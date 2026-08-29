@@ -1,16 +1,15 @@
 # Build stage
-FROM golang:1.24-alpine AS builder
+FROM golang:alpine AS builder
 
 WORKDIR /app
+
+# Enable automatic Go toolchain upgrade if sub-dependencies require it
+ENV GOTOOLCHAIN=auto
 
 # Install git and ca-certificates
 RUN apk add --no-cache git ca-certificates
 
-# Cache dependencies
-COPY go.mod go.sum ./
-RUN go mod download
-
-# Copy source code
+# Copy source code and modules
 COPY . .
 
 # Build the binary targeting cmd/gateway
