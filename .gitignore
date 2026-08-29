@@ -1,0 +1,26 @@
+# Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+/gateway
+
+# Logs & Runtime Data
+*.log
+gateway.log
+data/
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+
+# Sensitive files & user credentials
+api.txt
+.env
+run.bat
+test_out.txt
+
+# Goal artifacts & temporary test files
+goal-*
+test_bin.exe
