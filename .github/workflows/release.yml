@@ -1,0 +1,140 @@
+name: Build & Release
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Package Binaries
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: linux
+            arch: amd64
+            ext: ""
+            format: tar.gz
+          - os: linux
+            arch: arm64
+            ext: ""
+            format: tar.gz
+          - os: windows
+            arch: amd64
+            ext: ".exe"
+            format: zip
+          - os: windows
+            arch: arm64
+            ext: ".exe"
+            format: zip
+          - os: darwin
+            arch: amd64
+            ext: ""
+            format: tar.gz
+          - os: darwin
+            arch: arm64
+            ext: ""
+            format: tar.gz
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          check-latest: true
+
+      - name: Build Binary
+        env:
+          GOOS: ${{ matrix.os }}
+          GOARCH: ${{ matrix.arch }}
+          CGO_ENABLED: '0'
+        run: |
+          OUTPUT_NAME="gateway${{ matrix.ext }}"
+          go build -trimpath -ldflags="-s -w" -o "$OUTPUT_NAME" ./cmd/gateway
+
+      - name: Package Artifacts
+        run: |
+          TARGET_NAME="antigravity-gateway_${{ matrix.os }}_${{ matrix.arch }}"
+          mkdir -p "$TARGET_NAME"
+          
+          if [ "${{ matrix.os }}" = "windows" ]; then
+            cp gateway.exe "$TARGET_NAME/"
+            [ -f run.bat ] && cp run.bat "$TARGET_NAME/"
+          else
+            cp gateway "$TARGET_NAME/"
+            chmod +x "$TARGET_NAME/gateway"
+          fi
+
+          [ -f .env.example ] && cp .env.example "$TARGET_NAME/"
+          [ -f LICENSE ] && cp LICENSE "$TARGET_NAME/"
+          [ -f README.md ] && cp README.md "$TARGET_NAME/"
+
+          if [ "${{ matrix.format }}" = "zip" ]; then
+            zip -r "${TARGET_NAME}.zip" "$TARGET_NAME"
+            echo "ASSET=${TARGET_NAME}.zip" >> $GITHUB_ENV
+          else
+            tar -czvf "${TARGET_NAME}.tar.gz" "$TARGET_NAME"
+            echo "ASSET=${TARGET_NAME}.tar.gz" >> $GITHUB_ENV
+          fi
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ASSET }}
+          path: ${{ env.ASSET }}
+
+  publish:
+    name: Publish Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist
+          merge-multiple: true
+
+      - name: Generate Checksums
+        working-directory: ./dist
+        run: |
+          sha256sum * > checksums.txt || shasum -a 256 * > checksums.txt
+          cat checksums.txt
+
+      - name: Determine Release Tag & Name
+        id: release_meta
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            TAG_NAME="${GITHUB_REF#refs/tags/}"
+            echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
+            echo "title=Release ${TAG_NAME}" >> $GITHUB_OUTPUT
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+            echo "title=Continuous Build (latest)" >> $GITHUB_OUTPUT
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create or Update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release_meta.outputs.tag }}
+          name: ${{ steps.release_meta.outputs.title }}
+          prerelease: ${{ steps.release_meta.outputs.prerelease == 'true' }}
+          draft: false
+          generate_release_notes: true
+          files: |
+            ./dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
