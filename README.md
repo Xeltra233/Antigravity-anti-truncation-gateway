@@ -178,3 +178,9 @@ curl http://localhost:8080/v1/chat/completions \
 - `GET /readyz`: Readiness probe (`200 OK`)
 - `GET /metrics`: Standard Prometheus metrics (request counts, transform latencies, TTFB, active streams)
 - `WRAPPER_MODE=off`: Emergency rollback to pure passthrough mode.
+
+---
+
+### 📄 License
+
+This project is licensed under the [MIT License](LICENSE).

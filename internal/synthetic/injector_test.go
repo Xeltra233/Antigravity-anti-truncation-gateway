@@ -172,3 +172,89 @@ func TestRequestInjectorWrapperModeOff(t *testing.T) {
 		t.Errorf("expected verbatim body in off mode")
 	}
 }
+
+func TestRequestInjectorAssistantEndingWithTrailingSystem(t *testing.T) {
+	cfg := &config.Config{
+		ControlMessageRole:     "system",
+		ControlMessagePosition: "tail",
+		SyntheticToolPrefix:    "agw_emit_",
+		WrapperMode:            "prefer",
+	}
+
+	inj := NewRequestInjector(cfg)
+
+	// Simulated client payload ending with assistant then system
+	rawReq := []byte(`{
+		"model": "gemini-3.1-pro-low",
+		"messages": [
+			{"role": "system", "content": "You are an author."},
+			{"role": "assistant", "content": "Let us start!"},
+			{"role": "user", "content": "Write chapter 1"},
+			{"role": "assistant", "content": "Chapter 1 outline..."},
+			{"role": "system", "content": "Keep it NSFW"}
+		]
+	}`)
+
+	res, err := inj.Inject(rawReq)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	var parsed map[string]any
+	if err := json.Unmarshal(res.TransformedBody, &parsed); err != nil {
+		t.Fatalf("failed to unmarshal transformed body: %v", err)
+	}
+
+	msgs := parsed["messages"].([]any)
+	// Should have 6 messages (5 original + 1 injected user control message)
+	if len(msgs) != 6 {
+		t.Fatalf("expected 6 messages, got %d", len(msgs))
+	}
+
+	// Last message MUST have role: "user" to prevent Gemini 400
+	lastMsg := msgs[len(msgs)-1].(map[string]any)
+	if lastMsg["role"] != "user" {
+		t.Errorf("expected last message role to be 'user', got %s", lastMsg["role"])
+	}
+	if !strings.Contains(lastMsg["content"].(string), res.SyntheticToolName) {
+		t.Errorf("expected synthetic tool prompt in last message, got %v", lastMsg["content"])
+	}
+}
+
+func TestRequestInjectorOnlySystemMessages(t *testing.T) {
+	cfg := &config.Config{
+		ControlMessageRole:     "system",
+		ControlMessagePosition: "tail",
+		SyntheticToolPrefix:    "agw_emit_",
+		WrapperMode:            "prefer",
+	}
+
+	inj := NewRequestInjector(cfg)
+
+	rawReq := []byte(`{
+		"model": "gemini-3.1-pro-low",
+		"messages": [
+			{"role": "system", "content": "You are a bot."}
+		]
+	}`)
+
+	res, err := inj.Inject(rawReq)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	var parsed map[string]any
+	if err := json.Unmarshal(res.TransformedBody, &parsed); err != nil {
+		t.Fatalf("failed to unmarshal transformed body: %v", err)
+	}
+
+	msgs := parsed["messages"].([]any)
+	if len(msgs) != 2 {
+		t.Fatalf("expected 2 messages, got %d", len(msgs))
+	}
+
+	lastMsg := msgs[1].(map[string]any)
+	if lastMsg["role"] != "user" {
+		t.Errorf("expected last message role to be 'user', got %s", lastMsg["role"])
+	}
+}

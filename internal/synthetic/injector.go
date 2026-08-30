@@ -104,6 +104,77 @@ func (inj *RequestInjector) BuildControlMessage(toolName string) map[string]any 
 	}
 }
 
+// SanitizeAndInjectMessages ensures that:
+// 1. Synthetic control message is properly injected according to configured position.
+// 2. Upstream Gemini/CPA constraints are strictly satisfied: requests must never end with assistant/model turn or be left without a user turn after system messages are extracted.
+func (inj *RequestInjector) SanitizeAndInjectMessages(messages []any, controlMsg map[string]any) []any {
+	// Find the last conversational role (ignoring trailing system/developer messages)
+	lastConversationalRole := ""
+	for i := len(messages) - 1; i >= 0; i-- {
+		if mMap, ok := messages[i].(map[string]any); ok {
+			role, _ := mMap["role"].(string)
+			if role != "system" && role != "developer" {
+				lastConversationalRole = role
+				break
+			}
+		}
+	}
+
+	needsUserTurn := lastConversationalRole == "assistant" || lastConversationalRole == "model" || lastConversationalRole == ""
+	controlContent, _ := controlMsg["content"].(string)
+
+	switch inj.cfg.ControlMessagePosition {
+	case "head":
+		messages = append([]any{controlMsg}, messages...)
+		if needsUserTurn {
+			messages = append(messages, map[string]any{
+				"role":    "user",
+				"content": "Please continue and fulfill the request.",
+			})
+		}
+	case "system_tail":
+		lastSystemIdx := -1
+		for i, m := range messages {
+			if mMap, ok := m.(map[string]any); ok {
+				role, _ := mMap["role"].(string)
+				if role == "system" || role == "developer" {
+					lastSystemIdx = i
+				}
+			}
+		}
+		if lastSystemIdx >= 0 {
+			newMessages := make([]any, 0, len(messages)+1)
+			newMessages = append(newMessages, messages[:lastSystemIdx+1]...)
+			newMessages = append(newMessages, controlMsg)
+			newMessages = append(newMessages, messages[lastSystemIdx+1:]...)
+			messages = newMessages
+		} else {
+			messages = append([]any{controlMsg}, messages...)
+		}
+		if needsUserTurn {
+			messages = append(messages, map[string]any{
+				"role":    "user",
+				"content": "Please continue and fulfill the request.",
+			})
+		}
+	default: // "tail"
+		// If the conversation needs a user turn (ends with assistant, assistant+system, or empty/system-only),
+		// we inject the control message as role: "user" at the tail. This satisfies both the control prompt
+		// and the Gemini user-turn requirement without relying on system extraction.
+		if needsUserTurn {
+			userControl := map[string]any{
+				"role":    "user",
+				"content": controlContent,
+			}
+			messages = append(messages, userControl)
+		} else {
+			messages = append(messages, controlMsg)
+		}
+	}
+
+	return messages
+}
+
 func (inj *RequestInjector) Inject(rawBody []byte) (*InjectedRequest, error) {
 	return inj.InjectContext(context.Background(), rawBody)
 }
@@ -117,8 +188,33 @@ func (inj *RequestInjector) InjectContext(ctx context.Context, rawBody []byte) (
 	modelStr, _ := bodyMap["model"].(string)
 	isStreaming, _ := bodyMap["stream"].(bool)
 
-	// If WRAPPER_MODE is "off" or model is NOT a text model (e.g. image, audio, embedding), pass through verbatim
+	// If WRAPPER_MODE is "off" or model is NOT a text model (e.g. image, audio, embedding), pass through verbatim (with Gemini turn sanity)
 	if inj.cfg.WrapperMode == "off" || !inj.modelFilter.IsTextModel(modelStr) {
+		var messages []any
+		if mList, ok := bodyMap["messages"].([]any); ok && len(mList) > 0 {
+			messages = append(messages, mList...)
+			lastConversationalRole := ""
+			for i := len(messages) - 1; i >= 0; i-- {
+				if mMap, ok := messages[i].(map[string]any); ok {
+					role, _ := mMap["role"].(string)
+					if role != "system" && role != "developer" {
+						lastConversationalRole = role
+						break
+					}
+				}
+			}
+			if lastConversationalRole == "assistant" || lastConversationalRole == "model" || lastConversationalRole == "" {
+				messages = append(messages, map[string]any{
+					"role":    "user",
+					"content": "Please continue.",
+				})
+				bodyMap["messages"] = messages
+				if tb, err := json.Marshal(bodyMap); err == nil {
+					rawBody = tb
+				}
+			}
+		}
+
 		return &InjectedRequest{
 			SyntheticToolName:  "",
 			TransformedBody:    rawBody,
@@ -178,57 +274,14 @@ func (inj *RequestInjector) InjectContext(ctx context.Context, rawBody []byte) (
 		bodyMap["tool_choice"] = "auto"
 	}
 
-	// Prepare messages
+	// Prepare messages & inject synthetic control prompt while sanitizing conversation turns for Gemini/CPA
 	var messages []any
 	if mList, ok := bodyMap["messages"].([]any); ok {
 		messages = append(messages, mList...)
 	}
 
 	controlMsg := inj.BuildControlMessage(toolName)
-
-	if len(messages) > 0 {
-		lastMsg, _ := messages[len(messages)-1].(map[string]any)
-		lastRole, _ := lastMsg["role"].(string)
-
-		// Gemini / CPA 上游铁律：请求绝不能以 assistant/model 轮次结束，否则报错 400 "Requests ending with a model turn are not supported."
-		if lastRole == "assistant" {
-			userControl := map[string]any{
-				"role":    "user",
-				"content": controlMsg["content"],
-			}
-			messages = append(messages, userControl)
-		} else {
-			switch inj.cfg.ControlMessagePosition {
-			case "head":
-				messages = append([]any{controlMsg}, messages...)
-			case "system_tail":
-				lastSystemIdx := -1
-				for i, m := range messages {
-					if mMap, ok := m.(map[string]any); ok {
-						role, _ := mMap["role"].(string)
-						if role == "system" || role == "developer" {
-							lastSystemIdx = i
-						}
-					}
-				}
-				if lastSystemIdx >= 0 {
-					newMessages := make([]any, 0, len(messages)+1)
-					newMessages = append(newMessages, messages[:lastSystemIdx+1]...)
-					newMessages = append(newMessages, controlMsg)
-					newMessages = append(newMessages, messages[lastSystemIdx+1:]...)
-					messages = newMessages
-				} else {
-					messages = append([]any{controlMsg}, messages...)
-				}
-			default: // "tail"
-				messages = append(messages, controlMsg)
-			}
-		}
-	} else {
-		messages = append(messages, controlMsg)
-	}
-
-	bodyMap["messages"] = messages
+	bodyMap["messages"] = inj.SanitizeAndInjectMessages(messages, controlMsg)
 
 	transformed, err := json.Marshal(bodyMap)
 	if err != nil {

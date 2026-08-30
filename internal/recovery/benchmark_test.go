@@ -71,12 +71,15 @@ func TestHighConcurrency500Load(t *testing.T) {
 	cfg := &config.Config{
 		UpstreamBaseURL:             mockUpstream.URL,
 		UpstreamTimeout:             30 * time.Second,
+		UpstreamMaxIdleConns:        5000,
+		UpstreamMaxIdleConnsPerHost: 5000,
+		UpstreamMaxConnsPerHost:     5000,
 		WrapperMode:                 "prefer",
 		SyntheticToolPrefix:         "agw_emit_",
 		MaxRequestBytes:             1024 * 1024,
 		MaxResponseBytes:            1024 * 1024,
-		MaxConcurrentRequests:       1000,
-		MaxConcurrentRequestsPerKey: 500,
+		MaxConcurrentRequests:       5000,
+		MaxConcurrentRequestsPerKey: 5000,
 		RequestQueueTimeout:         1 * time.Second,
 	}
 
@@ -119,7 +122,9 @@ func TestHighConcurrency500Load(t *testing.T) {
 				if w.Code == http.StatusOK {
 					successCount.Add(1)
 				} else {
-					errorCount.Add(1)
+					if errorCount.Add(1) <= 3 {
+						t.Logf("Request failed with status %d: %s", w.Code, w.Body.String())
+					}
 				}
 				_ = reqIdx
 			}

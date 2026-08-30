@@ -230,9 +230,9 @@ func (o *Orchestrator) attemptSingleFormatRetry(ctx context.Context, originalBod
 		"function": map[string]any{"name": newToolName},
 	}
 
-	// Add correction message
+	// Add correction message as user role to guarantee Gemini turn compatibility
 	correctionMsg := map[string]any{
-		"role":    o.cfg.ControlMessageRole,
+		"role":    "user",
 		"content": fmt.Sprintf("Your previous response had formatting issues in the transport tool arguments. Please call the transport tool `%s` with valid JSON format `{\"content\": \"...\"}`.", newToolName),
 	}
 	var messages []any
