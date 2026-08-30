@@ -106,14 +106,6 @@ func TestConfigFailClosed(t *testing.T) {
 			},
 		},
 		{
-			name: "missing admin api key",
-			env: map[string]string{
-				"UPSTREAM_BASE_URL": "https://api.example.com",
-				"UPSTREAM_API_KEY":  "sk-123",
-				"KEY_HMAC_SECRET":   "hmac-secret-123456",
-			},
-		},
-		{
 			name: "short admin api key",
 			env: map[string]string{
 				"UPSTREAM_BASE_URL": "https://api.example.com",

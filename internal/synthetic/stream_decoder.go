@@ -24,6 +24,7 @@ type IncrementalJSONStringDecoder struct {
 	pendingEscape  []byte
 	pendingUTF8    []byte
 	pendingKey     strings.Builder
+	pendingQuote   bool // A trailing quote held at the end of a chunk to see if next chunk is '}'
 	surrogateHigh  rune
 	accumRaw       strings.Builder
 	ContentEmitted bool
@@ -53,7 +54,6 @@ func (d *IncrementalJSONStringDecoder) Feed(chunk string) (string, bool, error) 
 			if src[i] == '{' {
 				d.state = StateLookingForKey
 			} else if src[i] == '"' {
-				// Might start directly with key
 				d.state = StateLookingForKey
 				d.pendingKey.WriteByte('"')
 			}
@@ -67,7 +67,6 @@ func (d *IncrementalJSONStringDecoder) Feed(chunk string) (string, bool, error) 
 				d.state = StateLookingForColon
 				d.pendingKey.Reset()
 			} else if len(keyStr) > 500 {
-				// Safety check: key too long or unexpected structure
 				d.state = StateError
 			}
 
@@ -81,12 +80,27 @@ func (d *IncrementalJSONStringDecoder) Feed(chunk string) (string, bool, error) 
 			if src[i] == '"' {
 				d.state = StateInString
 			} else if src[i] != ' ' && src[i] != '\t' && src[i] != '\r' && src[i] != '\n' {
-				// Non-whitespace character before quote
 				d.state = StateError
 			}
 			i++
 
 		case StateInString:
+			// If we held a pending quote from the previous chunk, determine if it was closing or literal
+			if d.pendingQuote {
+				d.pendingQuote = false
+				// Check if current chunk starts with optional whitespace + '}'
+				trimmedRemaining := strings.TrimLeft(string(src[i:]), " \t\r\n")
+				if strings.HasPrefix(trimmedRemaining, "}") || trimmedRemaining == "" {
+					// It is the closing quote followed by '}'
+					d.state = StateCompleted
+					i = len(src)
+					break
+				} else {
+					// It was a literal quote!
+					out.WriteByte('"')
+				}
+			}
+
 			// Combine any pending prefix
 			var workingBytes []byte
 			if len(d.pendingEscape) > 0 {
@@ -127,6 +141,7 @@ func (d *IncrementalJSONStringDecoder) Feed(chunk string) (string, bool, error) 
 						wIdx += 2
 					case 'f':
 						out.WriteByte('\f')
+						wIdx += 2
 					case 'n':
 						out.WriteByte('\n')
 						wIdx += 2
@@ -172,11 +187,27 @@ func (d *IncrementalJSONStringDecoder) Feed(chunk string) (string, bool, error) 
 						wIdx += 2
 					}
 				} else if b == '"' {
-					// End of content string!
-					d.state = StateCompleted
-					wIdx++
-					i = len(src)
-					break
+					// We encountered a quote '"'. Check if it's the closing quote or an unescaped literal quote.
+					remainingAfterQuote := workingBytes[wIdx+1:]
+					trimmedRest := strings.TrimLeft(string(remainingAfterQuote), " \t\r\n")
+
+					if len(remainingAfterQuote) == 0 {
+						// Quote is at the very end of this chunk. Hold it to inspect the start of the next chunk.
+						d.pendingQuote = true
+						wIdx++
+						i = len(src)
+						break
+					} else if strings.HasPrefix(trimmedRest, "}") {
+						// Followed immediately by '}' -> definitely the closing quote!
+						d.state = StateCompleted
+						wIdx = len(workingBytes)
+						i = len(src)
+						break
+					} else {
+						// Followed by regular characters -> unescaped literal quote in text!
+						out.WriteByte('"')
+						wIdx++
+					}
 				} else {
 					// UTF-8 rune handling
 					if b < 0x80 {
@@ -206,6 +237,12 @@ func (d *IncrementalJSONStringDecoder) Feed(chunk string) (string, bool, error) 
 			i = len(src)
 
 		case StateCompleted:
+			// If we are marked completed but more non-closing text comes in (e.g. false closing quote), resume streaming
+			trimmed := strings.TrimSpace(string(src[i:]))
+			if trimmed != "" && trimmed != "}" && trimmed != "}," && trimmed != "}\n" {
+				d.state = StateInString
+				continue
+			}
 			i = len(src)
 
 		case StateError:
@@ -221,38 +258,44 @@ func (d *IncrementalJSONStringDecoder) Feed(chunk string) (string, bool, error) 
 }
 
 func (d *IncrementalJSONStringDecoder) Finish(maxBytes int) (string, error) {
-	if d.state == StateCompleted {
-		return "", nil
+	var out bytes.Buffer
+
+	if d.pendingQuote && !d.ContentEmitted {
+		out.WriteByte('"')
+		d.pendingQuote = false
 	}
 
-	// If never reached completion (e.g. malformed JSON or unclosed quote), attempt bounded repair
-	raw := d.accumRaw.String()
-	if raw == "" {
-		return "", nil
+	if len(d.pendingEscape) > 0 {
+		out.Write(d.pendingEscape)
+		d.pendingEscape = nil
+	}
+	if len(d.pendingUTF8) > 0 {
+		out.Write(d.pendingUTF8)
+		d.pendingUTF8 = nil
 	}
 
-	res, err := RepairSyntheticArguments(raw, maxBytes)
-	if err != nil {
-		return "", err
-	}
-
-	// If we haven't emitted anything yet, return the whole repaired content
+	// If no content was emitted throughout the entire stream, use the robust RepairSyntheticArguments fallback
 	if !d.ContentEmitted {
-		d.ContentEmitted = true
-		return res.Content, nil
+		raw := d.accumRaw.String()
+		if raw != "" {
+			res, err := RepairSyntheticArguments(raw, maxBytes)
+			if err == nil && res.Content != "" {
+				return res.Content, nil
+			}
+		}
 	}
 
-	return "", nil
+	return out.String(), nil
 }
 
 func utf16IsHighSurrogate(r rune) bool {
-	return 0xD800 <= r && r <= 0xDBFF
+	return r >= 0xD800 && r <= 0xDBFF
 }
 
 func utf16IsLowSurrogate(r rune) bool {
-	return 0xDC00 <= r && r <= 0xDFFF
+	return r >= 0xDC00 && r <= 0xDFFF
 }
 
 func utf16DecodeSurrogate(high, low rune) rune {
-	return 0x10000 + (high-0xD800)<<10 + (low - 0xDC00)
+	return 0x10000 + ((high - 0xD800) << 10) + (low - 0xDC00)
 }

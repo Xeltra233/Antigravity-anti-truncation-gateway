@@ -247,8 +247,15 @@ func scanAndExtractContent(s string) (string, bool) {
 		} else if b == '\\' {
 			escaped = true
 		} else if b == '"' {
-			// Found closing quote
-			return valBuf.String(), true
+			// Check if this quote is the true closing quote (followed only by whitespace and '}' or ',')
+			rest := strings.TrimLeft(sub[i+1:], " \t\r\n")
+			if rest == "" || strings.HasPrefix(rest, "}") || strings.HasPrefix(rest, ",") {
+				// Found true closing quote
+				return valBuf.String(), true
+			} else {
+				// Internal literal quote
+				valBuf.WriteByte('"')
+			}
 		} else {
 			valBuf.WriteByte(b)
 		}

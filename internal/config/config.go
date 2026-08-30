@@ -131,12 +131,16 @@ func Load(getenv func(string) string) (*Config, error) {
 	cfg.AdminAPIKey = strings.TrimSpace(getenv("ADMIN_API_KEY"))
 	if cfg.AdminAPIKey == "" {
 		cfg.AdminAPIKey = "admin-secret-key-12345"
+	} else if len(cfg.AdminAPIKey) < 8 {
+		return nil, errors.New("ADMIN_API_KEY must be at least 8 characters")
 	}
 
 	// Key HMAC Secret (Optional, fallback to default secret if not set)
 	cfg.KeyHMACSecret = strings.TrimSpace(getenv("KEY_HMAC_SECRET"))
 	if cfg.KeyHMACSecret == "" {
 		cfg.KeyHMACSecret = "antigravity-gateway-default-hmac-secret-2025"
+	} else if len(cfg.KeyHMACSecret) < 16 {
+		return nil, errors.New("KEY_HMAC_SECRET must be at least 16 characters")
 	}
 
 	// Key DB Path
