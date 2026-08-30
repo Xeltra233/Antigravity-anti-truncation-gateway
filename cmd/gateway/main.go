@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -16,6 +17,12 @@ import (
 	"antigravity-gateway/internal/proxy"
 	"antigravity-gateway/internal/recovery"
 	"antigravity-gateway/internal/server"
+)
+
+var (
+	Version   = "dev"
+	GitCommit = "none"
+	BuildTime = "unknown"
 )
 
 type responseLogger struct {
@@ -119,6 +126,14 @@ func detailedLoggingMiddleware(next http.Handler) http.Handler {
 }
 
 func main() {
+	if len(os.Args) > 1 {
+		arg := strings.ToLower(os.Args[1])
+		if arg == "-v" || arg == "-version" || arg == "--version" || arg == "version" {
+			fmt.Printf("Antigravity Gateway version %s (commit: %s, built: %s)\n", Version, GitCommit, BuildTime)
+			os.Exit(0)
+		}
+	}
+
 	cfg, err := config.LoadFromEnv()
 	if err != nil {
 		slog.Error("configuration error", "err", err)
@@ -127,6 +142,9 @@ func main() {
 
 	logger.Init(cfg.LogLevel, os.Stdout)
 	slog.Info("starting antigravity-gateway",
+		"version", Version,
+		"git_commit", GitCommit,
+		"build_time", BuildTime,
 		"port", cfg.Port,
 		"upstream", cfg.UpstreamBaseURL,
 		"wrapper_mode", cfg.WrapperMode,
@@ -160,10 +178,16 @@ func main() {
 
 	// Health & Metrics
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
-		server.WriteJSON(w, http.StatusOK, map[string]string{"status": "ok"})
+		server.WriteJSON(w, http.StatusOK, map[string]string{
+			"status":  "ok",
+			"version": Version,
+		})
 	})
 	mux.HandleFunc("GET /readyz", func(w http.ResponseWriter, r *http.Request) {
-		server.WriteJSON(w, http.StatusOK, map[string]string{"status": "ready"})
+		server.WriteJSON(w, http.StatusOK, map[string]string{
+			"status":  "ready",
+			"version": Version,
+		})
 	})
 	mux.HandleFunc("GET /metrics", metrics.Default.Handler())
 
