@@ -59,10 +59,10 @@ func (c *UpstreamClient) NewUpstreamRequest(ctx context.Context, method, targetU
 		return nil, fmt.Errorf("failed to create upstream request: %w", err)
 	}
 
-	// Standard content type & accept
+	// Standard content type, accept & user-agent
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json, text/event-stream")
-
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
 	// Upstream authentication - NEVER forward downstream auth
 	if c.cfg.UpstreamAuthMode == "bearer" && c.cfg.UpstreamAPIKey != "" {
 		req.Header.Set("Authorization", "Bearer "+c.cfg.UpstreamAPIKey)
@@ -73,6 +73,10 @@ func (c *UpstreamClient) NewUpstreamRequest(ctx context.Context, method, targetU
 	}
 
 	return req, nil
+}
+
+func (c *UpstreamClient) CloseIdleConnections() {
+	c.httpClient.CloseIdleConnections()
 }
 
 func (c *UpstreamClient) Do(req *http.Request) (*http.Response, error) {

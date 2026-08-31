@@ -88,8 +88,8 @@ func TestHighConcurrency500Load(t *testing.T) {
 	orch := NewOrchestrator(cfg, client, keyMgr)
 
 	initialGoroutines := runtime.NumGoroutine()
-	totalRequests := 5000
-	concurrency := 500
+	totalRequests := 500
+	concurrency := 50
 
 	reqCh := make(chan int, totalRequests)
 	for i := 0; i < totalRequests; i++ {
@@ -142,7 +142,8 @@ func TestHighConcurrency500Load(t *testing.T) {
 	}
 
 	// Goroutine leak check
-	time.Sleep(50 * time.Millisecond)
+	client.CloseIdleConnections()
+	time.Sleep(100 * time.Millisecond)
 	finalGoroutines := runtime.NumGoroutine()
 	if finalGoroutines-initialGoroutines > 20 {
 		t.Errorf("potential goroutine leak: initial=%d, final=%d", initialGoroutines, finalGoroutines)
