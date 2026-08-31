@@ -31,6 +31,10 @@ func NewRequestInjector(cfg *config.Config) *RequestInjector {
 	}
 }
 
+func (inj *RequestInjector) GetModelFilter() *ModelFilter {
+	return inj.modelFilter
+}
+
 func (inj *RequestInjector) GenerateUniqueToolName(existingToolNames map[string]bool) (string, error) {
 	prefix := inj.cfg.SyntheticToolPrefix
 	if prefix == "" {
