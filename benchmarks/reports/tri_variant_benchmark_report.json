@@ -1,628 +1,611 @@
 [
   {
     "question": {
-      "id": "fact_retrieval_01",
-      "category": "long_context_retrieval",
-      "title": "跨多段落事实定位与长文本精准提取",
-      "system_prompt": "你是一个严谨的研发助理，必须准确基于所给上下文回答问题。",
-      "user_prompt": "项目代号：Project Chimera-X。\n第一阶段在 2024-03-15 启动，负责人为 Dr. Alice Vance，分配预算为 450 万元。\n第二阶段在 2024-09-20 启动，负责人为 Bob Chen，分配预算为 820 万元。\n第三阶段在 2025-02-10 启动，负责人为 Carol Danvers，分配预算为 1200 万元。\n\n请直接回答：第二阶段的启动日期是什么？负责人是谁？分配预算是多少万元？",
+      "id": "mmlu_pro_cs_01",
+      "category": "mmlu_pro_computer_science",
+      "source": "MMLU-Pro (Massive Multitask Language Understanding Pro) - Computer Science",
+      "title": "MMLU-Pro 计算机科学：B+树分裂与磁盘I/O高度推导",
+      "system_prompt": "You are an expert in database engine internals and data structures. Answer the multiple-choice question clearly with step-by-step reasoning and state the final chosen letter in the format [Answer: X].",
+      "user_prompt": "Question from MMLU-Pro (Computer Science):\nConsider a B+ tree of order d = 4 (meaning each internal node can hold at most 4 keys and at most 5 pointers, and must contain at least ceil(4/2) = 2 keys except the root). The leaf nodes store data records, where each leaf can hold at most 8 records. Suppose the database currently contains 10,000 distinct records.\nWhat is the minimum possible height of this B+ tree (defined as the number of levels from the root down to the leaf level, counting the root as level 1)?\n\nOptions:\nA) 2\nB) 3\nC) 4\nD) 5\nE) 6\n\nShow your mathematical derivation for the maximum capacity at each level to achieve the minimum height, and conclude with the correct letter option.",
       "expected_keyword_groups": [
         [
-          "2024-09-20",
-          "2024年9月20日"
-        ],
-        [
-          "Bob Chen",
-          "bob chen",
-          "Bob"
-        ],
-        [
-          "820",
-          "820万"
+          "[answer: c]",
+          "answer: c",
+          "option c",
+          "c) 4",
+          "height is 4",
+          "minimum possible height is 4",
+          "minimum height of 4",
+          "level 4"
         ]
       ]
     },
     "standard": {
-      "request_bytes": 1067,
-      "latency_sec": 2.474754571914673,
+      "request_bytes": 1066,
+      "latency_sec": 5.838904619216919,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
+        "matched_groups": 1,
+        "total_groups": 1,
         "tokens": {
-          "completion_tokens": 75,
+          "completion_tokens": 674,
           "completion_tokens_details": {
-            "reasoning_tokens": 132
+            "reasoning_tokens": 1009
           },
-          "prompt_tokens": 286,
-          "total_tokens": 493
+          "prompt_tokens": 371,
+          "total_tokens": 2054
         },
-        "content_preview": "第二阶段的相关信息如下：\n- 启动日期：2024-09-20\n- 负责人：Bob Chen\n- 分配预算：820 万元"
+        "content_preview": "To find the **minimum possible height** of the B+ tree for storing $N = 10,000$ records, we need to maximize the capacity of the tree at each level.\n\n### 1. Tree Parameters & Maximum Fanout\n- **Intern..."
       }
     },
     "experimental": {
-      "request_bytes": 1067,
-      "latency_sec": 4.83019757270813,
+      "request_bytes": 1066,
+      "latency_sec": 4.505580425262451,
       "status_code": 200,
       "eval": {
-        "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
+        "score": 0.0,
+        "matched_groups": 0,
+        "total_groups": 1,
         "tokens": {
-          "completion_tokens": 79,
+          "completion_tokens": 530,
           "completion_tokens_details": {
-            "reasoning_tokens": 212
+            "reasoning_tokens": 690
           },
-          "prompt_tokens": 1178,
-          "total_tokens": 1469
+          "prompt_tokens": 1173,
+          "total_tokens": 2393
         },
-        "content_preview": "第二阶段的相关信息如下：\n\n* **启动日期**：2024-09-20\n* **负责人**：Bob Chen\n* **分配预算**：820 万元"
+        "content_preview": "To find the **minimum possible height** of the B+ tree for storing 10,000 records, we maximize the branching factor at every internal node and maximize the capacity of each leaf node:\n\n1. **Parameters..."
       }
     },
     "hybrid": {
-      "request_bytes": 1079,
-      "latency_sec": 2.5455148220062256,
+      "request_bytes": 1078,
+      "latency_sec": 4.446324348449707,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
+        "matched_groups": 1,
+        "total_groups": 1,
         "tokens": {
-          "completion_tokens": 83,
+          "completion_tokens": 609,
           "completion_tokens_details": {
-            "reasoning_tokens": 284
+            "reasoning_tokens": 757
           },
-          "prompt_tokens": 1254,
-          "total_tokens": 1621
+          "prompt_tokens": 1264,
+          "total_tokens": 2630
         },
-        "content_preview": "第二阶段的相关信息如下：\n\n- **启动日期**：2024-09-20\n- **负责人**：Bob Chen\n- **分配预算**：820 万元"
+        "content_preview": "To determine the **minimum possible height** of the B+ tree containing $N = 10,000$ records, we need to maximize the number of records the tree can hold at each level (i.e., every internal node must h..."
       }
     }
   },
   {
     "question": {
-      "id": "reasoning_logic_02",
-      "category": "multi_step_reasoning",
-      "title": "多约束条件逻辑推理与算术推导",
-      "system_prompt": "你是一个擅长逻辑推理与数学计算的专家。请一步一步思考并给出最终确切数字。",
-      "user_prompt": "甲、乙、丙三人分配 180 颗糖果。\n1. 甲分到的数量是乙的 2 倍；\n2. 丙分到的数量比乙少 20 颗；\n3. 三人刚好分完 180 颗糖果。\n\n请问：甲、乙、丙各自得到多少颗糖果？请在最后以形如【甲: X, 乙: Y, 丙: Z】的格式总结。",
+      "id": "openai_gsm8k_02",
+      "category": "gsm8k_multi_step_math",
+      "source": "OpenAI GSM8K (Grade School Math 8K) Dataset - Problem #248",
+      "title": "OpenAI GSM8K 权威数学多步链式推理",
+      "system_prompt": "You are a precise mathematical reasoning engine. Solve the word problem step by step and conclude with the final numerical value in the format #### <number>.",
+      "user_prompt": "Question from OpenAI GSM8K:\nA bakery makes 240 pastries in the morning. They sell 3/8 of the pastries to a morning corporate catering order. Then, a walk-in customer buys 1/5 of the remaining pastries. In the afternoon, the bakers bake an additional batch equal to 50% of whatever pastries are currently left in the shop. Finally, during the evening discount hour, they sell 3/4 of the total pastries in stock. How many pastries remain unsold at the end of the day?\n\nPlease solve step by step and provide the final answer at the very end formatted as #### <number>.",
       "expected_keyword_groups": [
         [
-          "甲: 100",
-          "甲：100",
-          "甲分到100",
-          "甲 100",
-          "甲=100"
-        ],
-        [
-          "乙: 50",
-          "乙：50",
-          "乙分到50",
-          "乙 50",
-          "乙=50"
-        ],
-        [
-          "丙: 30",
-          "丙：30",
-          "丙分到30",
-          "丙 30",
-          "丙=30"
+          "#### 45",
+          "45 pastries",
+          "45 remaining",
+          "answer is 45",
+          "remains 45"
         ]
       ]
     },
     "standard": {
-      "request_bytes": 908,
-      "latency_sec": 2.36295223236084,
+      "request_bytes": 882,
+      "latency_sec": 2.322618007659912,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
+        "matched_groups": 1,
+        "total_groups": 1,
         "tokens": {
-          "completion_tokens": 267,
+          "completion_tokens": 300,
           "completion_tokens_details": {
-            "reasoning_tokens": 274
+            "reasoning_tokens": 205
           },
-          "prompt_tokens": 273,
+          "prompt_tokens": 309,
           "total_tokens": 814
         },
-        "content_preview": "我们可以通过建立一元一次方程来求解：\n\n1. 设乙分到的糖果数量为 $x$ 颗。\n2. 根据题意：\n   - 甲分到的数量为 $2x$ 颗；\n   - 丙分到的数量为 $(x - 20)$ 颗。\n3. 三人糖果总数为 180 颗，列出方程：\n   $$2x + x + (x - 20) = 180$$\n   $$4x - 20 = 180$$\n   $$4x = 200$$\n   $$x = 50..."
+        "content_preview": "To find the number of unsold pastries at the end of the day, we calculate the inventory after each event:\n\n1. **Initial pastries**: 240\n2. **Morning corporate order**: \n   - Sells $\\frac{3}{8} \\times ..."
       }
     },
     "experimental": {
-      "request_bytes": 908,
-      "latency_sec": 2.967963218688965,
+      "request_bytes": 882,
+      "latency_sec": 3.7828903198242188,
       "status_code": 200,
       "eval": {
-        "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
+        "score": 0.0,
+        "matched_groups": 0,
+        "total_groups": 1,
         "tokens": {
-          "completion_tokens": 275,
+          "completion_tokens": 317,
           "completion_tokens_details": {
-            "reasoning_tokens": 330
+            "reasoning_tokens": 549
           },
-          "prompt_tokens": 1180,
-          "total_tokens": 1785
+          "prompt_tokens": 1195,
+          "total_tokens": 2061
         },
-        "content_preview": "我们可以设乙分到的糖果数量为 $x$ 颗。\n\n根据题意可得：\n- 甲分到的数量是乙的 2 倍，即甲分得：$2x$ 颗；\n- 丙分到的数量比乙少 20 颗，即丙分得：$x - 20$ 颗。\n\n三人一共分完 180 颗糖果，可列方程：\n$$2x + x + (x - 20) = 180$$\n\n解方程：\n$$4x - 20 = 180$$\n$$4x = 200$$\n$$x = 50$$\n\n因此：\n- 甲..."
+        "content_preview": "To find the number of unsold pastries at the end of the day, we can follow the steps in chronological order:\n\n1. **Morning catering order:**\n   - Initial pastries = $240$\n   - Pastries sold to caterin..."
       }
     },
     "hybrid": {
-      "request_bytes": 920,
-      "latency_sec": 2.434633493423462,
+      "request_bytes": 894,
+      "latency_sec": 2.554471492767334,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
+        "matched_groups": 1,
+        "total_groups": 1,
         "tokens": {
-          "completion_tokens": 283,
+          "completion_tokens": 297,
           "completion_tokens_details": {
-            "reasoning_tokens": 349
+            "reasoning_tokens": 388
           },
-          "prompt_tokens": 1254,
-          "total_tokens": 1886
+          "prompt_tokens": 1276,
+          "total_tokens": 1961
         },
-        "content_preview": "我们可以通过设立方程来一步步计算：\n\n设乙分到的糖果数量为 $Y$ 颗。\n\n根据题意：\n1. 甲分到的数量是乙的 2 倍，即甲为 $2Y$ 颗；\n2. 丙分到的数量比乙少 20 颗，即丙为 $Y - 20$ 颗；\n3. 三人分到的糖果总数为 180 颗。\n\n列出方程：\n$$2Y + Y + (Y - 20) = 180$$\n\n化简方程：\n$$4Y - 20 = 180$$\n$$4Y = 200$$..."
+        "content_preview": "Let's break down the problem step by step:\n\n1. **Morning Corporate Catering Order:**\n   - Total pastries made = 240\n   - Pastries sold = $\\frac{3}{8} \\times 240 = 90$\n   - Remaining pastries = $240 - ..."
       }
     }
   },
   {
     "question": {
-      "id": "code_analysis_03",
-      "category": "code_analysis_and_repair",
-      "title": "Python 算法边界条件分析与代码修复",
-      "system_prompt": "你是一个资深 Python 算法工程师。",
-      "user_prompt": "请审查以下二分查找函数并指出它的死循环 bug，然后给出修复后的正确 Python 代码：\n```python\ndef binary_search(arr, target):\n    left, right = 0, len(arr) - 1\n    while left < right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid\n        else:\n            right = mid - 1\n    return -1\n```",
+      "id": "hendrycks_math_level5_03",
+      "category": "hendrycks_math_competition",
+      "source": "Hendrycks MATH Benchmark (UC Berkeley) - Number Theory Level 5",
+      "title": "MATH Benchmark Level 5：完全平方数数论方程求解",
+      "system_prompt": "You are a mathematical olympiad competitor. Provide a rigorous algebraic and number-theoretic proof and enclose the final integer answer in \\boxed{...}.",
+      "user_prompt": "Problem from UC Berkeley MATH Dataset (Number Theory, Level 5):\nFind the unique positive integer $n$ such that $n^2 + 19n + 92$ is a perfect square of an integer.\n\nWork through the algebraic discriminant / difference of squares decomposition method, find all possible integer values for $n$, identify the positive solution, and place the final integer in \\boxed{}.",
       "expected_keyword_groups": [
         [
-          "left = mid + 1",
-          "mid + 1"
-        ],
-        [
-          "while left <= right",
-          "left <= right",
-          "left < right"
-        ],
-        [
-          "死循环",
-          "infinite loop",
-          "边界"
+          "\\boxed{5}",
+          "boxed{5}",
+          "n = 5",
+          "n=5",
+          "positive integer is 5",
+          "unique positive integer is 5"
         ]
       ]
     },
     "standard": {
-      "request_bytes": 763,
-      "latency_sec": 3.629631280899048,
+      "request_bytes": 678,
+      "latency_sec": 12.655158042907715,
       "status_code": 200,
       "eval": {
-        "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
+        "score": 0.0,
+        "matched_groups": 0,
+        "total_groups": 1,
         "tokens": {
-          "completion_tokens": 558,
+          "completion_tokens": 929,
           "completion_tokens_details": {
-            "reasoning_tokens": 222
+            "reasoning_tokens": 3858
           },
-          "prompt_tokens": 270,
-          "total_tokens": 1050
+          "prompt_tokens": 254,
+          "total_tokens": 5041
         },
-        "content_preview": "这段代码存在 **死循环** 和 **边界元素漏判** 两个主要问题：\n\n---\n\n### 问题分析\n\n1. **死循环 Bug（核心问题）：**\n   * 在 `arr[mid] < target` 时，代码执行了 `left = mid`。\n   * 当 `left` 和 `right` 相邻（即 `right = left + 1`）时，计算 `mid = (left + right) //..."
+        "content_preview": "To find the integer values of $n$ such that $n^2 + 19n + 92$ is a perfect square, let:\n$$n^2 + 19n + 92 = m^2$$\nfor some non-negative integer $m$.\n\n### Step 1: Complete the Square\nMultiplying the enti..."
       }
     },
     "experimental": {
-      "request_bytes": 763,
-      "latency_sec": 6.58781886100769,
+      "request_bytes": 678,
+      "latency_sec": 18.318366050720215,
       "status_code": 200,
       "eval": {
-        "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
+        "score": 0.0,
+        "matched_groups": 0,
+        "total_groups": 1,
         "tokens": {
-          "completion_tokens": 475,
+          "completion_tokens": 857,
           "completion_tokens_details": {
-            "reasoning_tokens": 403
+            "reasoning_tokens": 3142
           },
-          "prompt_tokens": 1162,
-          "total_tokens": 2040
+          "prompt_tokens": 1193,
+          "total_tokens": 5192
         },
-        "content_preview": "这段二分查找代码存在以下问题：\n\n### 问题分析\n\n1. **死循环 Bug（核心原因）：`left = mid`**\n   - 在 Python 中，整数除法 `(left + right) // 2` 是向下取整的。\n   - 当区间只剩下两个元素（即 `right = left + 1`）时，`mid = (left + left + 1) // 2 = left`。\n   - 如果此时 ..."
+        "content_preview": "To find the integer values of $n$ such that $n^2 + 19n + 92$ is a perfect square, let:\n$$n^2 + 19n + 92 = k^2$$\nfor some non-negative integer $k$.\n\n---\n\n### Step 1: Algebraic Completion of Squares / D..."
       }
     },
     "hybrid": {
-      "request_bytes": 775,
-      "latency_sec": 4.857408285140991,
+      "request_bytes": 690,
+      "latency_sec": 15.292003631591797,
       "status_code": 200,
       "eval": {
-        "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
+        "score": 0.0,
+        "matched_groups": 0,
+        "total_groups": 1,
         "tokens": {
-          "completion_tokens": 619,
+          "completion_tokens": 1200,
           "completion_tokens_details": {
-            "reasoning_tokens": 575
+            "reasoning_tokens": 4244
           },
-          "prompt_tokens": 1227,
-          "total_tokens": 2421
+          "prompt_tokens": 1277,
+          "total_tokens": 6721
         },
-        "content_preview": "这份二分查找代码存在 **死循环** 和 **边界遗漏** 两个主要 Bug。\n\n---\n\n### 问题分析\n\n#### 1. 死循环 Bug（核心问题）\n* **原因**：在 `arr[mid] < target` 分支中，代码执行了 `left = mid`。\n* **复现场景**：在整数向下取整除法 `mid = (left + right) // 2` 下，当 `right = left ..."
+        "content_preview": "To determine all integers $n$ such that $n^2 + 19n + 92$ is a perfect square, we let:\n$$n^2 + 19n + 92 = k^2$$\nfor some non-negative integer $k \\ge 0$.\n\n### Step 1: Complete the Square and Form a Diff..."
       }
     }
   },
   {
     "question": {
-      "id": "json_schema_04",
-      "category": "strict_json_schema",
-      "title": "严格 JSON Schema 实体提取",
-      "system_prompt": "你是一个严格的数据提取引擎。你的回复必须且仅能是一个合法的 JSON 对象，不包含任何 Markdown 代码块标记（如 ```json）或前后解释说明。",
-      "user_prompt": "请从下述文本中提取服务器配置信息：\n'主机 web-prod-01 (IP: 192.168.1.108) 运行于 us-west-2 机房，配备 32 核 CPU 和 64GB 内存，状态为 healthy。'\n\n输出 JSON 字段要求：hostname (string), ip (string), region (string), cpu_cores (number), memory_gb (number), status (string)。",
+      "id": "openai_humaneval_137_04",
+      "category": "openai_humaneval_code",
+      "source": "OpenAI HumanEval Benchmark - Task 137 (compare_one)",
+      "title": "OpenAI HumanEval #137：多类型边界比较与值保持",
+      "system_prompt": "You are an expert Python software engineer following OpenAI HumanEval specifications.",
+      "user_prompt": "Complete the official OpenAI HumanEval/137 problem:\n\n```python\ndef compare_one(a, b):\n    \"\"\"\n    Create a function that takes integers, floats, or strings representing\n    real numbers, and returns the larger variable in its given variable type.\n    Return None if the values are equal.\n    Note: If a real number is represented as a string, the floating point might be separated by a comma (e.g. \"2,3\" -> 2.3).\n\n    Examples:\n    compare_one(1, 2.5) ➞ 2.5\n    compare_one(1, \"2,3\") ➞ \"2,3\"\n    compare_one(\"5,1\", \"6\") ➞ \"6\"\n    compare_one(\"1\", 1) ➞ None\n    \"\"\"\n```\n\nProvide the clean, self-contained Python implementation for `compare_one` handling all types (int, float, str with commas or dots) properly.",
       "expected_keyword_groups": [
         [
-          "\"hostname\": \"web-prod-01\"",
-          "\"hostname\":\"web-prod-01\""
+          "def compare_one",
+          "compare_one"
         ],
         [
-          "\"ip\": \"192.168.1.108\"",
-          "\"ip\":\"192.168.1.108\""
+          "replace",
+          "float",
+          "str"
         ],
         [
-          "\"cpu_cores\": 32",
-          "\"cpu_cores\":32"
-        ],
-        [
-          "\"memory_gb\": 64",
-          "\"memory_gb\":64"
-        ],
-        [
-          "\"status\": \"healthy\"",
-          "\"status\":\"healthy\""
+          "return a",
+          "return b",
+          "return none",
+          "return None"
         ]
       ]
     },
     "standard": {
-      "request_bytes": 948,
-      "latency_sec": 1.4084181785583496,
+      "request_bytes": 1010,
+      "latency_sec": 3.0260441303253174,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 5,
-        "total_groups": 5,
+        "matched_groups": 3,
+        "total_groups": 3,
         "tokens": {
-          "completion_tokens": 102,
+          "completion_tokens": 296,
           "completion_tokens_details": {
-            "reasoning_tokens": 328
+            "reasoning_tokens": 329
           },
-          "prompt_tokens": 284,
-          "total_tokens": 714
+          "prompt_tokens": 379,
+          "total_tokens": 1004
         },
-        "content_preview": "{\"hostname\": \"web-prod-01\", \"ip\": \"192.168.1.108\", \"region\": \"us-west-2\", \"cpu_cores\": 32, \"memory_gb\": 64, \"status\": \"healthy\"}"
+        "content_preview": "def compare_one(a, b):\n    \"\"\"\n    Create a function that takes integers, floats, or strings representing\n    real numbers, and returns the larger variable in its given variable type.\n    Return None ..."
       }
     },
     "experimental": {
-      "request_bytes": 948,
-      "latency_sec": 2.7947888374328613,
+      "request_bytes": 1010,
+      "latency_sec": 3.4309639930725098,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 5,
-        "total_groups": 5,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 323,
+          "completion_tokens_details": {
+            "reasoning_tokens": 360
+          },
+          "prompt_tokens": 1168,
+          "total_tokens": 1851
+        },
+        "content_preview": "Here is the clean and self-contained implementation of `compare_one`:\n\n```python\ndef compare_one(a, b):\n    \"\"\"\n    Create a function that takes integers, floats, or strings representing\n    real numb..."
+      }
+    },
+    "hybrid": {
+      "request_bytes": 1022,
+      "latency_sec": 2.7021498680114746,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 296,
+          "completion_tokens_details": {
+            "reasoning_tokens": 548
+          },
+          "prompt_tokens": 1237,
+          "total_tokens": 2081
+        },
+        "content_preview": "```python\ndef compare_one(a, b):\n    \"\"\"\n    Create a function that takes integers, floats, or strings representing\n    real numbers, and returns the larger variable in its given variable type.\n    Re..."
+      }
+    }
+  },
+  {
+    "question": {
+      "id": "ruler_multi_needle_05",
+      "category": "ruler_needle_in_a_haystack",
+      "source": "NVIDIA RULER Benchmark / Kamradt Needle-in-a-Haystack",
+      "title": "NVIDIA RULER 长上下文复杂检索与多跳聚合",
+      "system_prompt": "You are a high-precision document extraction engine. Answer the question strictly using the provided context.",
+      "user_prompt": "=== CONTEXT START ===\nDocument Archive ID: ARCH-99201-ENG\n[Section 1.1] General server operations for Cluster Alpha were initiated on 2025-01-10. All node groups reported nominal status. Cluster security passkey is 'SECPASS-OMEGA-8812'. Maintenance cycle frequency is set to bi-weekly.\n[Section 1.2] Fleet storage replication factor was configured to 3 across AZ-East-1, AZ-East-2, and AZ-East-3. The backup storage encryption algorithm used by default is AES-256-GCM with key rotation every 90 days.\n[Section 1.3 - Embedded Needle A] The special secret deployment token assigned to Project Bluebird is 'TOKEN_BLUEBIRD_948271'.\n[Section 1.4] Network routing rules specify that egress traffic over port 8443 must transit through the primary Envoy proxy fleet. Ingress rate limit is configured at 50,000 QPS per tenant gateway.\n[Section 1.5 - Embedded Needle B] The designated disaster recovery failover coordinator for the Tokyo region is 'Dr. Kenji Sato' (Badge ID: ENG-TK-4402).\n[Section 1.6] Operating system kernel parameters were tuned: fs.file-max was set to 2097152, and net.core.somaxconn was increased to 65535 on all worker nodes.\n=== CONTEXT END ===\n\nBased ONLY on the text above, answer the following two precise questions:\n1. What is the exact secret deployment token assigned to Project Bluebird?\n2. Who is the designated disaster recovery failover coordinator for the Tokyo region and what is his Badge ID?",
+      "expected_keyword_groups": [
+        [
+          "token_bluebird_948271"
+        ],
+        [
+          "kenji sato",
+          "dr. kenji sato"
+        ],
+        [
+          "eng-tk-4402"
+        ]
+      ]
+    },
+    "standard": {
+      "request_bytes": 1698,
+      "latency_sec": 1.7044339179992676,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 100,
+          "completion_tokens_details": {
+            "reasoning_tokens": 138
+          },
+          "prompt_tokens": 554,
+          "total_tokens": 792
+        },
+        "content_preview": "1. The exact secret deployment token assigned to Project Bluebird is 'TOKEN_BLUEBIRD_948271'.\n2. The designated disaster recovery failover coordinator for the Tokyo region is Dr. Kenji Sato, and his B..."
+      }
+    },
+    "experimental": {
+      "request_bytes": 1698,
+      "latency_sec": 2.9529671669006348,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
         "tokens": {
           "completion_tokens": 121,
           "completion_tokens_details": {
-            "reasoning_tokens": 268
+            "reasoning_tokens": 484
           },
-          "prompt_tokens": 1179,
-          "total_tokens": 1568
+          "prompt_tokens": 1183,
+          "total_tokens": 1788
         },
-        "content_preview": "```json\n{\n  \"hostname\": \"web-prod-01\",\n  \"ip\": \"192.168.1.108\",\n  \"region\": \"us-west-2\",\n  \"cpu_cores\": 32,\n  \"memory_gb\": 64,\n  \"status\": \"healthy\"\n}\n```"
+        "content_preview": "Based on the provided text:\n\n1. **Secret deployment token assigned to Project Bluebird:**  \n   `TOKEN_BLUEBIRD_948271`\n\n2. **Designated disaster recovery failover coordinator for the Tokyo region and ..."
       }
     },
     "hybrid": {
-      "request_bytes": 960,
-      "latency_sec": 1.775615930557251,
+      "request_bytes": 1710,
+      "latency_sec": 2.8114850521087646,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 5,
-        "total_groups": 5,
+        "matched_groups": 3,
+        "total_groups": 3,
         "tokens": {
-          "completion_tokens": 102,
+          "completion_tokens": 122,
           "completion_tokens_details": {
-            "reasoning_tokens": 320
+            "reasoning_tokens": 466
           },
-          "prompt_tokens": 1269,
-          "total_tokens": 1691
+          "prompt_tokens": 1256,
+          "total_tokens": 1844
         },
-        "content_preview": "{\"hostname\": \"web-prod-01\", \"ip\": \"192.168.1.108\", \"region\": \"us-west-2\", \"cpu_cores\": 32, \"memory_gb\": 64, \"status\": \"healthy\"}"
+        "content_preview": "Based on the provided text:\n\n1. **Secret deployment token assigned to Project Bluebird:**  \n   `TOKEN_BLUEBIRD_948271`\n\n2. **Designated disaster recovery failover coordinator for the Tokyo region and ..."
       }
     }
   },
   {
     "question": {
-      "id": "chinese_nuance_05",
-      "category": "chinese_semantic_nuance",
-      "title": "中文成语语义辨析与高级英文对照",
-      "system_prompt": "你是一个精通中国古代文学与跨语言翻译的语言学专家。",
-      "user_prompt": "请辨析成语'不以为然'与'不以为意'的核心语义差异，并分别给出一个最贴切的高级英文翻译表达（如 take sth amiss, brush aside, disapprove 等）。",
+      "id": "chartqa_ascii_table_06",
+      "category": "chartqa_docvqa_benchmark",
+      "source": "ChartQA / DocVQA Standard Multi-Column Financial Table Reasoning",
+      "title": "ChartQA/DocVQA 权威复杂财务指标跨行加权复合推导",
+      "system_prompt": "You are an expert financial analyst and data reasoning system.",
+      "user_prompt": "Analyze the following standardized quarterly financial metrics table (from DocVQA/ChartQA financial benchmark corpus):\n\n+---------------+-------------+--------------+----------------+--------------+\n| Business_Unit | Revenue($M) | Gross_Margin | Op_Expense($M) | Tax_Rate(%)  |\n+---------------+-------------+--------------+----------------+--------------+\n| Cloud_SaaS    | 120.0       | 75.0%        | 45.0           | 20.0%        |\n| Hardware_IoT  | 80.0        | 35.0%        | 18.0           | 15.0%        |\n| AI_Services   | 60.0        | 80.0%        | 28.0           | 25.0%        |\n+---------------+-------------+--------------+----------------+--------------+\n\nDefinitions:\n1. Gross_Profit = Revenue * Gross_Margin\n2. Operating_Income (EBIT) = Gross_Profit - Op_Expense\n3. Net_Income = Operating_Income * (1 - Tax_Rate)\n\nCalculate the following values step by step:\n- Net Income for Cloud_SaaS\n- Net Income for Hardware_IoT\n- Net Income for AI_Services\n- Total Net Income summed across all three business units.\n\nConclude with: [Total Net Income: $X.XX M].",
       "expected_keyword_groups": [
         [
-          "不以为然",
-          "不同意",
-          "不认为是对的",
-          "disagree",
-          "disapprove"
+          "36",
+          "36.0",
+          "cloud_saas"
         ],
         [
-          "不以为意",
-          "不在乎",
-          "不放在心上",
-          "unconcerned",
-          "careless",
-          "brush aside",
-          "ignore"
+          "8.5",
+          "8.50",
+          "hardware_iot"
+        ],
+        [
+          "15",
+          "15.0",
+          "ai_services"
+        ],
+        [
+          "[total net income: $59.50 m]",
+          "59.5",
+          "59.50",
+          "59.5m",
+          "$59.5"
         ]
       ]
     },
     "standard": {
-      "request_bytes": 628,
-      "latency_sec": 6.5168375968933105,
+      "request_bytes": 1309,
+      "latency_sec": 2.809875011444092,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 2,
-        "total_groups": 2,
+        "matched_groups": 4,
+        "total_groups": 4,
         "tokens": {
-          "completion_tokens": 838,
+          "completion_tokens": 568,
           "completion_tokens_details": {
-            "reasoning_tokens": 1026
+            "reasoning_tokens": 556
           },
-          "prompt_tokens": 203,
-          "total_tokens": 2067
+          "prompt_tokens": 462,
+          "total_tokens": 1586
         },
-        "content_preview": "成语**“不以为然”**与**“不以为意”**在现代汉语中极易混淆，其核心区别在于**认知判断（对错/是非）**与**心理态度（重视/忽略）**的维度不同：\n\n---\n\n### 一、核心语义与语用辨析\n\n| 成语 | 字面本义 | 核心语义特征 | 语义指向（针对对象） | 常见误用倾向 |\n| :--- | :--- | :--- | :--- | :--- |\n| **不以为然** | “然”..."
+        "content_preview": "Here is the step-by-step financial breakdown for each business unit based on the provided formulas:\n\n### 1. Cloud_SaaS\n* **Gross Profit:** $120.0\\text{ M} \\times 75.0\\% = \\$90.0\\text{ M}$\n* **Operatin..."
       }
     },
     "experimental": {
-      "request_bytes": 628,
-      "latency_sec": 6.458169221878052,
+      "request_bytes": 1309,
+      "latency_sec": 9.937722206115723,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 2,
-        "total_groups": 2,
+        "matched_groups": 4,
+        "total_groups": 4,
         "tokens": {
-          "completion_tokens": 881,
+          "completion_tokens": 665,
           "completion_tokens_details": {
-            "reasoning_tokens": 479
+            "reasoning_tokens": 833
           },
-          "prompt_tokens": 1145,
-          "total_tokens": 2505
+          "prompt_tokens": 1186,
+          "total_tokens": 2684
         },
-        "content_preview": "### 一、 核心语义差异辨析\n\n这两个成语的核心差异在于**认知判断（对错/赞同与否）**与**情感态度（在乎与否）**的区别，关键看末尾的字义：\n\n| 成语 | 末字本义 | 核心语义 | 侧重点 | 常见语境 |\n| :--- | :--- | :--- | :--- | :--- |\n| **不以为然** | **然**：对、正确 | **不认为是正确的**（否定、不同意、不赞同） | *..."
+        "content_preview": "To calculate the Net Income for each business unit, we follow the provided definitions step by step:\n\n---\n\n### **1. Cloud_SaaS**\n* **Gross Profit:**\n  $$\\text{Gross Profit} = \\$120.0\\text{ M} \\times 7..."
       }
     },
     "hybrid": {
-      "request_bytes": 640,
-      "latency_sec": 7.784868478775024,
+      "request_bytes": 1321,
+      "latency_sec": 6.54809045791626,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 2,
-        "total_groups": 2,
+        "matched_groups": 4,
+        "total_groups": 4,
         "tokens": {
-          "completion_tokens": 696,
+          "completion_tokens": 649,
           "completion_tokens_details": {
-            "reasoning_tokens": 345
+            "reasoning_tokens": 831
           },
-          "prompt_tokens": 1217,
-          "total_tokens": 2258
+          "prompt_tokens": 1246,
+          "total_tokens": 2726
         },
-        "content_preview": "这两个成语常被混淆，其核心区别在于**“对认知/观点的否定”**与**“对态度/关注的轻视”**，关键在于对末尾字“**然**”与“**意**”的训诂：\n\n---\n\n### 一、 核心语义辨析\n\n| 成语 | 核心字义 | 核心语义 | 适用语境 |\n| :--- | :--- | :--- | :--- |\n| **不以为然** | **然**：对、正确 | **不认为是对的**。<br>强调*..."
+        "content_preview": "To calculate the Net Income for each business unit and the total across all units, we apply the provided formulas:\n\n1. **Gross Profit** = $\\text{Revenue} \\times \\text{Gross Margin}$\n2. **Operating Inc..."
       }
     }
   },
   {
     "question": {
-      "id": "ocr_ascii_table_06",
-      "category": "ocr_and_symbols",
-      "title": "复杂 ASCII 表格与数学公式符号解析",
-      "system_prompt": "你是一个高精度的文档图表识别与解析引擎。",
-      "user_prompt": "请解析下表并计算：\n+------------+----------+------------+----------+\n| Server_ID  | QPS_Base | Error_Rate | Latency  |\n+------------+----------+------------+----------+\n| srv-us-01  | 14500    | 0.02%      | 12.4ms   |\n| srv-eu-02  | 9800     | 0.05%      | 24.8ms   |\n| srv-ap-03  | 23100    | 0.01%      | 8.1ms    |\n+------------+----------+------------+----------+\n\n计算公式：Total_Errors = Sum(QPS_Base * Error_Rate)\n请列出各服务器计算的单秒错误数，并给出 Total_Errors 的总和。",
-      "expected_keyword_groups": [
-        [
-          "srv-us-01"
-        ],
-        [
-          "srv-eu-02"
-        ],
-        [
-          "srv-ap-03"
-        ],
-        [
-          "2.9"
-        ],
-        [
-          "4.9"
-        ],
-        [
-          "2.31"
-        ],
-        [
-          "10.11"
-        ]
-      ]
-    },
-    "standard": {
-      "request_bytes": 917,
-      "latency_sec": 5.817044734954834,
-      "status_code": 200,
-      "eval": {
-        "score": 1.0,
-        "matched_groups": 7,
-        "total_groups": 7,
-        "tokens": {
-          "completion_tokens": 287,
-          "completion_tokens_details": {
-            "reasoning_tokens": 316
-          },
-          "prompt_tokens": 359,
-          "total_tokens": 962
-        },
-        "content_preview": "根据提供的数据和计算公式：`Total_Errors = Sum(QPS_Base * Error_Rate)`，计算如下：\n\n### 1. 各服务器单秒错误数计算\n* **srv-us-01**：$14500 \\times 0.02\\% = 14500 \\times 0.0002 = \\mathbf{2.9}$ 次/秒\n* **srv-eu-02**：$9800 \\times 0.05\\% = ..."
-      }
-    },
-    "experimental": {
-      "request_bytes": 917,
-      "latency_sec": 3.7228193283081055,
-      "status_code": 200,
-      "eval": {
-        "score": 1.0,
-        "matched_groups": 7,
-        "total_groups": 7,
-        "tokens": {
-          "completion_tokens": 306,
-          "completion_tokens_details": {
-            "reasoning_tokens": 469
-          },
-          "prompt_tokens": 1156,
-          "total_tokens": 1931
-        },
-        "content_preview": "根据表格数据与给定的计算公式：`Errors = QPS_Base × Error_Rate`，计算各服务器的单秒错误数及总和如下：\n\n### 1. 各服务器单秒错误数计算：\n\n* **srv-us-01**：\n  $$14500 \\times 0.02\\% = 14500 \\times 0.0002 = 2.9\\text{ 个/秒}$$\n\n* **srv-eu-02**：\n  $$9800 \\t..."
-      }
-    },
-    "hybrid": {
-      "request_bytes": 929,
-      "latency_sec": 4.8905603885650635,
-      "status_code": 200,
-      "eval": {
-        "score": 1.0,
-        "matched_groups": 7,
-        "total_groups": 7,
-        "tokens": {
-          "completion_tokens": 286,
-          "completion_tokens_details": {
-            "reasoning_tokens": 418
-          },
-          "prompt_tokens": 1222,
-          "total_tokens": 1926
-        },
-        "content_preview": "根据表格中的数据，按照公式 **Errors = QPS_Base × Error_Rate** 计算各服务器每秒的错误数如下：\n\n1. **srv-us-01**：\n   $$14500 \\times 0.02\\% = 14500 \\times 0.0002 = 2.9 \\text{ 个/秒}$$\n\n2. **srv-eu-02**：\n   $$9800 \\times 0.05\\% = 9800..."
-      }
-    }
-  },
-  {
-    "question": {
-      "id": "native_image_interleaved_07",
-      "category": "native_image_fidelity",
-      "title": "原生图片与上下文文本交错理解",
-      "system_prompt": "你是一个能够理解文本和图像的多模态AI助手。",
-      "user_prompt": "这是一个包含原生单像素红色PNG图像的多模态会话测试。\n问题：在计算机图像学中，一个 1x1 像素的标准 PNG 图像，其 RGBA 值为 (255, 0, 0, 255) 代表什么颜色？请简要解释 PNG 文件头的前 8 个 Magic Bytes 是什么。",
+      "id": "multimodal_vqa_standard_07",
+      "category": "multimodal_vqa_interleaved",
+      "source": "Standard Multimodal VQA (Visual Question Answering) Benchmark",
+      "title": "权威多模态 VQA：纯色标准图像与计算机视觉色彩空间解析",
+      "system_prompt": "You are a multimodal AI expert specializing in digital imaging standards and color science.",
+      "user_prompt": "Inspect the attached 1x1 pixel native PNG image asset and answer the following authoritative colorimetry questions:\n1. What is the primary RGB color component represented by this solid 1x1 image?\n2. In standard sRGB color space (ITU-R BT.709), what are the normalized CIE 1931 xy chromaticity coordinates of the standard red primary (approximate to two decimal places: x ≈ 0.64, y ≈ 0.33)?\n3. What is the difference between sRGB and Display P3 color gamuts in terms of red saturation coverage?",
       "has_native_image": true,
       "native_image_data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
       "expected_keyword_groups": [
         [
-          "红",
-          "red"
+          "red",
+          "红色",
+          "纯红"
         ],
         [
-          "png",
-          "image"
+          "0.64",
+          "0.33",
+          "chromaticity",
+          "srgb"
         ],
         [
-          "89",
-          "50",
-          "4e",
-          "47",
-          "magic",
-          "header",
-          "137"
+          "p3",
+          "display p3",
+          "gamut",
+          "saturation",
+          "色域"
         ]
       ]
     },
     "standard": {
-      "request_bytes": 960,
-      "latency_sec": 4.637120008468628,
+      "request_bytes": 949,
+      "latency_sec": 3.8123128414154053,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 532,
+          "completion_tokens": 422,
           "completion_tokens_details": {
-            "reasoning_tokens": 272
+            "reasoning_tokens": 391
           },
-          "prompt_tokens": 1324,
-          "total_tokens": 2128
+          "prompt_tokens": 1376,
+          "total_tokens": 2189
         },
-        "content_preview": "### 1. RGBA 值为 `(255, 0, 0, 255)` 代表的颜色\n- **颜色**：**纯红色（完全不透明）**。\n- **解析**：\n  - **R (Red)**: `255`（红色分量达到最大饱和度）\n  - **G (Green)**: `0`（无绿色）\n  - **B (Blue)**: `0`（无蓝色）\n  - **A (Alpha)**: `255`（完全不透明，Alp..."
+        "content_preview": "Here are the authoritative colorimetric answers to your questions:\n\n### 1. Primary RGB Color Component\n* **Red ($R$):** The dominant primary color component in this solid image is **Red** (forming a c..."
       }
     },
     "experimental": {
-      "request_bytes": 960,
-      "latency_sec": 4.484252452850342,
+      "request_bytes": 949,
+      "latency_sec": 4.756469011306763,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 542,
+          "completion_tokens": 366,
           "completion_tokens_details": {
-            "reasoning_tokens": 449
+            "reasoning_tokens": 361
           },
-          "prompt_tokens": 2248,
-          "total_tokens": 3239
+          "prompt_tokens": 2233,
+          "total_tokens": 2960
         },
-        "content_preview": "在计算机图像学中，针对您的两个问题解答如下：\n\n---\n\n### 1. RGBA 值为 `(255, 0, 0, 255)` 代表什么颜色？\n该值代表 **完全不透明的纯红色（Pure Red / #FF0000）**。\n- **R (Red, 红色)** = 255（通道最大值，完全饱和）\n- **G (Green, 绿色)** = 0（无绿光）\n- **B (Blue, 蓝色)** = 0（无..."
+        "content_preview": "Here are the answers to the colorimetry questions:\n\n1. **Primary RGB Color Component:**  \n   **Red ($R$)** is the dominant primary color component in this solid color patch (a coral/salmon shade where..."
       }
     },
     "hybrid": {
-      "request_bytes": 972,
-      "latency_sec": 7.608478546142578,
+      "request_bytes": 961,
+      "latency_sec": 3.5518813133239746,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 609,
+          "completion_tokens": 392,
           "completion_tokens_details": {
-            "reasoning_tokens": 524
+            "reasoning_tokens": 355
           },
-          "prompt_tokens": 2315,
-          "total_tokens": 3448
+          "prompt_tokens": 2305,
+          "total_tokens": 3052
         },
-        "content_preview": "针对您提出的问题，解答如下：\n\n### 1. RGBA 值为 `(255, 0, 0, 255)` 代表的颜色\n- **代表颜色**：**纯红色（Pure Red，完全不透明）**。\n- **解析**：\n  - **R (Red) = 255**：红色通道达到最大亮度；\n  - **G (Green) = 0**、**B (Blue) = 0**：无绿色和蓝色成分；\n  - **A (Alpha)..."
+        "content_preview": "Here are the authoritative answers to your colorimetry questions:\n\n1. **Primary RGB Color Component:**\n   * The dominant/primary color component represented in this image is **Red** ($R$), as its RGB ..."
       }
     }
   },
   {
     "question": {
-      "id": "complex_tools_history_image_08",
-      "category": "tool_calling_with_history_image",
-      "title": "工具调用与历史原生图片混合多轮复杂场景",
-      "system_prompt": "你是一个高可靠工业物联网控制与安全审计 AI 助手。必须严格根据用户提供的信息、历史查询结果及图片，调用相应的函数工具完成任务。",
+      "id": "bfcl_multi_turn_tool_08",
+      "category": "berkeley_function_calling_leaderboard",
+      "source": "Berkeley Function-Calling Leaderboard (BFCL) - Multi-Turn Tool Evaluation",
+      "title": "Berkeley Function-Calling (BFCL) 权威多轮工具链协同与状态决策",
+      "system_prompt": "You are an autonomous AI agent conforming to the Berkeley Function Calling Leaderboard (BFCL) specifications. You must strictly invoke functions when required parameters are satisfied.",
       "has_tools": true,
       "has_history": true,
       "tools": [
         {
           "type": "function",
           "function": {
-            "name": "lookup_device_inventory",
-            "description": "查询设备库存与状态数据库",
+            "name": "get_weather_forecast",
+            "description": "Get current weather and 7-day forecast for a city",
             "parameters": {
               "type": "object",
               "properties": {
-                "device_id": {
+                "location": {
                   "type": "string",
-                  "description": "设备ID代码"
+                  "description": "City and state/country, e.g. San Francisco, CA"
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "celsius",
+                    "fahrenheit"
+                  ]
                 }
               },
               "required": [
-                "device_id"
+                "location"
               ]
             }
           }
@@ -630,33 +613,38 @@
         {
           "type": "function",
           "function": {
-            "name": "record_security_audit",
-            "description": "记录安全审计事件并提交审计报告",
+            "name": "book_flight_ticket",
+            "description": "Book a commercial flight ticket between two airport codes",
             "parameters": {
               "type": "object",
               "properties": {
-                "device_id": {
+                "origin_airport": {
                   "type": "string",
-                  "description": "设备ID"
+                  "description": "IATA 3-letter departure airport code, e.g. SFO"
                 },
-                "led_color": {
+                "destination_airport": {
                   "type": "string",
-                  "description": "照片中检测到的指示灯颜色 (例如 Red, Green, Blue)"
+                  "description": "IATA 3-letter arrival airport code, e.g. HND"
                 },
-                "stock_count": {
-                  "type": "integer",
-                  "description": "数据库查询到的剩余库存数量"
-                },
-                "action_required": {
+                "departure_date": {
                   "type": "string",
-                  "description": "建议采取的紧急处置操作"
+                  "description": "YYYY-MM-DD"
+                },
+                "cabin_class": {
+                  "type": "string",
+                  "enum": [
+                    "economy",
+                    "premium_economy",
+                    "business",
+                    "first"
+                  ]
                 }
               },
               "required": [
-                "device_id",
-                "led_color",
-                "stock_count",
-                "action_required"
+                "origin_airport",
+                "destination_airport",
+                "departure_date",
+                "cabin_class"
               ]
             }
           }
@@ -668,7 +656,7 @@
           "content": [
             {
               "type": "text",
-              "text": "我们正在现场巡检设备 DEV-9002。请首先帮我查询它的库存和基本状态。附上该设备当前的现场指示灯照片："
+              "text": "I am planning an urgent business trip to Tokyo. Could you first check the weather forecast for Tokyo, Japan so I know what clothing to pack? Here is my trip schedule screenshot:"
             },
             {
               "type": "image_url",
@@ -681,94 +669,96 @@
         },
         {
           "role": "assistant",
-          "content": "我先为您查询设备 DEV-9002 的库存与状态信息。",
+          "content": "I will check the weather forecast for Tokyo, Japan for you.",
           "tool_calls": [
             {
-              "id": "call_inv_001",
+              "id": "call_weather_01",
               "type": "function",
               "function": {
-                "name": "lookup_device_inventory",
-                "arguments": "{\"device_id\": \"DEV-9002\"}"
+                "name": "get_weather_forecast",
+                "arguments": "{\"location\": \"Tokyo, Japan\", \"unit\": \"celsius\"}"
               }
             }
           ]
         },
         {
           "role": "tool",
-          "tool_call_id": "call_inv_001",
-          "content": "{\"status\": \"success\", \"device_id\": \"DEV-9002\", \"stock_count\": 42, \"location\": \"上海张江仓库 A3-09\", \"last_inspected\": \"2026-03-01\"}"
+          "tool_call_id": "call_weather_01",
+          "content": "{\"location\": \"Tokyo, Japan\", \"temperature\": 18, \"condition\": \"Clear skies with mild breeze\", \"precipitation_chance\": 0}"
         }
       ],
-      "user_prompt": "已收到数据库返回的库存信息。现在请你结合刚才照片中设备指示灯的颜色（注意分析第一条消息中图片的颜色）以及库存数量，调用 `record_security_audit` 工具提交最终的安全审计记录！",
+      "user_prompt": "Thanks! Weather looks great. Now please proceed to book my flight from San Francisco (SFO) to Tokyo Haneda (HND) on departure date '2026-04-15' in 'business' class.",
       "expected_keyword_groups": [
         [
-          "record_security_audit"
+          "book_flight_ticket"
         ],
         [
-          "dev-9002"
+          "sfo"
         ],
         [
-          "red",
-          "红"
+          "hnd"
         ],
         [
-          "42"
+          "2026-04-15"
+        ],
+        [
+          "business"
         ]
       ]
     },
     "standard": {
-      "request_bytes": 3178,
-      "latency_sec": 5.3955748081207275,
+      "request_bytes": 2463,
+      "latency_sec": 2.1092886924743652,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 4,
-        "total_groups": 4,
+        "matched_groups": 5,
+        "total_groups": 5,
         "tokens": {
-          "completion_tokens": 58,
+          "completion_tokens": 55,
           "completion_tokens_details": {
-            "reasoning_tokens": 184
+            "reasoning_tokens": 142
           },
-          "prompt_tokens": 1664,
-          "total_tokens": 1906
+          "prompt_tokens": 1694,
+          "total_tokens": 1891
         },
         "content_preview": "[Tool Calls: 1] "
       }
     },
     "experimental": {
-      "request_bytes": 3178,
-      "latency_sec": 5.268454551696777,
+      "request_bytes": 2463,
+      "latency_sec": 3.6041715145111084,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 4,
-        "total_groups": 4,
+        "matched_groups": 5,
+        "total_groups": 5,
         "tokens": {
-          "completion_tokens": 69,
+          "completion_tokens": 55,
           "completion_tokens_details": {
-            "reasoning_tokens": 180
+            "reasoning_tokens": 179
           },
-          "prompt_tokens": 4655,
-          "total_tokens": 4904
+          "prompt_tokens": 4693,
+          "total_tokens": 4927
         },
         "content_preview": "[Tool Calls: 1] "
       }
     },
     "hybrid": {
-      "request_bytes": 3190,
-      "latency_sec": 4.265452146530151,
+      "request_bytes": 2475,
+      "latency_sec": 4.296003580093384,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 4,
-        "total_groups": 4,
+        "matched_groups": 5,
+        "total_groups": 5,
         "tokens": {
-          "completion_tokens": 65,
+          "completion_tokens": 55,
           "completion_tokens_details": {
-            "reasoning_tokens": 180
+            "reasoning_tokens": 898
           },
-          "prompt_tokens": 2683,
-          "total_tokens": 2928
+          "prompt_tokens": 2697,
+          "total_tokens": 3650
         },
         "content_preview": "[Tool Calls: 1] "
       }
