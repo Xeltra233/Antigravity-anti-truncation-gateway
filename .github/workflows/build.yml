@@ -54,19 +54,15 @@ jobs:
         run: |
           ./gradlew :app:testDebugUnitTest
 
-      - name: Assemble Android Debug APK
+      - name: Assemble Android Release APK
         working-directory: android
         run: |
-          ./gradlew :app:assembleDebug
+          ./gradlew :app:assembleRelease
 
-      - name: Compute Short SHA
-        id: vars
-        run: echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
-
-      - name: Upload Debug APK Artifact
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-${{ steps.vars.outputs.short_sha }}
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: antigravity-gateway-apk
+          path: android/app/build/outputs/apk/release/antigravity-gateway-*.apk
           retention-days: 14
           if-no-files-found: error

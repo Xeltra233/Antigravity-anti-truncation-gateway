@@ -133,13 +133,13 @@
 cd android
 
 # 2. 运行单元测试
-./gradlew :app:testDebugUnitTest
+./gradlew :app:testReleaseUnitTest
 
-# 3. 构建 Debug APK
-./gradlew :app:assembleDebug
+# 3. 构建 Release APK
+./gradlew :app:assembleRelease
 
 # 产物输出路径:
-# android/app/build/outputs/apk/debug/app-debug.apk
+# android/app/build/outputs/apk/release/antigravity-gateway-v1.0.0.apk
 ```
 
 ---
@@ -189,9 +189,9 @@ By embedding the high-performance Go native core (`libantigravity.so`) via JNI, 
 
 ```bash
 cd android
-./gradlew :app:testDebugUnitTest
-./gradlew :app:assembleDebug
-# Output APK: android/app/build/outputs/apk/debug/app-debug.apk
+./gradlew :app:testReleaseUnitTest
+./gradlew :app:assembleRelease
+# Output APK: android/app/build/outputs/apk/release/antigravity-gateway-v1.0.0.apk
 ```
 
 ---
