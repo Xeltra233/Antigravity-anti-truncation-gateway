@@ -101,7 +101,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
+        with:
+          ref: android
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
