@@ -19,7 +19,6 @@ gateway.log
 # Sensitive files & user credentials
 api.txt
 .env
-run.bat
 test_out.txt
 
 # Goal artifacts & temporary test files
