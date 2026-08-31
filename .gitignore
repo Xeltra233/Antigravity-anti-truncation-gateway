@@ -3,13 +3,14 @@
 *.exe~
 *.dll
 *.so
+!android/app/src/main/jniLibs/**/*.so
 *.dylib
 /gateway
 
 # Logs & Runtime Data
 *.log
 gateway.log
-data/
+/data/
 *.sqlite
 *.sqlite-journal
 *.sqlite-wal
@@ -24,3 +25,17 @@ test_out.txt
 # Goal artifacts & temporary test files
 goal-*
 test_bin.exe
+icon_source.jpg
+
+# Android
+.gradle/
+android/.gradle/
+android/local.properties
+android/*/build/
+android/build/
+android/captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_

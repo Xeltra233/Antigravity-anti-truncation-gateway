@@ -1,0 +1,72 @@
+name: Build & Test Gateway and Android APK
+
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Test Go & Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          check-latest: true
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Run Go Unit Tests
+        run: |
+          go test -v -short ./...
+          go vet ./...
+
+      - name: Run Android Lint
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:lintDebug
+
+      - name: Run Android Unit Tests
+        working-directory: android
+        run: |
+          ./gradlew :app:testDebugUnitTest
+
+      - name: Assemble Android Debug APK
+        working-directory: android
+        run: |
+          ./gradlew :app:assembleDebug
+
+      - name: Compute Short SHA
+        id: vars
+        run: echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+
+      - name: Upload Debug APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-${{ steps.vars.outputs.short_sha }}
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
+          if-no-files-found: error

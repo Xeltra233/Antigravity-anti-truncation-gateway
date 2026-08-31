@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Antigravity Gateway</string>
+    <string name="provider_label">当前供应商</string>
+    <string name="switch_provider">切换/新建供应商</string>
+    <string name="upstream_url_label">上游 URL</string>
+    <string name="upstream_url_hint">例如: https://api.openai.com</string>
+    <string name="upstream_key_label">上游 Key</string>
+    <string name="upstream_key_hint">sk-...</string>
+    <string name="downstream_key_label">全局下游 Key</string>
+    <string name="generate_key">生成</string>
+    <string name="copy_key">复制</string>
+    <string name="app_link_label">应用链接</string>
+    <string name="start_gateway">启动</string>
+    <string name="stop_gateway">停止</string>
+    <string name="fetch_models">拉取模型</string>
+    <string name="test_message">消息测试</string>
+    <string name="test_result_title">测试结果</string>
+    <string name="custom_model_id_hint">输入模型 ID (例如 gpt-4o)</string>
+    <string name="notification_channel_name">网关后台运行</string>
+    <string name="notification_channel_desc">保持网关在后台持续运行</string>
+    <string name="notification_running_text">网关正在监听端口 38472</string>
+</resources>
