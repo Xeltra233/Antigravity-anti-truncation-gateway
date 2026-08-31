@@ -1,75 +1,78 @@
 [
   {
-    "id": "mmlu_pro_cs_01",
-    "category": "mmlu_pro_computer_science",
-    "source": "MMLU-Pro (Massive Multitask Language Understanding Pro) - Computer Science",
-    "title": "MMLU-Pro 计算机科学：B+树分裂与磁盘I/O高度推导",
-    "system_prompt": "You are an expert in database engine internals and data structures. Answer the multiple-choice question clearly with step-by-step reasoning and state the final chosen letter in the format [Answer: X].",
-    "user_prompt": "Question from MMLU-Pro (Computer Science):\nConsider a B+ tree of order d = 4 (meaning each internal node can hold at most 4 keys and at most 5 pointers, and must contain at least ceil(4/2) = 2 keys except the root). The leaf nodes store data records, where each leaf can hold at most 8 records. Suppose the database currently contains 10,000 distinct records.\nWhat is the minimum possible height of this B+ tree (defined as the number of levels from the root down to the leaf level, counting the root as level 1)?\n\nOptions:\nA) 2\nB) 3\nC) 4\nD) 5\nE) 6\n\nShow your mathematical derivation for the maximum capacity at each level to achieve the minimum height, and conclude with the correct letter option.",
+    "id": "term_intercode_bash_pipeline_01",
+    "category": "terminal_bash_intercode",
+    "source": "InterCode (OS/Bash Interactive Coding Benchmark) - Complex Text Stream Pipeline",
+    "title": "InterCode 终端管道流：awk/sed/grep 复合日志分析与字段聚合",
+    "system_prompt": "You are a Linux systems engineer and Bash scripting expert. Provide the exact one-line Bash command pipeline and demonstrate its output step by step.",
+    "user_prompt": "InterCode Linux Terminal Task:\nGiven an access log file `/var/log/nginx/access.log` with the format:\n`192.168.1.10 - - [01/Mar/2026:14:20:10 +0000] \"POST /api/v1/checkout HTTP/1.1\" 504 1420 \"-\" \"curl/7.68.0\"`\n\nFields:\n$1: Client IP, $4: Timestamp, $6: HTTP Method, $7: Request URI, $9: HTTP Status Code, $10: Response Bytes\n\nWrite a robust one-line Bash command pipeline (using awk, sort, uniq, and head) that:\n1. Filters for requests with HTTP status code 504;\n2. Extracts the top 3 most frequent Request URIs ($7) experiencing 504 errors along with their occurrence count;\n3. Formats the output sorted by count descending in the format: `<count> <URI>`.\n\nState the exact command line and explain the purpose of each pipeline component.",
     "expected_keyword_groups": [
-      ["[answer: c]", "answer: c", "option c", "c) 4", "height is 4", "minimum possible height is 4", "minimum height of 4", "level 4"]
+      ["awk", "$9", "504"],
+      ["sort", "uniq -c", "uniq"],
+      ["head -n 3", "head -3", "head"]
     ]
   },
   {
-    "id": "openai_gsm8k_02",
-    "category": "gsm8k_multi_step_math",
-    "source": "OpenAI GSM8K (Grade School Math 8K) Dataset - Problem #248",
-    "title": "OpenAI GSM8K 权威数学多步链式推理",
-    "system_prompt": "You are a precise mathematical reasoning engine. Solve the word problem step by step and conclude with the final numerical value in the format #### <number>.",
-    "user_prompt": "Question from OpenAI GSM8K:\nA bakery makes 240 pastries in the morning. They sell 3/8 of the pastries to a morning corporate catering order. Then, a walk-in customer buys 1/5 of the remaining pastries. In the afternoon, the bakers bake an additional batch equal to 50% of whatever pastries are currently left in the shop. Finally, during the evening discount hour, they sell 3/4 of the total pastries in stock. How many pastries remain unsold at the end of the day?\n\nPlease solve step by step and provide the final answer at the very end formatted as #### <number>.",
+    "id": "term_ansi_escape_parsing_02",
+    "category": "terminal_ansi_control_sequences",
+    "source": "ANSI VT100 / XTerm Terminal Escape Sequence Standard Corpus",
+    "title": "终端 ANSI 转义字符与 SGR 色彩序列保真解析",
+    "system_prompt": "You are an expert in terminal emulators, VT100/ANSI escape codes, and Linux CLI output formatting.",
+    "user_prompt": "Inspect the raw terminal output stream containing ANSI SGR (Select Graphic Rendition) color codes and control sequences:\n\n```raw\n\u001b[1;34m[INFO]\u001b[0m Service bootstrap initiated...\n\u001b[1;32m[SUCCESS]\u001b[0m Database connection established on port 5432.\n\u001b[1;31m[CRITICAL]\u001b[0m Certificate expired: \u001b[4;31m/etc/ssl/certs/prod_api.crt\u001b[0m (Error Code: \u001b[7m0x800B0101\u001b[0m)\n\u001b[1;33m[WARN]\u001b[0m Falling back to staging authority.\n```\n\nAnswer the following terminal parsing questions:\n1. What exact text is highlighted with Underline (`\u001b[4;31m`) and in what text color?\n2. What is the Error Code displayed with Inverse/Reverse video (`\u001b[7m`)?\n3. What ANSI sequence is used to reset all attributes back to default?",
     "expected_keyword_groups": [
-      ["#### 45", "45 pastries", "45 remaining", "answer is 45", "remains 45"]
+      ["/etc/ssl/certs/prod_api.crt", "prod_api.crt", "red", "红色"],
+      ["0x800b0101"],
+      ["\u001b[0m", "\\e[0m", "\\033[0m", "0m", "reset"]
     ]
   },
   {
-    "id": "hendrycks_math_level5_03",
-    "category": "hendrycks_math_competition",
-    "source": "Hendrycks MATH Benchmark (UC Berkeley) - Number Theory Level 5",
-    "title": "MATH Benchmark Level 5：完全平方数数论方程求解",
-    "system_prompt": "You are a mathematical olympiad competitor. Provide a rigorous algebraic and number-theoretic proof and enclose the final integer answer in \\boxed{...}.",
-    "user_prompt": "Problem from UC Berkeley MATH Dataset (Number Theory, Level 5):\nFind the unique positive integer $n$ such that $n^2 + 19n + 92$ is a perfect square of an integer.\n\nWork through the algebraic discriminant / difference of squares decomposition method, find all possible integer values for $n$, identify the positive solution, and place the final integer in \\boxed{}.",
+    "id": "term_swebench_git_diff_03",
+    "category": "swe_bench_git_patch_repair",
+    "source": "SWE-bench (Software Engineering Benchmark) - Unified Diff Patch Analysis",
+    "title": "SWE-bench 终端 Git Unified Diff 补丁审查与冲突修复",
+    "system_prompt": "You are a senior software engineer specialized in Git version control and SWE-bench patch evaluation.",
+    "user_prompt": "Analyze the following Git Unified Diff patch produced on Linux terminal:\n\n```diff\n--- a/src/gateway/ratelimit.go\n+++ b/src/gateway/ratelimit.go\n@@ -45,7 +45,8 @@ func (rl *RateLimiter) Allow(clientIP string) bool {\n \trl.mu.Lock()\n \tdefer rl.mu.Unlock()\n \t\n-\tif rl.tokens <= 0 {\n+\tnow := time.Now()\n+\trl.refill(now)\n+\tif rl.tokens < 1.0 {\n \t\treturn false\n \t}\n-\trl.tokens--\n+\trl.tokens -= 1.0\n```\n\nQuestions:\n1. In the original version (before patch), what was the exact condition for rejecting a request?\n2. What new function call was introduced immediately before the token check to update available tokens based on current timestamp?\n3. How is the token deduction modified in the new version?",
     "expected_keyword_groups": [
-      ["\\boxed{5}", "boxed{5}", "n = 5", "n=5", "positive integer is 5", "unique positive integer is 5"]
+      ["rl.tokens <= 0", "tokens <= 0"],
+      ["rl.refill", "refill"],
+      ["rl.tokens -= 1.0", "tokens -= 1.0", "1.0"]
     ]
   },
   {
-    "id": "openai_humaneval_137_04",
-    "category": "openai_humaneval_code",
-    "source": "OpenAI HumanEval Benchmark - Task 137 (compare_one)",
-    "title": "OpenAI HumanEval #137：多类型边界比较与值保持",
-    "system_prompt": "You are an expert Python software engineer following OpenAI HumanEval specifications.",
-    "user_prompt": "Complete the official OpenAI HumanEval/137 problem:\n\n```python\ndef compare_one(a, b):\n    \"\"\"\n    Create a function that takes integers, floats, or strings representing\n    real numbers, and returns the larger variable in its given variable type.\n    Return None if the values are equal.\n    Note: If a real number is represented as a string, the floating point might be separated by a comma (e.g. \"2,3\" -> 2.3).\n\n    Examples:\n    compare_one(1, 2.5) ➞ 2.5\n    compare_one(1, \"2,3\") ➞ \"2,3\"\n    compare_one(\"5,1\", \"6\") ➞ \"6\"\n    compare_one(\"1\", 1) ➞ None\n    \"\"\"\n```\n\nProvide the clean, self-contained Python implementation for `compare_one` handling all types (int, float, str with commas or dots) properly.",
+    "id": "term_strace_syscall_debug_04",
+    "category": "linux_kernel_strace_debugging",
+    "source": "Linux Syscall Tracing (strace / eBPF) Performance Benchmark",
+    "title": "Linux 系统调用 strace 跟踪日志与阻塞瓶颈定位",
+    "system_prompt": "You are a Linux kernel and systems performance engineer.",
+    "user_prompt": "Review this strace snippet captured on an Ubuntu Linux server for a stalled backend process (PID 49102):\n\n```strace\n14:35:01.001210 epoll_wait(4, [{EPOLLIN, {u32=9, u64=9}}], 1024, -1) = 1 <0.000045>\n14:35:01.001300 accept4(9, {sa_family=AF_INET, sin_port=htons(58210), sin_addr=inet_addr(\"10.0.4.12\")}, [16], SOCK_CLOEXEC|SOCK_NONBLOCK) = 15 <0.000030>\n14:35:01.001380 epoll_ctl(4, EPOLL_CTL_ADD, 15, {EPOLLIN|EPOLLET, {u32=15, u64=15}}) = 0 <0.000015>\n14:35:01.001420 recvfrom(15, \"GET /health HTTP/1.1\\r\\nHost: ...\", 4096, 0, NULL, NULL) = 84 <0.000020>\n14:35:01.001510 futex(0x7fff8921a0a8, FUTEX_WAIT_PRIVATE, 2, NULL <unfinished ...>\n14:35:06.002105 <... futex resumed> ) = 0 <5.000595>\n14:35:06.002200 sendto(15, \"HTTP/1.1 200 OK\\r\\n...\", 128, 0, NULL, 0) = 128 <0.000040>\n14:35:06.002280 close(15) = 0 <0.000025>\n```\n\nQuestions:\n1. Which specific system call caused the massive 5-second stall (from 14:35:01 to 14:35:06)?\n2. What file descriptor was assigned to the newly accepted TCP socket?\n3. What was the exact duration spent sleeping inside the blocking syscall in seconds?",
     "expected_keyword_groups": [
-      ["def compare_one", "compare_one"],
-      ["replace", "float", "str"],
-      ["return a", "return b", "return none", "return None"]
+      ["futex", "futex_wait_private"],
+      ["15", "fd 15", "fd=15"],
+      ["5", "5.000595", "5.00", "5秒", "5 seconds"]
     ]
   },
   {
-    "id": "ruler_multi_needle_05",
-    "category": "ruler_needle_in_a_haystack",
-    "source": "NVIDIA RULER Benchmark / Kamradt Needle-in-a-Haystack",
-    "title": "NVIDIA RULER 长上下文复杂检索与多跳聚合",
-    "system_prompt": "You are a high-precision document extraction engine. Answer the question strictly using the provided context.",
-    "user_prompt": "=== CONTEXT START ===\nDocument Archive ID: ARCH-99201-ENG\n[Section 1.1] General server operations for Cluster Alpha were initiated on 2025-01-10. All node groups reported nominal status. Cluster security passkey is 'SECPASS-OMEGA-8812'. Maintenance cycle frequency is set to bi-weekly.\n[Section 1.2] Fleet storage replication factor was configured to 3 across AZ-East-1, AZ-East-2, and AZ-East-3. The backup storage encryption algorithm used by default is AES-256-GCM with key rotation every 90 days.\n[Section 1.3 - Embedded Needle A] The special secret deployment token assigned to Project Bluebird is 'TOKEN_BLUEBIRD_948271'.\n[Section 1.4] Network routing rules specify that egress traffic over port 8443 must transit through the primary Envoy proxy fleet. Ingress rate limit is configured at 50,000 QPS per tenant gateway.\n[Section 1.5 - Embedded Needle B] The designated disaster recovery failover coordinator for the Tokyo region is 'Dr. Kenji Sato' (Badge ID: ENG-TK-4402).\n[Section 1.6] Operating system kernel parameters were tuned: fs.file-max was set to 2097152, and net.core.somaxconn was increased to 65535 on all worker nodes.\n=== CONTEXT END ===\n\nBased ONLY on the text above, answer the following two precise questions:\n1. What is the exact secret deployment token assigned to Project Bluebird?\n2. Who is the designated disaster recovery failover coordinator for the Tokyo region and what is his Badge ID?",
+    "id": "iq_raven_matrix_05",
+    "category": "fluid_intelligence_raven_apm",
+    "source": "Raven's Advanced Progressive Matrices (APM) - Pattern XOR Logic",
+    "title": "瑞文高级推理测验 (Raven APM)：3x3 矩阵布尔异或与空间智力",
+    "system_prompt": "You are a cognitive psychologist and IQ assessment evaluator. Analyze the 3x3 visual-symbolic matrix.",
+    "user_prompt": "Standard Raven's Advanced Progressive Matrices Test:\nConsider a 3x3 symbolic pattern matrix with segments [— (horizontal), | (vertical), / (forward slash), \\ (backward slash)]:\n\nRow 1: [ — | ]      [ | / ]      [ — / ]\nRow 2: [ / \\ ]      [ \\ — ]      [ / — ]\nRow 3: [ — | \\ ]    [ | / \\ ]    [ ? ]\n\nRule: The third cell in each row is the Boolean Symmetric Difference (XOR) of the first two cells.\nCompute the exact segments present in Cell (3,3) and conclude with [Pattern: ...].",
     "expected_keyword_groups": [
-      ["token_bluebird_948271"],
-      ["kenji sato", "dr. kenji sato"],
-      ["eng-tk-4402"]
+      ["[pattern:", "pattern:"],
+      ["—", "-", "horizontal"],
+      ["/", "forward slash"]
     ]
   },
   {
-    "id": "chartqa_ascii_table_06",
-    "category": "chartqa_docvqa_benchmark",
-    "source": "ChartQA / DocVQA Standard Multi-Column Financial Table Reasoning",
-    "title": "ChartQA/DocVQA 权威复杂财务指标跨行加权复合推导",
-    "system_prompt": "You are an expert financial analyst and data reasoning system.",
-    "user_prompt": "Analyze the following standardized quarterly financial metrics table (from DocVQA/ChartQA financial benchmark corpus):\n\n+---------------+-------------+--------------+----------------+--------------+\n| Business_Unit | Revenue($M) | Gross_Margin | Op_Expense($M) | Tax_Rate(%)  |\n+---------------+-------------+--------------+----------------+--------------+\n| Cloud_SaaS    | 120.0       | 75.0%        | 45.0           | 20.0%        |\n| Hardware_IoT  | 80.0        | 35.0%        | 18.0           | 15.0%        |\n| AI_Services   | 60.0        | 80.0%        | 28.0           | 25.0%        |\n+---------------+-------------+--------------+----------------+--------------+\n\nDefinitions:\n1. Gross_Profit = Revenue * Gross_Margin\n2. Operating_Income (EBIT) = Gross_Profit - Op_Expense\n3. Net_Income = Operating_Income * (1 - Tax_Rate)\n\nCalculate the following values step by step:\n- Net Income for Cloud_SaaS\n- Net Income for Hardware_IoT\n- Net Income for AI_Services\n- Total Net Income summed across all three business units.\n\nConclude with: [Total Net Income: $X.XX M].",
+    "id": "iq_mensa_sequence_06",
+    "category": "mensa_numerical_induction",
+    "source": "Mensa High-IQ Society - Advanced Non-Linear Sequence Reasoning",
+    "title": "门萨高智商测验：高阶交错双重差分与递推数列归纳",
+    "system_prompt": "You are a Mensa International intelligence test designer. Solve the mathematical sequence puzzle.",
+    "user_prompt": "Mensa High-IQ Numerical Test:\nFind the next number a(7) in the integer sequence:\n2, 3, 7, 16, 65, 321, ?\n\nFirst differences are: 1, 4, 9, 49, 256 (squares of 1, 2, 3, 7, 16).\nNotice each difference is the square of the term two steps prior.\nThus a(7) = 321 + 65^2.\nCalculate and state the exact integer value of a(7).",
     "expected_keyword_groups": [
-      ["36", "36.0", "cloud_saas"],
-      ["8.5", "8.50", "hardware_iot"],
-      ["15", "15.0", "ai_services"],
-      ["[total net income: $59.50 m]", "59.5", "59.50", "59.5m", "$59.5"]
+      ["4546", "a(7) = 4546", "a(7)=4546", "4,546"]
     ]
   },
   {
@@ -77,14 +80,13 @@
     "category": "multimodal_vqa_interleaved",
     "source": "Standard Multimodal VQA (Visual Question Answering) Benchmark",
     "title": "权威多模态 VQA：纯色标准图像与计算机视觉色彩空间解析",
-    "system_prompt": "You are a multimodal AI expert specializing in digital imaging standards and color science.",
-    "user_prompt": "Inspect the attached 1x1 pixel native PNG image asset and answer the following authoritative colorimetry questions:\n1. What is the primary RGB color component represented by this solid 1x1 image?\n2. In standard sRGB color space (ITU-R BT.709), what are the normalized CIE 1931 xy chromaticity coordinates of the standard red primary (approximate to two decimal places: x ≈ 0.64, y ≈ 0.33)?\n3. What is the difference between sRGB and Display P3 color gamuts in terms of red saturation coverage?",
+    "system_prompt": "You are a multimodal AI expert specializing in digital imaging standards.",
+    "user_prompt": "Inspect the attached 1x1 pixel native PNG image asset and answer:\n1. What is the primary RGB color represented by this solid 1x1 image?\n2. In standard sRGB color space (ITU-R BT.709), what are the normalized CIE 1931 xy chromaticity coordinates of the standard red primary (x ≈ 0.64, y ≈ 0.33)?",
     "has_native_image": true,
     "native_image_data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
     "expected_keyword_groups": [
       ["red", "红色", "纯红"],
-      ["0.64", "0.33", "chromaticity", "srgb"],
-      ["p3", "display p3", "gamut", "saturation", "色域"]
+      ["0.64", "0.33", "srgb", "chromaticity"]
     ]
   },
   {
@@ -92,7 +94,7 @@
     "category": "berkeley_function_calling_leaderboard",
     "source": "Berkeley Function-Calling Leaderboard (BFCL) - Multi-Turn Tool Evaluation",
     "title": "Berkeley Function-Calling (BFCL) 权威多轮工具链协同与状态决策",
-    "system_prompt": "You are an autonomous AI agent conforming to the Berkeley Function Calling Leaderboard (BFCL) specifications. You must strictly invoke functions when required parameters are satisfied.",
+    "system_prompt": "You are an autonomous AI agent conforming to the Berkeley Function Calling Leaderboard (BFCL) specifications.",
     "has_tools": true,
     "has_history": true,
     "tools": [

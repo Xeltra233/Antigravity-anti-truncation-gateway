@@ -1,487 +1,494 @@
 [
   {
     "question": {
-      "id": "mmlu_pro_cs_01",
-      "category": "mmlu_pro_computer_science",
-      "source": "MMLU-Pro (Massive Multitask Language Understanding Pro) - Computer Science",
-      "title": "MMLU-Pro 计算机科学：B+树分裂与磁盘I/O高度推导",
-      "system_prompt": "You are an expert in database engine internals and data structures. Answer the multiple-choice question clearly with step-by-step reasoning and state the final chosen letter in the format [Answer: X].",
-      "user_prompt": "Question from MMLU-Pro (Computer Science):\nConsider a B+ tree of order d = 4 (meaning each internal node can hold at most 4 keys and at most 5 pointers, and must contain at least ceil(4/2) = 2 keys except the root). The leaf nodes store data records, where each leaf can hold at most 8 records. Suppose the database currently contains 10,000 distinct records.\nWhat is the minimum possible height of this B+ tree (defined as the number of levels from the root down to the leaf level, counting the root as level 1)?\n\nOptions:\nA) 2\nB) 3\nC) 4\nD) 5\nE) 6\n\nShow your mathematical derivation for the maximum capacity at each level to achieve the minimum height, and conclude with the correct letter option.",
+      "id": "term_intercode_bash_pipeline_01",
+      "category": "terminal_bash_intercode",
+      "source": "InterCode (OS/Bash Interactive Coding Benchmark) - Complex Text Stream Pipeline",
+      "title": "InterCode 终端管道流：awk/sed/grep 复合日志分析与字段聚合",
+      "system_prompt": "You are a Linux systems engineer and Bash scripting expert. Provide the exact one-line Bash command pipeline and demonstrate its output step by step.",
+      "user_prompt": "InterCode Linux Terminal Task:\nGiven an access log file `/var/log/nginx/access.log` with the format:\n`192.168.1.10 - - [01/Mar/2026:14:20:10 +0000] \"POST /api/v1/checkout HTTP/1.1\" 504 1420 \"-\" \"curl/7.68.0\"`\n\nFields:\n$1: Client IP, $4: Timestamp, $6: HTTP Method, $7: Request URI, $9: HTTP Status Code, $10: Response Bytes\n\nWrite a robust one-line Bash command pipeline (using awk, sort, uniq, and head) that:\n1. Filters for requests with HTTP status code 504;\n2. Extracts the top 3 most frequent Request URIs ($7) experiencing 504 errors along with their occurrence count;\n3. Formats the output sorted by count descending in the format: `<count> <URI>`.\n\nState the exact command line and explain the purpose of each pipeline component.",
       "expected_keyword_groups": [
         [
-          "[answer: c]",
-          "answer: c",
-          "option c",
-          "c) 4",
-          "height is 4",
-          "minimum possible height is 4",
-          "minimum height of 4",
-          "level 4"
+          "awk",
+          "$9",
+          "504"
+        ],
+        [
+          "sort",
+          "uniq -c",
+          "uniq"
+        ],
+        [
+          "head -n 3",
+          "head -3",
+          "head"
         ]
       ]
     },
     "standard": {
-      "request_bytes": 1066,
-      "latency_sec": 5.838904619216919,
+      "request_bytes": 1061,
+      "latency_sec": 4.303256273269653,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 1,
-        "total_groups": 1,
+        "matched_groups": 3,
+        "total_groups": 3,
         "tokens": {
-          "completion_tokens": 674,
+          "completion_tokens": 410,
           "completion_tokens_details": {
-            "reasoning_tokens": 1009
+            "reasoning_tokens": 401
           },
-          "prompt_tokens": 371,
-          "total_tokens": 2054
+          "prompt_tokens": 415,
+          "total_tokens": 1226
         },
-        "content_preview": "To find the **minimum possible height** of the B+ tree for storing $N = 10,000$ records, we need to maximize the capacity of the tree at each level.\n\n### 1. Tree Parameters & Maximum Fanout\n- **Intern..."
+        "content_preview": "### One-Line Bash Command Pipeline\n\n```bash\nawk '$9 == 504 {print $7}' /var/log/nginx/access.log | sort | uniq -c | sort -rn | head -n 3\n```\n\n---\n\n### Step-by-Step Breakdown\n\n1. **`awk '$9 == 504 {pri..."
       }
     },
     "experimental": {
-      "request_bytes": 1066,
-      "latency_sec": 4.505580425262451,
-      "status_code": 200,
-      "eval": {
-        "score": 0.0,
-        "matched_groups": 0,
-        "total_groups": 1,
-        "tokens": {
-          "completion_tokens": 530,
-          "completion_tokens_details": {
-            "reasoning_tokens": 690
-          },
-          "prompt_tokens": 1173,
-          "total_tokens": 2393
-        },
-        "content_preview": "To find the **minimum possible height** of the B+ tree for storing 10,000 records, we maximize the branching factor at every internal node and maximize the capacity of each leaf node:\n\n1. **Parameters..."
-      }
-    },
-    "hybrid": {
-      "request_bytes": 1078,
-      "latency_sec": 4.446324348449707,
+      "request_bytes": 1061,
+      "latency_sec": 3.939026117324829,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 1,
-        "total_groups": 1,
+        "matched_groups": 3,
+        "total_groups": 3,
         "tokens": {
-          "completion_tokens": 609,
+          "completion_tokens": 356,
           "completion_tokens_details": {
-            "reasoning_tokens": 757
+            "reasoning_tokens": 454
           },
-          "prompt_tokens": 1264,
-          "total_tokens": 2630
+          "prompt_tokens": 1147,
+          "total_tokens": 1957
         },
-        "content_preview": "To determine the **minimum possible height** of the B+ tree containing $N = 10,000$ records, we need to maximize the number of records the tree can hold at each level (i.e., every internal node must h..."
+        "content_preview": "Here is the one-line Bash command pipeline to accomplish the task:\n\n```bash\nawk '$9 == 504 {print $7}' /var/log/nginx/access.log | sort | uniq -c | sort -nr | head -n 3\n```\n\n---\n\n### **Explanation of ..."
+      }
+    },
+    "hybrid": {
+      "request_bytes": 1073,
+      "latency_sec": 3.540776014328003,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 398,
+          "completion_tokens_details": {
+            "reasoning_tokens": 427
+          },
+          "prompt_tokens": 1231,
+          "total_tokens": 2056
+        },
+        "content_preview": "### One-Line Bash Command Pipeline\n\n```bash\nawk '$9 == 504 {print $7}' /var/log/nginx/access.log | sort | uniq -c | sort -rn | head -n 3\n```\n\n---\n\n### Step-by-Step Breakdown & Explanation\n\n1. **`awk '..."
       }
     }
   },
   {
     "question": {
-      "id": "openai_gsm8k_02",
-      "category": "gsm8k_multi_step_math",
-      "source": "OpenAI GSM8K (Grade School Math 8K) Dataset - Problem #248",
-      "title": "OpenAI GSM8K 权威数学多步链式推理",
-      "system_prompt": "You are a precise mathematical reasoning engine. Solve the word problem step by step and conclude with the final numerical value in the format #### <number>.",
-      "user_prompt": "Question from OpenAI GSM8K:\nA bakery makes 240 pastries in the morning. They sell 3/8 of the pastries to a morning corporate catering order. Then, a walk-in customer buys 1/5 of the remaining pastries. In the afternoon, the bakers bake an additional batch equal to 50% of whatever pastries are currently left in the shop. Finally, during the evening discount hour, they sell 3/4 of the total pastries in stock. How many pastries remain unsold at the end of the day?\n\nPlease solve step by step and provide the final answer at the very end formatted as #### <number>.",
+      "id": "term_ansi_escape_parsing_02",
+      "category": "terminal_ansi_control_sequences",
+      "source": "ANSI VT100 / XTerm Terminal Escape Sequence Standard Corpus",
+      "title": "终端 ANSI 转义字符与 SGR 色彩序列保真解析",
+      "system_prompt": "You are an expert in terminal emulators, VT100/ANSI escape codes, and Linux CLI output formatting.",
+      "user_prompt": "Inspect the raw terminal output stream containing ANSI SGR (Select Graphic Rendition) color codes and control sequences:\n\n```raw\n\u001b[1;34m[INFO]\u001b[0m Service bootstrap initiated...\n\u001b[1;32m[SUCCESS]\u001b[0m Database connection established on port 5432.\n\u001b[1;31m[CRITICAL]\u001b[0m Certificate expired: \u001b[4;31m/etc/ssl/certs/prod_api.crt\u001b[0m (Error Code: \u001b[7m0x800B0101\u001b[0m)\n\u001b[1;33m[WARN]\u001b[0m Falling back to staging authority.\n```\n\nAnswer the following terminal parsing questions:\n1. What exact text is highlighted with Underline (`\u001b[4;31m`) and in what text color?\n2. What is the Error Code displayed with Inverse/Reverse video (`\u001b[7m`)?\n3. What ANSI sequence is used to reset all attributes back to default?",
       "expected_keyword_groups": [
         [
-          "#### 45",
-          "45 pastries",
-          "45 remaining",
-          "answer is 45",
-          "remains 45"
+          "/etc/ssl/certs/prod_api.crt",
+          "prod_api.crt",
+          "red",
+          "红色"
+        ],
+        [
+          "0x800b0101"
+        ],
+        [
+          "\u001b[0m",
+          "\\e[0m",
+          "\\033[0m",
+          "0m",
+          "reset"
         ]
       ]
     },
     "standard": {
-      "request_bytes": 882,
-      "latency_sec": 2.322618007659912,
+      "request_bytes": 1032,
+      "latency_sec": 4.559561491012573,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 1,
-        "total_groups": 1,
+        "matched_groups": 3,
+        "total_groups": 3,
         "tokens": {
-          "completion_tokens": 300,
+          "completion_tokens": 173,
           "completion_tokens_details": {
-            "reasoning_tokens": 205
+            "reasoning_tokens": 341
           },
-          "prompt_tokens": 309,
-          "total_tokens": 814
+          "prompt_tokens": 388,
+          "total_tokens": 902
         },
-        "content_preview": "To find the number of unsold pastries at the end of the day, we calculate the inventory after each event:\n\n1. **Initial pastries**: 240\n2. **Morning corporate order**: \n   - Sells $\\frac{3}{8} \\times ..."
+        "content_preview": "Based on the provided raw ANSI terminal stream:\n\n1. **Underlined Text (`\\x1b[4;31m`):**\n   * **Exact Text:** `/etc/ssl/certs/prod_api.crt`\n   * **Text Color:** Red (code `31`)\n\n2. **Inverse/Reverse Vi..."
       }
     },
     "experimental": {
-      "request_bytes": 882,
-      "latency_sec": 3.7828903198242188,
-      "status_code": 200,
-      "eval": {
-        "score": 0.0,
-        "matched_groups": 0,
-        "total_groups": 1,
-        "tokens": {
-          "completion_tokens": 317,
-          "completion_tokens_details": {
-            "reasoning_tokens": 549
-          },
-          "prompt_tokens": 1195,
-          "total_tokens": 2061
-        },
-        "content_preview": "To find the number of unsold pastries at the end of the day, we can follow the steps in chronological order:\n\n1. **Morning catering order:**\n   - Initial pastries = $240$\n   - Pastries sold to caterin..."
-      }
-    },
-    "hybrid": {
-      "request_bytes": 894,
-      "latency_sec": 2.554471492767334,
+      "request_bytes": 1032,
+      "latency_sec": 3.4880611896514893,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 1,
-        "total_groups": 1,
+        "matched_groups": 3,
+        "total_groups": 3,
         "tokens": {
-          "completion_tokens": 297,
+          "completion_tokens": 182,
           "completion_tokens_details": {
-            "reasoning_tokens": 388
+            "reasoning_tokens": 356
           },
-          "prompt_tokens": 1276,
-          "total_tokens": 1961
+          "prompt_tokens": 1194,
+          "total_tokens": 1732
         },
-        "content_preview": "Let's break down the problem step by step:\n\n1. **Morning Corporate Catering Order:**\n   - Total pastries made = 240\n   - Pastries sold = $\\frac{3}{8} \\times 240 = 90$\n   - Remaining pastries = $240 - ..."
+        "content_preview": "Based on the provided raw terminal output stream, here are the answers:\n\n1. **Underlined text and color:**\n   - **Exact text:** `/etc/ssl/certs/prod_api.crt`\n   - **Text color:** **Red** (indicated by..."
+      }
+    },
+    "hybrid": {
+      "request_bytes": 1044,
+      "latency_sec": 3.1611833572387695,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 220,
+          "completion_tokens_details": {
+            "reasoning_tokens": 396
+          },
+          "prompt_tokens": 1263,
+          "total_tokens": 1879
+        },
+        "content_preview": "Based on the provided raw ANSI terminal stream, here are the answers to the questions:\n\n1. **Underlined Text and Color:**\n   - **Exact text:** `/etc/ssl/certs/prod_api.crt`\n   - **Text color:** **Red*..."
       }
     }
   },
   {
     "question": {
-      "id": "hendrycks_math_level5_03",
-      "category": "hendrycks_math_competition",
-      "source": "Hendrycks MATH Benchmark (UC Berkeley) - Number Theory Level 5",
-      "title": "MATH Benchmark Level 5：完全平方数数论方程求解",
-      "system_prompt": "You are a mathematical olympiad competitor. Provide a rigorous algebraic and number-theoretic proof and enclose the final integer answer in \\boxed{...}.",
-      "user_prompt": "Problem from UC Berkeley MATH Dataset (Number Theory, Level 5):\nFind the unique positive integer $n$ such that $n^2 + 19n + 92$ is a perfect square of an integer.\n\nWork through the algebraic discriminant / difference of squares decomposition method, find all possible integer values for $n$, identify the positive solution, and place the final integer in \\boxed{}.",
+      "id": "term_swebench_git_diff_03",
+      "category": "swe_bench_git_patch_repair",
+      "source": "SWE-bench (Software Engineering Benchmark) - Unified Diff Patch Analysis",
+      "title": "SWE-bench 终端 Git Unified Diff 补丁审查与冲突修复",
+      "system_prompt": "You are a senior software engineer specialized in Git version control and SWE-bench patch evaluation.",
+      "user_prompt": "Analyze the following Git Unified Diff patch produced on Linux terminal:\n\n```diff\n--- a/src/gateway/ratelimit.go\n+++ b/src/gateway/ratelimit.go\n@@ -45,7 +45,8 @@ func (rl *RateLimiter) Allow(clientIP string) bool {\n \trl.mu.Lock()\n \tdefer rl.mu.Unlock()\n \t\n-\tif rl.tokens <= 0 {\n+\tnow := time.Now()\n+\trl.refill(now)\n+\tif rl.tokens < 1.0 {\n \t\treturn false\n \t}\n-\trl.tokens--\n+\trl.tokens -= 1.0\n```\n\nQuestions:\n1. In the original version (before patch), what was the exact condition for rejecting a request?\n2. What new function call was introduced immediately before the token check to update available tokens based on current timestamp?\n3. How is the token deduction modified in the new version?",
       "expected_keyword_groups": [
         [
-          "\\boxed{5}",
-          "boxed{5}",
-          "n = 5",
-          "n=5",
-          "positive integer is 5",
-          "unique positive integer is 5"
+          "rl.tokens <= 0",
+          "tokens <= 0"
+        ],
+        [
+          "rl.refill",
+          "refill"
+        ],
+        [
+          "rl.tokens -= 1.0",
+          "tokens -= 1.0",
+          "1.0"
         ]
       ]
     },
     "standard": {
-      "request_bytes": 678,
-      "latency_sec": 12.655158042907715,
+      "request_bytes": 985,
+      "latency_sec": 2.079106330871582,
       "status_code": 200,
       "eval": {
-        "score": 0.0,
-        "matched_groups": 0,
-        "total_groups": 1,
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
         "tokens": {
-          "completion_tokens": 929,
+          "completion_tokens": 169,
           "completion_tokens_details": {
-            "reasoning_tokens": 3858
+            "reasoning_tokens": 265
           },
-          "prompt_tokens": 254,
-          "total_tokens": 5041
+          "prompt_tokens": 382,
+          "total_tokens": 816
         },
-        "content_preview": "To find the integer values of $n$ such that $n^2 + 19n + 92$ is a perfect square, let:\n$$n^2 + 19n + 92 = m^2$$\nfor some non-negative integer $m$.\n\n### Step 1: Complete the Square\nMultiplying the enti..."
+        "content_preview": "Based on the provided Git unified diff, here are the answers to your questions:\n\n1. **Original rejection condition:**\n   The exact condition was `rl.tokens <= 0` (i.e., checking if the token count was..."
       }
     },
     "experimental": {
-      "request_bytes": 678,
-      "latency_sec": 18.318366050720215,
+      "request_bytes": 985,
+      "latency_sec": 3.447402238845825,
       "status_code": 200,
       "eval": {
-        "score": 0.0,
-        "matched_groups": 0,
-        "total_groups": 1,
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
         "tokens": {
-          "completion_tokens": 857,
+          "completion_tokens": 163,
           "completion_tokens_details": {
-            "reasoning_tokens": 3142
+            "reasoning_tokens": 229
           },
-          "prompt_tokens": 1193,
-          "total_tokens": 5192
+          "prompt_tokens": 1171,
+          "total_tokens": 1563
         },
-        "content_preview": "To find the integer values of $n$ such that $n^2 + 19n + 92$ is a perfect square, let:\n$$n^2 + 19n + 92 = k^2$$\nfor some non-negative integer $k$.\n\n---\n\n### Step 1: Algebraic Completion of Squares / D..."
+        "content_preview": "Based on the provided Git diff patch, here are the answers to your questions:\n\n1. **Exact condition for rejecting a request in the original version:**\n   `rl.tokens <= 0`\n\n2. **New function call intro..."
       }
     },
     "hybrid": {
-      "request_bytes": 690,
-      "latency_sec": 15.292003631591797,
+      "request_bytes": 997,
+      "latency_sec": 3.1781764030456543,
       "status_code": 200,
       "eval": {
-        "score": 0.0,
-        "matched_groups": 0,
-        "total_groups": 1,
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
         "tokens": {
-          "completion_tokens": 1200,
+          "completion_tokens": 178,
           "completion_tokens_details": {
-            "reasoning_tokens": 4244
+            "reasoning_tokens": 346
           },
-          "prompt_tokens": 1277,
-          "total_tokens": 6721
+          "prompt_tokens": 1243,
+          "total_tokens": 1767
         },
-        "content_preview": "To determine all integers $n$ such that $n^2 + 19n + 92$ is a perfect square, we let:\n$$n^2 + 19n + 92 = k^2$$\nfor some non-negative integer $k \\ge 0$.\n\n### Step 1: Complete the Square and Form a Diff..."
+        "content_preview": "Based on the provided Git diff patch, here are the answers to your questions:\n\n1. **Exact condition for rejecting a request in the original version:**\n   - The condition was `rl.tokens <= 0` (which tr..."
       }
     }
   },
   {
     "question": {
-      "id": "openai_humaneval_137_04",
-      "category": "openai_humaneval_code",
-      "source": "OpenAI HumanEval Benchmark - Task 137 (compare_one)",
-      "title": "OpenAI HumanEval #137：多类型边界比较与值保持",
-      "system_prompt": "You are an expert Python software engineer following OpenAI HumanEval specifications.",
-      "user_prompt": "Complete the official OpenAI HumanEval/137 problem:\n\n```python\ndef compare_one(a, b):\n    \"\"\"\n    Create a function that takes integers, floats, or strings representing\n    real numbers, and returns the larger variable in its given variable type.\n    Return None if the values are equal.\n    Note: If a real number is represented as a string, the floating point might be separated by a comma (e.g. \"2,3\" -> 2.3).\n\n    Examples:\n    compare_one(1, 2.5) ➞ 2.5\n    compare_one(1, \"2,3\") ➞ \"2,3\"\n    compare_one(\"5,1\", \"6\") ➞ \"6\"\n    compare_one(\"1\", 1) ➞ None\n    \"\"\"\n```\n\nProvide the clean, self-contained Python implementation for `compare_one` handling all types (int, float, str with commas or dots) properly.",
+      "id": "term_strace_syscall_debug_04",
+      "category": "linux_kernel_strace_debugging",
+      "source": "Linux Syscall Tracing (strace / eBPF) Performance Benchmark",
+      "title": "Linux 系统调用 strace 跟踪日志与阻塞瓶颈定位",
+      "system_prompt": "You are a Linux kernel and systems performance engineer.",
+      "user_prompt": "Review this strace snippet captured on an Ubuntu Linux server for a stalled backend process (PID 49102):\n\n```strace\n14:35:01.001210 epoll_wait(4, [{EPOLLIN, {u32=9, u64=9}}], 1024, -1) = 1 <0.000045>\n14:35:01.001300 accept4(9, {sa_family=AF_INET, sin_port=htons(58210), sin_addr=inet_addr(\"10.0.4.12\")}, [16], SOCK_CLOEXEC|SOCK_NONBLOCK) = 15 <0.000030>\n14:35:01.001380 epoll_ctl(4, EPOLL_CTL_ADD, 15, {EPOLLIN|EPOLLET, {u32=15, u64=15}}) = 0 <0.000015>\n14:35:01.001420 recvfrom(15, \"GET /health HTTP/1.1\\r\\nHost: ...\", 4096, 0, NULL, NULL) = 84 <0.000020>\n14:35:01.001510 futex(0x7fff8921a0a8, FUTEX_WAIT_PRIVATE, 2, NULL <unfinished ...>\n14:35:06.002105 <... futex resumed> ) = 0 <5.000595>\n14:35:06.002200 sendto(15, \"HTTP/1.1 200 OK\\r\\n...\", 128, 0, NULL, 0) = 128 <0.000040>\n14:35:06.002280 close(15) = 0 <0.000025>\n```\n\nQuestions:\n1. Which specific system call caused the massive 5-second stall (from 14:35:01 to 14:35:06)?\n2. What file descriptor was assigned to the newly accepted TCP socket?\n3. What was the exact duration spent sleeping inside the blocking syscall in seconds?",
       "expected_keyword_groups": [
         [
-          "def compare_one",
-          "compare_one"
-        ],
-        [
-          "replace",
-          "float",
-          "str"
-        ],
-        [
-          "return a",
-          "return b",
-          "return none",
-          "return None"
-        ]
-      ]
-    },
-    "standard": {
-      "request_bytes": 1010,
-      "latency_sec": 3.0260441303253174,
-      "status_code": 200,
-      "eval": {
-        "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
-        "tokens": {
-          "completion_tokens": 296,
-          "completion_tokens_details": {
-            "reasoning_tokens": 329
-          },
-          "prompt_tokens": 379,
-          "total_tokens": 1004
-        },
-        "content_preview": "def compare_one(a, b):\n    \"\"\"\n    Create a function that takes integers, floats, or strings representing\n    real numbers, and returns the larger variable in its given variable type.\n    Return None ..."
-      }
-    },
-    "experimental": {
-      "request_bytes": 1010,
-      "latency_sec": 3.4309639930725098,
-      "status_code": 200,
-      "eval": {
-        "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
-        "tokens": {
-          "completion_tokens": 323,
-          "completion_tokens_details": {
-            "reasoning_tokens": 360
-          },
-          "prompt_tokens": 1168,
-          "total_tokens": 1851
-        },
-        "content_preview": "Here is the clean and self-contained implementation of `compare_one`:\n\n```python\ndef compare_one(a, b):\n    \"\"\"\n    Create a function that takes integers, floats, or strings representing\n    real numb..."
-      }
-    },
-    "hybrid": {
-      "request_bytes": 1022,
-      "latency_sec": 2.7021498680114746,
-      "status_code": 200,
-      "eval": {
-        "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
-        "tokens": {
-          "completion_tokens": 296,
-          "completion_tokens_details": {
-            "reasoning_tokens": 548
-          },
-          "prompt_tokens": 1237,
-          "total_tokens": 2081
-        },
-        "content_preview": "```python\ndef compare_one(a, b):\n    \"\"\"\n    Create a function that takes integers, floats, or strings representing\n    real numbers, and returns the larger variable in its given variable type.\n    Re..."
-      }
-    }
-  },
-  {
-    "question": {
-      "id": "ruler_multi_needle_05",
-      "category": "ruler_needle_in_a_haystack",
-      "source": "NVIDIA RULER Benchmark / Kamradt Needle-in-a-Haystack",
-      "title": "NVIDIA RULER 长上下文复杂检索与多跳聚合",
-      "system_prompt": "You are a high-precision document extraction engine. Answer the question strictly using the provided context.",
-      "user_prompt": "=== CONTEXT START ===\nDocument Archive ID: ARCH-99201-ENG\n[Section 1.1] General server operations for Cluster Alpha were initiated on 2025-01-10. All node groups reported nominal status. Cluster security passkey is 'SECPASS-OMEGA-8812'. Maintenance cycle frequency is set to bi-weekly.\n[Section 1.2] Fleet storage replication factor was configured to 3 across AZ-East-1, AZ-East-2, and AZ-East-3. The backup storage encryption algorithm used by default is AES-256-GCM with key rotation every 90 days.\n[Section 1.3 - Embedded Needle A] The special secret deployment token assigned to Project Bluebird is 'TOKEN_BLUEBIRD_948271'.\n[Section 1.4] Network routing rules specify that egress traffic over port 8443 must transit through the primary Envoy proxy fleet. Ingress rate limit is configured at 50,000 QPS per tenant gateway.\n[Section 1.5 - Embedded Needle B] The designated disaster recovery failover coordinator for the Tokyo region is 'Dr. Kenji Sato' (Badge ID: ENG-TK-4402).\n[Section 1.6] Operating system kernel parameters were tuned: fs.file-max was set to 2097152, and net.core.somaxconn was increased to 65535 on all worker nodes.\n=== CONTEXT END ===\n\nBased ONLY on the text above, answer the following two precise questions:\n1. What is the exact secret deployment token assigned to Project Bluebird?\n2. Who is the designated disaster recovery failover coordinator for the Tokyo region and what is his Badge ID?",
-      "expected_keyword_groups": [
-        [
-          "token_bluebird_948271"
-        ],
-        [
-          "kenji sato",
-          "dr. kenji sato"
-        ],
-        [
-          "eng-tk-4402"
-        ]
-      ]
-    },
-    "standard": {
-      "request_bytes": 1698,
-      "latency_sec": 1.7044339179992676,
-      "status_code": 200,
-      "eval": {
-        "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
-        "tokens": {
-          "completion_tokens": 100,
-          "completion_tokens_details": {
-            "reasoning_tokens": 138
-          },
-          "prompt_tokens": 554,
-          "total_tokens": 792
-        },
-        "content_preview": "1. The exact secret deployment token assigned to Project Bluebird is 'TOKEN_BLUEBIRD_948271'.\n2. The designated disaster recovery failover coordinator for the Tokyo region is Dr. Kenji Sato, and his B..."
-      }
-    },
-    "experimental": {
-      "request_bytes": 1698,
-      "latency_sec": 2.9529671669006348,
-      "status_code": 200,
-      "eval": {
-        "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
-        "tokens": {
-          "completion_tokens": 121,
-          "completion_tokens_details": {
-            "reasoning_tokens": 484
-          },
-          "prompt_tokens": 1183,
-          "total_tokens": 1788
-        },
-        "content_preview": "Based on the provided text:\n\n1. **Secret deployment token assigned to Project Bluebird:**  \n   `TOKEN_BLUEBIRD_948271`\n\n2. **Designated disaster recovery failover coordinator for the Tokyo region and ..."
-      }
-    },
-    "hybrid": {
-      "request_bytes": 1710,
-      "latency_sec": 2.8114850521087646,
-      "status_code": 200,
-      "eval": {
-        "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
-        "tokens": {
-          "completion_tokens": 122,
-          "completion_tokens_details": {
-            "reasoning_tokens": 466
-          },
-          "prompt_tokens": 1256,
-          "total_tokens": 1844
-        },
-        "content_preview": "Based on the provided text:\n\n1. **Secret deployment token assigned to Project Bluebird:**  \n   `TOKEN_BLUEBIRD_948271`\n\n2. **Designated disaster recovery failover coordinator for the Tokyo region and ..."
-      }
-    }
-  },
-  {
-    "question": {
-      "id": "chartqa_ascii_table_06",
-      "category": "chartqa_docvqa_benchmark",
-      "source": "ChartQA / DocVQA Standard Multi-Column Financial Table Reasoning",
-      "title": "ChartQA/DocVQA 权威复杂财务指标跨行加权复合推导",
-      "system_prompt": "You are an expert financial analyst and data reasoning system.",
-      "user_prompt": "Analyze the following standardized quarterly financial metrics table (from DocVQA/ChartQA financial benchmark corpus):\n\n+---------------+-------------+--------------+----------------+--------------+\n| Business_Unit | Revenue($M) | Gross_Margin | Op_Expense($M) | Tax_Rate(%)  |\n+---------------+-------------+--------------+----------------+--------------+\n| Cloud_SaaS    | 120.0       | 75.0%        | 45.0           | 20.0%        |\n| Hardware_IoT  | 80.0        | 35.0%        | 18.0           | 15.0%        |\n| AI_Services   | 60.0        | 80.0%        | 28.0           | 25.0%        |\n+---------------+-------------+--------------+----------------+--------------+\n\nDefinitions:\n1. Gross_Profit = Revenue * Gross_Margin\n2. Operating_Income (EBIT) = Gross_Profit - Op_Expense\n3. Net_Income = Operating_Income * (1 - Tax_Rate)\n\nCalculate the following values step by step:\n- Net Income for Cloud_SaaS\n- Net Income for Hardware_IoT\n- Net Income for AI_Services\n- Total Net Income summed across all three business units.\n\nConclude with: [Total Net Income: $X.XX M].",
-      "expected_keyword_groups": [
-        [
-          "36",
-          "36.0",
-          "cloud_saas"
-        ],
-        [
-          "8.5",
-          "8.50",
-          "hardware_iot"
+          "futex",
+          "futex_wait_private"
         ],
         [
           "15",
-          "15.0",
-          "ai_services"
+          "fd 15",
+          "fd=15"
         ],
         [
-          "[total net income: $59.50 m]",
-          "59.5",
-          "59.50",
-          "59.5m",
-          "$59.5"
+          "5",
+          "5.000595",
+          "5.00",
+          "5秒",
+          "5 seconds"
         ]
       ]
     },
     "standard": {
-      "request_bytes": 1309,
-      "latency_sec": 2.809875011444092,
+      "request_bytes": 1325,
+      "latency_sec": 4.357543706893921,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 4,
-        "total_groups": 4,
+        "matched_groups": 3,
+        "total_groups": 3,
         "tokens": {
-          "completion_tokens": 568,
+          "completion_tokens": 200,
           "completion_tokens_details": {
-            "reasoning_tokens": 556
+            "reasoning_tokens": 721
           },
-          "prompt_tokens": 462,
-          "total_tokens": 1586
+          "prompt_tokens": 727,
+          "total_tokens": 1648
         },
-        "content_preview": "Here is the step-by-step financial breakdown for each business unit based on the provided formulas:\n\n### 1. Cloud_SaaS\n* **Gross Profit:** $120.0\\text{ M} \\times 75.0\\% = \\$90.0\\text{ M}$\n* **Operatin..."
+        "content_preview": "Based on the provided `strace` log:\n\n1. **System call causing the stall:**  \n   `futex` (specifically with `FUTEX_WAIT_PRIVATE`, indicating synchronization lock contention such as a mutex/semaphore wa..."
       }
     },
     "experimental": {
-      "request_bytes": 1309,
-      "latency_sec": 9.937722206115723,
+      "request_bytes": 1325,
+      "latency_sec": 7.5873637199401855,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 4,
-        "total_groups": 4,
+        "matched_groups": 3,
+        "total_groups": 3,
         "tokens": {
-          "completion_tokens": 665,
+          "completion_tokens": 180,
           "completion_tokens_details": {
-            "reasoning_tokens": 833
+            "reasoning_tokens": 645
           },
-          "prompt_tokens": 1186,
-          "total_tokens": 2684
+          "prompt_tokens": 1184,
+          "total_tokens": 2009
         },
-        "content_preview": "To calculate the Net Income for each business unit, we follow the provided definitions step by step:\n\n---\n\n### **1. Cloud_SaaS**\n* **Gross Profit:**\n  $$\\text{Gross Profit} = \\$120.0\\text{ M} \\times 7..."
+        "content_preview": "Based on the provided `strace` log:\n\n1. **System call causing the stall:**  \n   **`futex`** (specifically with the `FUTEX_WAIT_PRIVATE` operation, waiting on a synchronization primitive/lock).\n\n2. **F..."
       }
     },
     "hybrid": {
-      "request_bytes": 1321,
-      "latency_sec": 6.54809045791626,
+      "request_bytes": 1337,
+      "latency_sec": 2.565523147583008,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 4,
-        "total_groups": 4,
+        "matched_groups": 3,
+        "total_groups": 3,
         "tokens": {
-          "completion_tokens": 649,
+          "completion_tokens": 190,
           "completion_tokens_details": {
-            "reasoning_tokens": 831
+            "reasoning_tokens": 172
           },
-          "prompt_tokens": 1246,
-          "total_tokens": 2726
+          "prompt_tokens": 1245,
+          "total_tokens": 1607
         },
-        "content_preview": "To calculate the Net Income for each business unit and the total across all units, we apply the provided formulas:\n\n1. **Gross Profit** = $\\text{Revenue} \\times \\text{Gross Margin}$\n2. **Operating Inc..."
+        "content_preview": "Based on the provided `strace` output:\n\n1. **System call causing the stall:**\n   * **`futex`** (specifically with the `FUTEX_WAIT_PRIVATE` operation, typically indicating the thread was blocked waitin..."
+      }
+    }
+  },
+  {
+    "question": {
+      "id": "iq_raven_matrix_05",
+      "category": "fluid_intelligence_raven_apm",
+      "source": "Raven's Advanced Progressive Matrices (APM) - Pattern XOR Logic",
+      "title": "瑞文高级推理测验 (Raven APM)：3x3 矩阵布尔异或与空间智力",
+      "system_prompt": "You are a cognitive psychologist and IQ assessment evaluator. Analyze the 3x3 visual-symbolic matrix.",
+      "user_prompt": "Standard Raven's Advanced Progressive Matrices Test:\nConsider a 3x3 symbolic pattern matrix with segments [— (horizontal), | (vertical), / (forward slash), \\ (backward slash)]:\n\nRow 1: [ — | ]      [ | / ]      [ — / ]\nRow 2: [ / \\ ]      [ \\ — ]      [ / — ]\nRow 3: [ — | \\ ]    [ | / \\ ]    [ ? ]\n\nRule: The third cell in each row is the Boolean Symmetric Difference (XOR) of the first two cells.\nCompute the exact segments present in Cell (3,3) and conclude with [Pattern: ...].",
+      "expected_keyword_groups": [
+        [
+          "[pattern:",
+          "pattern:"
+        ],
+        [
+          "—",
+          "-",
+          "horizontal"
+        ],
+        [
+          "/",
+          "forward slash"
+        ]
+      ]
+    },
+    "standard": {
+      "request_bytes": 782,
+      "latency_sec": 3.0986874103546143,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 359,
+          "completion_tokens_details": {
+            "reasoning_tokens": 436
+          },
+          "prompt_tokens": 312,
+          "total_tokens": 1107
+        },
+        "content_preview": "To determine the contents of Cell (3,3), we apply the Boolean Symmetric Difference (XOR) operation across the elements of Row 3:\n\n### Analysis:\n- **Operation Definition (XOR):** An element is included..."
+      }
+    },
+    "experimental": {
+      "request_bytes": 782,
+      "latency_sec": 3.766714096069336,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 278,
+          "completion_tokens_details": {
+            "reasoning_tokens": 402
+          },
+          "prompt_tokens": 1153,
+          "total_tokens": 1833
+        },
+        "content_preview": "To find the segments in Cell (3,3), we apply the Boolean Symmetric Difference (XOR) rule to the first two cells in Row 3:\n\n* **Cell (3,1):** `[ — | \\ ]` (contains segments: `—`, `|`, `\\`)\n* **Cell (3,..."
+      }
+    },
+    "hybrid": {
+      "request_bytes": 794,
+      "latency_sec": 3.1484732627868652,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 380,
+          "completion_tokens_details": {
+            "reasoning_tokens": 407
+          },
+          "prompt_tokens": 1231,
+          "total_tokens": 2018
+        },
+        "content_preview": "Based on the cognitive matrix analysis using the Boolean Symmetric Difference (XOR) rule across each row:\n\n### **Matrix Analysis:**\n\n* **Row 1:**\n  * **Cell (1,1):** `[ — | ]`\n  * **Cell (1,2):** `[ |..."
+      }
+    }
+  },
+  {
+    "question": {
+      "id": "iq_mensa_sequence_06",
+      "category": "mensa_numerical_induction",
+      "source": "Mensa High-IQ Society - Advanced Non-Linear Sequence Reasoning",
+      "title": "门萨高智商测验：高阶交错双重差分与递推数列归纳",
+      "system_prompt": "You are a Mensa International intelligence test designer. Solve the mathematical sequence puzzle.",
+      "user_prompt": "Mensa High-IQ Numerical Test:\nFind the next number a(7) in the integer sequence:\n2, 3, 7, 16, 65, 321, ?\n\nFirst differences are: 1, 4, 9, 49, 256 (squares of 1, 2, 3, 7, 16).\nNotice each difference is the square of the term two steps prior.\nThus a(7) = 321 + 65^2.\nCalculate and state the exact integer value of a(7).",
+      "expected_keyword_groups": [
+        [
+          "4546",
+          "a(7) = 4546",
+          "a(7)=4546",
+          "4,546"
+        ]
+      ]
+    },
+    "standard": {
+      "request_bytes": 578,
+      "latency_sec": 1.6987419128417969,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 1,
+        "total_groups": 1,
+        "tokens": {
+          "completion_tokens": 144,
+          "completion_tokens_details": {
+            "reasoning_tokens": 249
+          },
+          "prompt_tokens": 294,
+          "total_tokens": 687
+        },
+        "content_preview": "To find the next number $a(7)$ in the sequence:\n\n1. Calculate $65^2$:\n   $$65^2 = 4225$$\n\n2. Add this value to $a(6) = 321$:\n   $$a(7) = 321 + 4225 = 4546$$\n\n**Final Answer:**\nThe exact integer value ..."
+      }
+    },
+    "experimental": {
+      "request_bytes": 578,
+      "latency_sec": 2.98508882522583,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 1,
+        "total_groups": 1,
+        "tokens": {
+          "completion_tokens": 133,
+          "completion_tokens_details": {
+            "reasoning_tokens": 473
+          },
+          "prompt_tokens": 1146,
+          "total_tokens": 1752
+        },
+        "content_preview": "To find the exact integer value of $a(7)$:\n\n1. Calculate $65^2$:\n   $$65^2 = 4225$$\n\n2. Add this difference to the previous term $a(6) = 321$:\n   $$a(7) = 321 + 4225 = 4546$$\n\n**Exact integer value:**..."
+      }
+    },
+    "hybrid": {
+      "request_bytes": 590,
+      "latency_sec": 2.5085837841033936,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 1,
+        "total_groups": 1,
+        "tokens": {
+          "completion_tokens": 151,
+          "completion_tokens_details": {
+            "reasoning_tokens": 456
+          },
+          "prompt_tokens": 1217,
+          "total_tokens": 1824
+        },
+        "content_preview": "To find the next number $a(7)$ in the sequence:\n\n1. Calculate the square of the term two steps prior:\n   $$65^2 = 4225$$\n\n2. Add this difference to the preceding term ($a(6) = 321$):\n   $$a(7) = 321 +..."
       }
     }
   },
@@ -491,8 +498,8 @@
       "category": "multimodal_vqa_interleaved",
       "source": "Standard Multimodal VQA (Visual Question Answering) Benchmark",
       "title": "权威多模态 VQA：纯色标准图像与计算机视觉色彩空间解析",
-      "system_prompt": "You are a multimodal AI expert specializing in digital imaging standards and color science.",
-      "user_prompt": "Inspect the attached 1x1 pixel native PNG image asset and answer the following authoritative colorimetry questions:\n1. What is the primary RGB color component represented by this solid 1x1 image?\n2. In standard sRGB color space (ITU-R BT.709), what are the normalized CIE 1931 xy chromaticity coordinates of the standard red primary (approximate to two decimal places: x ≈ 0.64, y ≈ 0.33)?\n3. What is the difference between sRGB and Display P3 color gamuts in terms of red saturation coverage?",
+      "system_prompt": "You are a multimodal AI expert specializing in digital imaging standards.",
+      "user_prompt": "Inspect the attached 1x1 pixel native PNG image asset and answer:\n1. What is the primary RGB color represented by this solid 1x1 image?\n2. In standard sRGB color space (ITU-R BT.709), what are the normalized CIE 1931 xy chromaticity coordinates of the standard red primary (x ≈ 0.64, y ≈ 0.33)?",
       "has_native_image": true,
       "native_image_data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
       "expected_keyword_groups": [
@@ -504,73 +511,66 @@
         [
           "0.64",
           "0.33",
-          "chromaticity",
-          "srgb"
-        ],
-        [
-          "p3",
-          "display p3",
-          "gamut",
-          "saturation",
-          "色域"
+          "srgb",
+          "chromaticity"
         ]
       ]
     },
     "standard": {
-      "request_bytes": 949,
-      "latency_sec": 3.8123128414154053,
+      "request_bytes": 731,
+      "latency_sec": 3.546165704727173,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
+        "matched_groups": 2,
+        "total_groups": 2,
         "tokens": {
-          "completion_tokens": 422,
+          "completion_tokens": 174,
           "completion_tokens_details": {
-            "reasoning_tokens": 391
+            "reasoning_tokens": 421
           },
-          "prompt_tokens": 1376,
-          "total_tokens": 2189
+          "prompt_tokens": 1331,
+          "total_tokens": 1926
         },
-        "content_preview": "Here are the authoritative colorimetric answers to your questions:\n\n### 1. Primary RGB Color Component\n* **Red ($R$):** The dominant primary color component in this solid image is **Red** (forming a c..."
+        "content_preview": "Based on the digital imaging standards and image inspection:\n\n1. **Primary RGB Color:** \n   The image represents a shade of **Red** (specifically a light coral / salmon pink hue, where the red channel..."
       }
     },
     "experimental": {
-      "request_bytes": 949,
-      "latency_sec": 4.756469011306763,
+      "request_bytes": 731,
+      "latency_sec": 5.077694892883301,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
+        "matched_groups": 2,
+        "total_groups": 2,
         "tokens": {
-          "completion_tokens": 366,
+          "completion_tokens": 188,
           "completion_tokens_details": {
-            "reasoning_tokens": 361
+            "reasoning_tokens": 604
           },
-          "prompt_tokens": 2233,
-          "total_tokens": 2960
+          "prompt_tokens": 2246,
+          "total_tokens": 3038
         },
-        "content_preview": "Here are the answers to the colorimetry questions:\n\n1. **Primary RGB Color Component:**  \n   **Red ($R$)** is the dominant primary color component in this solid color patch (a coral/salmon shade where..."
+        "content_preview": "Based on the provided image and standard colorimetric definitions:\n\n1. **Dominant / Primary RGB Color:**\n   * **Red** (specifically a warm coral / salmon shade, where the red channel dominates the RGB..."
       }
     },
     "hybrid": {
-      "request_bytes": 961,
-      "latency_sec": 3.5518813133239746,
+      "request_bytes": 743,
+      "latency_sec": 5.489843368530273,
       "status_code": 200,
       "eval": {
         "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
+        "matched_groups": 2,
+        "total_groups": 2,
         "tokens": {
-          "completion_tokens": 392,
+          "completion_tokens": 194,
           "completion_tokens_details": {
-            "reasoning_tokens": 355
+            "reasoning_tokens": 720
           },
-          "prompt_tokens": 2305,
-          "total_tokens": 3052
+          "prompt_tokens": 2308,
+          "total_tokens": 3222
         },
-        "content_preview": "Here are the authoritative answers to your colorimetry questions:\n\n1. **Primary RGB Color Component:**\n   * The dominant/primary color component represented in this image is **Red** ($R$), as its RGB ..."
+        "content_preview": "Based on the provided image and digital colorimetry standards:\n\n1. **Primary RGB Color & Description:**\n   - **Dominant Primary Channel:** **Red** (the image is dominated by the red spectral component..."
       }
     }
   },
@@ -580,7 +580,7 @@
       "category": "berkeley_function_calling_leaderboard",
       "source": "Berkeley Function-Calling Leaderboard (BFCL) - Multi-Turn Tool Evaluation",
       "title": "Berkeley Function-Calling (BFCL) 权威多轮工具链协同与状态决策",
-      "system_prompt": "You are an autonomous AI agent conforming to the Berkeley Function Calling Leaderboard (BFCL) specifications. You must strictly invoke functions when required parameters are satisfied.",
+      "system_prompt": "You are an autonomous AI agent conforming to the Berkeley Function Calling Leaderboard (BFCL) specifications.",
       "has_tools": true,
       "has_history": true,
       "tools": [
@@ -707,8 +707,8 @@
       ]
     },
     "standard": {
-      "request_bytes": 2463,
-      "latency_sec": 2.1092886924743652,
+      "request_bytes": 2388,
+      "latency_sec": 1.6230759620666504,
       "status_code": 200,
       "eval": {
         "score": 1.0,
@@ -717,17 +717,17 @@
         "tokens": {
           "completion_tokens": 55,
           "completion_tokens_details": {
-            "reasoning_tokens": 142
+            "reasoning_tokens": 141
           },
-          "prompt_tokens": 1694,
-          "total_tokens": 1891
+          "prompt_tokens": 1683,
+          "total_tokens": 1879
         },
         "content_preview": "[Tool Calls: 1] "
       }
     },
     "experimental": {
-      "request_bytes": 2463,
-      "latency_sec": 3.6041715145111084,
+      "request_bytes": 2388,
+      "latency_sec": 3.661058187484741,
       "status_code": 200,
       "eval": {
         "score": 1.0,
@@ -736,17 +736,17 @@
         "tokens": {
           "completion_tokens": 55,
           "completion_tokens_details": {
-            "reasoning_tokens": 179
+            "reasoning_tokens": 71
           },
-          "prompt_tokens": 4693,
-          "total_tokens": 4927
+          "prompt_tokens": 4691,
+          "total_tokens": 4817
         },
         "content_preview": "[Tool Calls: 1] "
       }
     },
     "hybrid": {
-      "request_bytes": 2475,
-      "latency_sec": 4.296003580093384,
+      "request_bytes": 2400,
+      "latency_sec": 2.1068899631500244,
       "status_code": 200,
       "eval": {
         "score": 1.0,
@@ -755,10 +755,10 @@
         "tokens": {
           "completion_tokens": 55,
           "completion_tokens_details": {
-            "reasoning_tokens": 898
+            "reasoning_tokens": 250
           },
-          "prompt_tokens": 2697,
-          "total_tokens": 3650
+          "prompt_tokens": 2688,
+          "total_tokens": 2993
         },
         "content_preview": "[Tool Calls: 1] "
       }
