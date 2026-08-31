@@ -21,10 +21,14 @@
   - [🛡️ 运维监控与健康检查](#️-运维监控与健康检查)
   - [❓ 常见问题排查 (FAQ)](#-常见问题排查-faq)
 - [🇬🇧 English Documentation](#-english-documentation)
-  - [Overview](#overview)
-  - [Key Features](#key-features)
-  - [Quick Start](#quick-start)
-  - [Configuration](#configuration)
+  - [Overview & Problems Solved](#overview--problems-solved)
+  - [🌟 Key Architecture & Features](#-key-architecture--features)
+  - [📥 Installation & Getting Started (No-Go / Docker / Source)](#-installation--getting-started)
+  - [⚙️ Configuration & Environment Variables](#️-configuration--environment-variables)
+  - [🚀 Deployment Methods (Windows / Linux / Docker / Systemd)](#-deployment-methods)
+  - [📱 Client Integration (SillyTavern, Cherry Studio, etc.)](#-client-integration)
+  - [🛡️ Health Checks & Observability](#️-health-checks--observability)
+  - [❓ Frequently Asked Questions (FAQ)](#-frequently-asked-questions-faq)
 - [📄 License](#-license)
 
 ---
@@ -355,27 +359,159 @@ services:
 <a name="english"></a>
 ## 🇬🇧 English Documentation
 
-### Overview
+### 📖 Overview & Problems Solved
 
-**Antigravity Anti-Truncation Gateway** is a high-performance, headless, environment-variable-configured OpenAI Chat Completions compatibility middleware. It is purposefully engineered to eliminate output truncation, formatting breakdowns, and tool-call collisions for LLMs operating under heavy prompt contexts (e.g. SillyTavern complex presets, large character cards, prompt pre-fill, and multi-turn workflows).
+**Antigravity Anti-Truncation Gateway** is a high-performance, headless, environment-variable-configured OpenAI Chat Completions compatibility middleware.
 
-### Key Features
+Under heavy prompt workloads (e.g., **SillyTavern complex presets, massive character cards, prompt pre-fills, and multi-turn tool calling**), mainstream large language models (Claude, Gemini, GPT, etc.) frequently encounter:
+1. **Abrupt Output Truncation**: Standard completion channels cut off long-form responses prematurely due to hard output token limits or filters.
+2. **Upstream Turn Validation Errors (HTTP 400)**: Using Gemini / CPA upstream with pre-filled Assistant messages or non-standard concluding turns triggers `Requests ending with a model turn are not supported.`.
+3. **Format Breakdown & Dangling Syntax**: Unclosed Markdown code fences, missing JSON quotes, or dangling commas crashing downstream client parsers.
+4. **Tool Call Collision**: Synthetic control prompts corrupting genuine client-defined tools (e.g., web search, code execution).
 
-1. **Synthetic Transport Protocol**: Automatically provisions a high-entropy 96-bit random nonce synthetic tool call (e.g., `agw_emit_...`) per request, allowing the model to emit full text through structured function parameters and bypass output text truncation limits.
-2. **100% Native Model ID Passthrough**: Preserves raw model IDs without alteration or aliasing.
-3. **Genuine Downstream Tool Fidelity**: Preserves downstream client tools intact; genuine tool calls from models pass through without modification.
-4. **Instant-Emission SSE Streaming**: Byte-level incremental UTF-8 & JSON parsing state machine ensures zero perceptible latency for stream chunks.
-5. **Deterministic Format Repair & Empty Retries**: Automatically cleans markdown formatting artifacts, handles trailing syntax issues, and retries upstream when empty responses occur.
-6. **Gemini / CPA Turn Compatibility**: Automatically ensures conversations conclude with a user turn, eliminating `400 Requests ending with a model turn are not supported` errors.
+By leveraging a **Dynamic Synthetic Transport Tool Protocol**, an **Incremental UTF-8 / JSON Stream State Machine**, and **Adaptive Conversation Turn Sanitization**, this gateway transparently eliminates these issues without altering client workflows or upstream model IDs.
 
-### Quick Start
+---
 
-#### Build & Run
+### 🌟 Key Architecture & Features
+
+1. **Synthetic Transport Protocol**:
+   - Provisions a high-entropy (96-bit random nonce) transport tool (e.g., `agw_emit_7f3a91c8d42e6b1a9c02a547`) per request.
+   - Instructs the model to output visible responses within tool arguments, leveraging the structured function call channel to bypass output text truncation limits.
+   - Deconstructed in real-time and reconstructed into standard `assistant.content` transparently for downstream clients.
+2. **100% Native Model ID Passthrough**:
+   - Verbatim model forwarding (e.g., `gemini-3.5-flash-low`, `gemini-3.7-flash-high`, `claude-sonnet-4-6`) without alias mappings or ID pollution.
+3. **Genuine Downstream Tool Fidelity**:
+   - Client tools (Web Search, custom extensions) are fully preserved. Genuine model-generated tool calls pass through intact.
+4. **Single Source of Truth (No Concatenation)**:
+   - Enforces strict isolation to prevent synthetic tool outputs from colliding or concatenating with plain assistant content.
+5. **Instant-Emission SSE Streaming (Low Latency)**:
+   - Byte-level incremental UTF-8 and JSON escape state machine flushes validated chunks immediately, adding near-zero latency.
+6. **Deterministic Bounded Repair & Empty Retries**:
+   - Local deterministic formatting repair for unclosed markdown fences and quotes.
+   - Automatic upstream retries (default: 3 attempts) when upstream returns an empty response.
+7. **Intelligent Model Classification**:
+   - Automatically activates protection for conversational/text models while transparently passing through non-text models (image generation, audio, embeddings, moderation).
+8. **Adaptive Turn Sanitization (Gemini Compatibility)**:
+   - Scans conversational history to ensure turn structures conclude on a valid `user` turn, resolving Gemini/CPA HTTP 400 errors.
+9. **Lock-Free Hot Path**:
+   - Atomic pointer swaps and immutable memory snapshots for authentication and routing, effortlessly supporting thousands of QPS.
+
+---
+
+### 📥 Installation & Getting Started
+
+Antigravity Gateway is distributed as a **statically linked, standalone single binary** with zero external runtime dependencies.
+
+> 💡 **No Go Environment Installed?**
+> You **do not need Go installed**! Choose **[Option A: Prebuilt Binary]** or **[Option B: Docker Container]** to get started immediately.
+
+---
+
+#### Option A: Prebuilt Standalone Binary (Recommended / No Go Needed)
+1. Download the archive for your operating system from [Releases](https://github.com/Xeltra233/Antigravity-anti-truncation-gateway/releases):
+   - **Windows**: `antigravity-gateway_windows_amd64.zip` (includes `gateway.exe` & `run.bat`)
+   - **Linux**: `antigravity-gateway_linux_amd64.tar.gz`
+   - **macOS**: `antigravity-gateway_darwin_arm64.tar.gz` or `antigravity-gateway_darwin_amd64.tar.gz`
+2. Extract the archive, configure your environment variables (or edit `.env`), and run (`run.bat` on Windows, `./gateway` on Linux/macOS).
+
+---
+
+#### Option B: Docker Container (No Go Needed)
 ```bash
-# Build
-go build -trimpath -ldflags="-s -w" -o gateway ./cmd/gateway
+# 1. Clone repository
+git clone https://github.com/Xeltra233/Antigravity-anti-truncation-gateway.git
+cd Antigravity-anti-truncation-gateway
 
-# Run with basic configuration
+# 2. Build and run container
+docker build -t antigravity-gateway:latest .
+docker run -d \
+  --name antigravity-gateway \
+  -p 8080:8080 \
+  -e UPSTREAM_BASE_URL="https://your-upstream-url.com" \
+  -e UPSTREAM_API_KEY="sk-your-upstream-key" \
+  -e API_KEY="sk-antigravity-123456" \
+  --restart unless-stopped \
+  antigravity-gateway:latest
+```
+
+---
+
+#### Option C: Build from Source (Requires Go 1.24+)
+
+##### 1. Install Go (if not installed)
+- **Windows**: In PowerShell run `winget install GoLang.Go` or download from [Go Downloads](https://go.dev/dl/).
+- **Ubuntu / Debian**: `sudo apt update && sudo apt install -y golang`
+- **macOS**: `brew install go`
+
+##### 2. Clone & Compile
+```bash
+git clone https://github.com/Xeltra233/Antigravity-anti-truncation-gateway.git
+cd Antigravity-anti-truncation-gateway
+
+# Native compilation
+go build -trimpath -ldflags="-s -w" -o gateway ./cmd/gateway
+```
+
+##### 3. Cross-Compilation
+```bash
+# Target Linux AMD64 from Windows/macOS
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o gateway-linux-amd64 ./cmd/gateway
+
+# Target Windows from Linux/macOS
+CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -trimpath -ldflags="-s -w" -o gateway.exe ./cmd/gateway
+```
+
+---
+
+### ⚙️ Configuration & Environment Variables
+
+The gateway follows 12-Factor App design principles and reads configuration directly from environment variables or `.env` files.
+
+#### Complete Environment Variables Reference
+
+| Variable | Required | Default | Description |
+| :--- | :---: | :--- | :--- |
+| **`UPSTREAM_BASE_URL`** | **Yes** | - | Upstream API base URL (e.g., `https://api.openai.com` or custom reverse proxy, `/v1` appended automatically) |
+| **`UPSTREAM_API_KEY`** | Conditional | - | Upstream Bearer API key (required when `UPSTREAM_AUTH_MODE=bearer`) |
+| `UPSTREAM_AUTH_MODE` | No | `bearer` | Upstream authentication mode: `bearer` or `none` |
+| `UPSTREAM_TIMEOUT_MS` | No | `120000` | Upstream request timeout in milliseconds (default: 2 minutes) |
+| **`API_KEY`** | No | - | Downstream client authentication key (single-key simplified mode) |
+| `PORT` | No | `8080` | Gateway listening port |
+| `HOST` | No | `0.0.0.0` | Gateway listening host interface |
+| `WRAPPER_MODE` | No | `prefer` | Wrapper mode: `prefer` (recommended, injects synthetic protocol), `required` (strict), `off` (emergency passthrough) |
+| `RECOVERY_POLICY` | No | `repair` | Recovery policy: `repair` (local deterministic fix), `repair_then_retry` (retry on failure), `fail` (error out) |
+| `UPSTREAM_EMPTY_RETRIES` | No | `3` | Number of automatic retries upon receiving empty responses from upstream |
+| `CONTROL_MESSAGE_ROLE` | No | `system` | Injected control message role: `system` or `developer` |
+| `CONTROL_MESSAGE_POSITION`| No | `tail` | Injected message position: `tail` (recommended for strong adherence), `head`, `system_tail` |
+| `SYNTHETIC_TOOL_PREFIX` | No | `agw_emit_` | Prefix for generated synthetic tool names |
+| `MAX_REQUEST_BYTES` | No | `16777216` | Maximum allowed request size in bytes (default: 16MB) |
+| `MAX_RESPONSE_BYTES` | No | `16777216` | Maximum allowed response size in bytes (default: 16MB) |
+| `MAX_CONCURRENT_REQUESTS` | No | `1024` | Global maximum concurrent requests |
+| `MAX_CONCURRENT_REQUESTS_PER_KEY` | No | `64` | Maximum concurrent requests per API key |
+| `ADMIN_API_KEY` | No | `admin-secret-key-12345` | Authentication key for dynamic key management endpoint (`/admin/keys`) |
+| `LOG_LEVEL` | No | `info` | Logging verbosity level: `debug`, `info`, `warn`, `error` |
+
+#### `.env` File Example
+```env
+UPSTREAM_BASE_URL=https://api.openai.com
+UPSTREAM_API_KEY=sk-your-upstream-key-here
+
+API_KEY=sk-antigravity-123456
+PORT=8080
+HOST=0.0.0.0
+
+WRAPPER_MODE=prefer
+RECOVERY_POLICY=repair
+UPSTREAM_EMPTY_RETRIES=3
+```
+
+---
+
+### 🚀 Deployment Methods
+
+#### Method 1: Linux / macOS CLI
+```bash
 export UPSTREAM_BASE_URL="https://your-upstream-domain.com"
 export UPSTREAM_API_KEY="sk-your-upstream-key"
 export API_KEY="sk-antigravity-123456"
@@ -384,18 +520,131 @@ export PORT=8080
 ./gateway
 ```
 
-#### Test with cURL
-```bash
-curl http://localhost:8080/v1/chat/completions \
-  -H "Authorization: Bearer sk-antigravity-123456" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gemini-3.5-flash-low",
-    "messages": [{"role": "user", "content": "Hello!"}],
-    "stream": false
-  }'
+#### Method 2: Windows Batch Script (`run.bat`)
+Double-click `run.bat` or run:
+```bat
+@echo off
+set UPSTREAM_BASE_URL=https://your-upstream-domain.com
+set UPSTREAM_API_KEY=sk-your-upstream-key
+set API_KEY=sk-antigravity-123456
+set PORT=8080
+
+"%~dp0gateway.exe"
+pause
 ```
 
+#### Method 3: Linux Systemd Service
+Create `/etc/systemd/system/antigravity-gateway.service`:
+```ini
+[Unit]
+Description=Antigravity Anti-Truncation Gateway Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/antigravity-gateway
+ExecStart=/opt/antigravity-gateway/gateway
+Restart=always
+RestartSec=5
+Environment=UPSTREAM_BASE_URL=https://your-upstream-domain.com
+Environment=UPSTREAM_API_KEY=sk-your-upstream-key
+Environment=API_KEY=sk-antigravity-123456
+Environment=PORT=8080
+Environment=HOST=0.0.0.0
+
+[Install]
+WantedBy=multi-user.target
+```
+Enable and start the service:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now antigravity-gateway
+```
+
+#### Method 4: Docker Compose
+```yaml
+version: '3.8'
+
+services:
+  gateway:
+    build: .
+    container_name: antigravity-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - UPSTREAM_BASE_URL=https://your-upstream-domain.com
+      - UPSTREAM_API_KEY=sk-your-upstream-key
+      - API_KEY=sk-antigravity-123456
+      - PORT=8080
+    restart: unless-stopped
+```
+
+---
+
+### 📱 Client Integration
+
+The gateway is fully compatible with standard OpenAI `/v1` endpoint specifications.
+
+#### 1. General Connection Settings
+- **Base URL**: `http://127.0.0.1:8080/v1` (replace with server IP / domain for remote deployment)
+- **API Key**: The configured `API_KEY` (e.g., `sk-antigravity-123456`)
+- **Model Name**: Any model supported upstream (e.g., `gemini-3.5-flash-low`, `claude-sonnet-4-6`, `gpt-4o`)
+
+#### 2. SillyTavern Configuration
+1. Open API settings in SillyTavern, set **API** to `Chat Completion (OpenAI Compatible)`.
+2. **Custom Endpoint**: `http://127.0.0.1:8080/v1`.
+3. **API Key**: Enter your `API_KEY`.
+4. Click **Connect** and select your target model.
+
+#### 3. Cherry Studio / NextChat / Chatbox
+- **Provider**: OpenAI / OpenAI Compatible
+- **API Host**: `http://127.0.0.1:8080/v1`
+- **API Key**: `sk-antigravity-123456`
+
+#### 4. cURL Verification
+- **Fetch Models**:
+  ```bash
+  curl -s -H "Authorization: Bearer sk-antigravity-123456" http://127.0.0.1:8080/v1/models
+  ```
+- **Test Streaming Chat Completion**:
+  ```bash
+  curl http://127.0.0.1:8080/v1/chat/completions \
+    -H "Authorization: Bearer sk-antigravity-123456" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "model": "gemini-3.5-flash-low",
+      "messages": [{"role": "user", "content": "Write a 500-word short story."}],
+      "stream": true
+    }'
+  ```
+
+---
+
+### 🛡️ Health Checks & Observability
+
+- **Liveness Probe**: `GET /healthz` → returns `{"status":"ok","version":"..."}` (200 OK)
+- **Readiness Probe**: `GET /readyz` → returns `{"status":"ready","version":"..."}` (200 OK)
+- **Prometheus Metrics**: `GET /metrics` → exports standard metrics including request totals, latencies, active connections, and synthetic wrapper counts.
+- **Emergency Fallback**: Set `WRAPPER_MODE=off` to revert instantly to transparent raw passthrough without restarting.
+
+---
+
+### ❓ Frequently Asked Questions (FAQ)
+
+#### Q1: Why did I receive 400 "Requests ending with a model turn are not supported"?
+**A**: This is a strict constraint enforced by Google Gemini / CPA upstream requiring conversations to end on a `user` turn. The gateway automatically detects dangling Assistant pre-fills and system messages, sanitizing trailing turns into compliant user turns to eliminate this error.
+
+#### Q2: Is model refusal (e.g., "I cannot fulfill this request") caused by the gateway?
+**A**: No. Refusal occurs either as:
+1. **External Filter**: Guardrails returning `finish_reason: "SAFETY"` or HTTP 400.
+2. **Internal Refusal**: The model itself generating an apology text (`role: "assistant"`, status 200).
+Internal refusal indicates sensitive keywords in the prompt card. Adjust your character card or switch to models with reasoning/thinking enabled.
+
+#### Q3: Does the gateway support non-text models (e.g., image generation, audio)?
+**A**: Yes. The gateway includes an automatic classifier that skips synthetic wrapping for non-text models (DALL-E, Flux, Whisper, Embeddings) and performs 100% raw passthrough.
+
+---
 ---
 
 <a name="license"></a>
