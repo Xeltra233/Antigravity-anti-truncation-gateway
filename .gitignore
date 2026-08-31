@@ -22,5 +22,7 @@ run.bat
 test_out.txt
 
 # Goal artifacts & temporary test files
-goal-*
+# Android build artifacts in Go root
+android/
+*.jpg
 test_bin.exe

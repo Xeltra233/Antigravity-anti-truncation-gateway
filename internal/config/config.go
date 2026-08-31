@@ -50,6 +50,17 @@ type Config struct {
 	TextModelPattern     string // Optional regex override for text models
 	NonTextModelPattern  string // Optional regex override for non-text models
 
+	// Experimental 3-Variant Multi-modal Configuration
+	StandardAliasPrefix     string // default "[抗截断] "
+	ExperimentalAliasPrefix string // default "[实验性] "
+	HybridAliasPrefix       string // default "[混合实验性] "
+	ImageMaxRunesPerPage    int    // default 1500
+	ImageMaxLinesPerPage    int    // default 40
+	ImageMaxPages           int    // default 100
+	ImageMaxTotalBytes      int64  // default 12582912 (12 MiB)
+	ImageMaxSingleBytes     int64  // default 4194304 (4 MiB)
+	ImageFallbackOnError    bool   // default true
+
 	MaxRequestBytes             int64
 	MaxResponseBytes            int64
 	MaxConcurrentRequests       int
@@ -220,6 +231,35 @@ func Load(getenv func(string) string) (*Config, error) {
 	// Model Filter Patterns (Regex)
 	cfg.TextModelPattern = strings.TrimSpace(getenv("TEXT_MODEL_PATTERN"))
 	cfg.NonTextModelPattern = strings.TrimSpace(getenv("NON_TEXT_MODEL_PATTERN"))
+
+	// Experimental 3-Variant Multi-modal Prefixes
+	rawStdPrefix := getenv("STANDARD_ALIAS_PREFIX")
+	if rawStdPrefix == "" {
+		cfg.StandardAliasPrefix = "[抗截断] "
+	} else {
+		cfg.StandardAliasPrefix = rawStdPrefix
+	}
+
+	rawExpPrefix := getenv("EXPERIMENTAL_ALIAS_PREFIX")
+	if rawExpPrefix == "" {
+		cfg.ExperimentalAliasPrefix = "[实验性] "
+	} else {
+		cfg.ExperimentalAliasPrefix = rawExpPrefix
+	}
+
+	rawHybPrefix := getenv("HYBRID_ALIAS_PREFIX")
+	if rawHybPrefix == "" {
+		cfg.HybridAliasPrefix = "[混合实验性] "
+	} else {
+		cfg.HybridAliasPrefix = rawHybPrefix
+	}
+
+	cfg.ImageMaxRunesPerPage = getInt(getenv("IMAGE_MAX_RUNES_PER_PAGE"), 1500, 10, 10000)
+	cfg.ImageMaxLinesPerPage = getInt(getenv("IMAGE_MAX_LINES_PER_PAGE"), 40, 1, 500)
+	cfg.ImageMaxPages = getInt(getenv("IMAGE_MAX_PAGES"), 100, 1, 1000)
+	cfg.ImageMaxTotalBytes = int64(getInt(getenv("IMAGE_MAX_TOTAL_BYTES"), 12582912, 1024, 104857600))
+	cfg.ImageMaxSingleBytes = int64(getInt(getenv("IMAGE_MAX_SINGLE_BYTES"), 4194304, 1024, 52428800))
+	cfg.ImageFallbackOnError = getBool(getenv("IMAGE_FALLBACK_ON_ERROR"), true)
 	// Buffers & Limits
 	cfg.MaxRequestBytes = int64(getInt(getenv("MAX_REQUEST_BYTES"), 16777216, 1024, 104857600))   // 1KB - 100MB
 	cfg.MaxResponseBytes = int64(getInt(getenv("MAX_RESPONSE_BYTES"), 16777216, 1024, 104857600)) // 1KB - 100MB

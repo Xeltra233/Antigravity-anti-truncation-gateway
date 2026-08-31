@@ -1,0 +1,777 @@
+[
+  {
+    "question": {
+      "id": "fact_retrieval_01",
+      "category": "long_context_retrieval",
+      "title": "跨多段落事实定位与长文本精准提取",
+      "system_prompt": "你是一个严谨的研发助理，必须准确基于所给上下文回答问题。",
+      "user_prompt": "项目代号：Project Chimera-X。\n第一阶段在 2024-03-15 启动，负责人为 Dr. Alice Vance，分配预算为 450 万元。\n第二阶段在 2024-09-20 启动，负责人为 Bob Chen，分配预算为 820 万元。\n第三阶段在 2025-02-10 启动，负责人为 Carol Danvers，分配预算为 1200 万元。\n\n请直接回答：第二阶段的启动日期是什么？负责人是谁？分配预算是多少万元？",
+      "expected_keyword_groups": [
+        [
+          "2024-09-20",
+          "2024年9月20日"
+        ],
+        [
+          "Bob Chen",
+          "bob chen",
+          "Bob"
+        ],
+        [
+          "820",
+          "820万"
+        ]
+      ]
+    },
+    "standard": {
+      "request_bytes": 1067,
+      "latency_sec": 2.474754571914673,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 75,
+          "completion_tokens_details": {
+            "reasoning_tokens": 132
+          },
+          "prompt_tokens": 286,
+          "total_tokens": 493
+        },
+        "content_preview": "第二阶段的相关信息如下：\n- 启动日期：2024-09-20\n- 负责人：Bob Chen\n- 分配预算：820 万元"
+      }
+    },
+    "experimental": {
+      "request_bytes": 1067,
+      "latency_sec": 4.83019757270813,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 79,
+          "completion_tokens_details": {
+            "reasoning_tokens": 212
+          },
+          "prompt_tokens": 1178,
+          "total_tokens": 1469
+        },
+        "content_preview": "第二阶段的相关信息如下：\n\n* **启动日期**：2024-09-20\n* **负责人**：Bob Chen\n* **分配预算**：820 万元"
+      }
+    },
+    "hybrid": {
+      "request_bytes": 1079,
+      "latency_sec": 2.5455148220062256,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 83,
+          "completion_tokens_details": {
+            "reasoning_tokens": 284
+          },
+          "prompt_tokens": 1254,
+          "total_tokens": 1621
+        },
+        "content_preview": "第二阶段的相关信息如下：\n\n- **启动日期**：2024-09-20\n- **负责人**：Bob Chen\n- **分配预算**：820 万元"
+      }
+    }
+  },
+  {
+    "question": {
+      "id": "reasoning_logic_02",
+      "category": "multi_step_reasoning",
+      "title": "多约束条件逻辑推理与算术推导",
+      "system_prompt": "你是一个擅长逻辑推理与数学计算的专家。请一步一步思考并给出最终确切数字。",
+      "user_prompt": "甲、乙、丙三人分配 180 颗糖果。\n1. 甲分到的数量是乙的 2 倍；\n2. 丙分到的数量比乙少 20 颗；\n3. 三人刚好分完 180 颗糖果。\n\n请问：甲、乙、丙各自得到多少颗糖果？请在最后以形如【甲: X, 乙: Y, 丙: Z】的格式总结。",
+      "expected_keyword_groups": [
+        [
+          "甲: 100",
+          "甲：100",
+          "甲分到100",
+          "甲 100",
+          "甲=100"
+        ],
+        [
+          "乙: 50",
+          "乙：50",
+          "乙分到50",
+          "乙 50",
+          "乙=50"
+        ],
+        [
+          "丙: 30",
+          "丙：30",
+          "丙分到30",
+          "丙 30",
+          "丙=30"
+        ]
+      ]
+    },
+    "standard": {
+      "request_bytes": 908,
+      "latency_sec": 2.36295223236084,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 267,
+          "completion_tokens_details": {
+            "reasoning_tokens": 274
+          },
+          "prompt_tokens": 273,
+          "total_tokens": 814
+        },
+        "content_preview": "我们可以通过建立一元一次方程来求解：\n\n1. 设乙分到的糖果数量为 $x$ 颗。\n2. 根据题意：\n   - 甲分到的数量为 $2x$ 颗；\n   - 丙分到的数量为 $(x - 20)$ 颗。\n3. 三人糖果总数为 180 颗，列出方程：\n   $$2x + x + (x - 20) = 180$$\n   $$4x - 20 = 180$$\n   $$4x = 200$$\n   $$x = 50..."
+      }
+    },
+    "experimental": {
+      "request_bytes": 908,
+      "latency_sec": 2.967963218688965,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 275,
+          "completion_tokens_details": {
+            "reasoning_tokens": 330
+          },
+          "prompt_tokens": 1180,
+          "total_tokens": 1785
+        },
+        "content_preview": "我们可以设乙分到的糖果数量为 $x$ 颗。\n\n根据题意可得：\n- 甲分到的数量是乙的 2 倍，即甲分得：$2x$ 颗；\n- 丙分到的数量比乙少 20 颗，即丙分得：$x - 20$ 颗。\n\n三人一共分完 180 颗糖果，可列方程：\n$$2x + x + (x - 20) = 180$$\n\n解方程：\n$$4x - 20 = 180$$\n$$4x = 200$$\n$$x = 50$$\n\n因此：\n- 甲..."
+      }
+    },
+    "hybrid": {
+      "request_bytes": 920,
+      "latency_sec": 2.434633493423462,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 283,
+          "completion_tokens_details": {
+            "reasoning_tokens": 349
+          },
+          "prompt_tokens": 1254,
+          "total_tokens": 1886
+        },
+        "content_preview": "我们可以通过设立方程来一步步计算：\n\n设乙分到的糖果数量为 $Y$ 颗。\n\n根据题意：\n1. 甲分到的数量是乙的 2 倍，即甲为 $2Y$ 颗；\n2. 丙分到的数量比乙少 20 颗，即丙为 $Y - 20$ 颗；\n3. 三人分到的糖果总数为 180 颗。\n\n列出方程：\n$$2Y + Y + (Y - 20) = 180$$\n\n化简方程：\n$$4Y - 20 = 180$$\n$$4Y = 200$$..."
+      }
+    }
+  },
+  {
+    "question": {
+      "id": "code_analysis_03",
+      "category": "code_analysis_and_repair",
+      "title": "Python 算法边界条件分析与代码修复",
+      "system_prompt": "你是一个资深 Python 算法工程师。",
+      "user_prompt": "请审查以下二分查找函数并指出它的死循环 bug，然后给出修复后的正确 Python 代码：\n```python\ndef binary_search(arr, target):\n    left, right = 0, len(arr) - 1\n    while left < right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid\n        else:\n            right = mid - 1\n    return -1\n```",
+      "expected_keyword_groups": [
+        [
+          "left = mid + 1",
+          "mid + 1"
+        ],
+        [
+          "while left <= right",
+          "left <= right",
+          "left < right"
+        ],
+        [
+          "死循环",
+          "infinite loop",
+          "边界"
+        ]
+      ]
+    },
+    "standard": {
+      "request_bytes": 763,
+      "latency_sec": 3.629631280899048,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 558,
+          "completion_tokens_details": {
+            "reasoning_tokens": 222
+          },
+          "prompt_tokens": 270,
+          "total_tokens": 1050
+        },
+        "content_preview": "这段代码存在 **死循环** 和 **边界元素漏判** 两个主要问题：\n\n---\n\n### 问题分析\n\n1. **死循环 Bug（核心问题）：**\n   * 在 `arr[mid] < target` 时，代码执行了 `left = mid`。\n   * 当 `left` 和 `right` 相邻（即 `right = left + 1`）时，计算 `mid = (left + right) //..."
+      }
+    },
+    "experimental": {
+      "request_bytes": 763,
+      "latency_sec": 6.58781886100769,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 475,
+          "completion_tokens_details": {
+            "reasoning_tokens": 403
+          },
+          "prompt_tokens": 1162,
+          "total_tokens": 2040
+        },
+        "content_preview": "这段二分查找代码存在以下问题：\n\n### 问题分析\n\n1. **死循环 Bug（核心原因）：`left = mid`**\n   - 在 Python 中，整数除法 `(left + right) // 2` 是向下取整的。\n   - 当区间只剩下两个元素（即 `right = left + 1`）时，`mid = (left + left + 1) // 2 = left`。\n   - 如果此时 ..."
+      }
+    },
+    "hybrid": {
+      "request_bytes": 775,
+      "latency_sec": 4.857408285140991,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 619,
+          "completion_tokens_details": {
+            "reasoning_tokens": 575
+          },
+          "prompt_tokens": 1227,
+          "total_tokens": 2421
+        },
+        "content_preview": "这份二分查找代码存在 **死循环** 和 **边界遗漏** 两个主要 Bug。\n\n---\n\n### 问题分析\n\n#### 1. 死循环 Bug（核心问题）\n* **原因**：在 `arr[mid] < target` 分支中，代码执行了 `left = mid`。\n* **复现场景**：在整数向下取整除法 `mid = (left + right) // 2` 下，当 `right = left ..."
+      }
+    }
+  },
+  {
+    "question": {
+      "id": "json_schema_04",
+      "category": "strict_json_schema",
+      "title": "严格 JSON Schema 实体提取",
+      "system_prompt": "你是一个严格的数据提取引擎。你的回复必须且仅能是一个合法的 JSON 对象，不包含任何 Markdown 代码块标记（如 ```json）或前后解释说明。",
+      "user_prompt": "请从下述文本中提取服务器配置信息：\n'主机 web-prod-01 (IP: 192.168.1.108) 运行于 us-west-2 机房，配备 32 核 CPU 和 64GB 内存，状态为 healthy。'\n\n输出 JSON 字段要求：hostname (string), ip (string), region (string), cpu_cores (number), memory_gb (number), status (string)。",
+      "expected_keyword_groups": [
+        [
+          "\"hostname\": \"web-prod-01\"",
+          "\"hostname\":\"web-prod-01\""
+        ],
+        [
+          "\"ip\": \"192.168.1.108\"",
+          "\"ip\":\"192.168.1.108\""
+        ],
+        [
+          "\"cpu_cores\": 32",
+          "\"cpu_cores\":32"
+        ],
+        [
+          "\"memory_gb\": 64",
+          "\"memory_gb\":64"
+        ],
+        [
+          "\"status\": \"healthy\"",
+          "\"status\":\"healthy\""
+        ]
+      ]
+    },
+    "standard": {
+      "request_bytes": 948,
+      "latency_sec": 1.4084181785583496,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 5,
+        "total_groups": 5,
+        "tokens": {
+          "completion_tokens": 102,
+          "completion_tokens_details": {
+            "reasoning_tokens": 328
+          },
+          "prompt_tokens": 284,
+          "total_tokens": 714
+        },
+        "content_preview": "{\"hostname\": \"web-prod-01\", \"ip\": \"192.168.1.108\", \"region\": \"us-west-2\", \"cpu_cores\": 32, \"memory_gb\": 64, \"status\": \"healthy\"}"
+      }
+    },
+    "experimental": {
+      "request_bytes": 948,
+      "latency_sec": 2.7947888374328613,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 5,
+        "total_groups": 5,
+        "tokens": {
+          "completion_tokens": 121,
+          "completion_tokens_details": {
+            "reasoning_tokens": 268
+          },
+          "prompt_tokens": 1179,
+          "total_tokens": 1568
+        },
+        "content_preview": "```json\n{\n  \"hostname\": \"web-prod-01\",\n  \"ip\": \"192.168.1.108\",\n  \"region\": \"us-west-2\",\n  \"cpu_cores\": 32,\n  \"memory_gb\": 64,\n  \"status\": \"healthy\"\n}\n```"
+      }
+    },
+    "hybrid": {
+      "request_bytes": 960,
+      "latency_sec": 1.775615930557251,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 5,
+        "total_groups": 5,
+        "tokens": {
+          "completion_tokens": 102,
+          "completion_tokens_details": {
+            "reasoning_tokens": 320
+          },
+          "prompt_tokens": 1269,
+          "total_tokens": 1691
+        },
+        "content_preview": "{\"hostname\": \"web-prod-01\", \"ip\": \"192.168.1.108\", \"region\": \"us-west-2\", \"cpu_cores\": 32, \"memory_gb\": 64, \"status\": \"healthy\"}"
+      }
+    }
+  },
+  {
+    "question": {
+      "id": "chinese_nuance_05",
+      "category": "chinese_semantic_nuance",
+      "title": "中文成语语义辨析与高级英文对照",
+      "system_prompt": "你是一个精通中国古代文学与跨语言翻译的语言学专家。",
+      "user_prompt": "请辨析成语'不以为然'与'不以为意'的核心语义差异，并分别给出一个最贴切的高级英文翻译表达（如 take sth amiss, brush aside, disapprove 等）。",
+      "expected_keyword_groups": [
+        [
+          "不以为然",
+          "不同意",
+          "不认为是对的",
+          "disagree",
+          "disapprove"
+        ],
+        [
+          "不以为意",
+          "不在乎",
+          "不放在心上",
+          "unconcerned",
+          "careless",
+          "brush aside",
+          "ignore"
+        ]
+      ]
+    },
+    "standard": {
+      "request_bytes": 628,
+      "latency_sec": 6.5168375968933105,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 2,
+        "total_groups": 2,
+        "tokens": {
+          "completion_tokens": 838,
+          "completion_tokens_details": {
+            "reasoning_tokens": 1026
+          },
+          "prompt_tokens": 203,
+          "total_tokens": 2067
+        },
+        "content_preview": "成语**“不以为然”**与**“不以为意”**在现代汉语中极易混淆，其核心区别在于**认知判断（对错/是非）**与**心理态度（重视/忽略）**的维度不同：\n\n---\n\n### 一、核心语义与语用辨析\n\n| 成语 | 字面本义 | 核心语义特征 | 语义指向（针对对象） | 常见误用倾向 |\n| :--- | :--- | :--- | :--- | :--- |\n| **不以为然** | “然”..."
+      }
+    },
+    "experimental": {
+      "request_bytes": 628,
+      "latency_sec": 6.458169221878052,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 2,
+        "total_groups": 2,
+        "tokens": {
+          "completion_tokens": 881,
+          "completion_tokens_details": {
+            "reasoning_tokens": 479
+          },
+          "prompt_tokens": 1145,
+          "total_tokens": 2505
+        },
+        "content_preview": "### 一、 核心语义差异辨析\n\n这两个成语的核心差异在于**认知判断（对错/赞同与否）**与**情感态度（在乎与否）**的区别，关键看末尾的字义：\n\n| 成语 | 末字本义 | 核心语义 | 侧重点 | 常见语境 |\n| :--- | :--- | :--- | :--- | :--- |\n| **不以为然** | **然**：对、正确 | **不认为是正确的**（否定、不同意、不赞同） | *..."
+      }
+    },
+    "hybrid": {
+      "request_bytes": 640,
+      "latency_sec": 7.784868478775024,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 2,
+        "total_groups": 2,
+        "tokens": {
+          "completion_tokens": 696,
+          "completion_tokens_details": {
+            "reasoning_tokens": 345
+          },
+          "prompt_tokens": 1217,
+          "total_tokens": 2258
+        },
+        "content_preview": "这两个成语常被混淆，其核心区别在于**“对认知/观点的否定”**与**“对态度/关注的轻视”**，关键在于对末尾字“**然**”与“**意**”的训诂：\n\n---\n\n### 一、 核心语义辨析\n\n| 成语 | 核心字义 | 核心语义 | 适用语境 |\n| :--- | :--- | :--- | :--- |\n| **不以为然** | **然**：对、正确 | **不认为是对的**。<br>强调*..."
+      }
+    }
+  },
+  {
+    "question": {
+      "id": "ocr_ascii_table_06",
+      "category": "ocr_and_symbols",
+      "title": "复杂 ASCII 表格与数学公式符号解析",
+      "system_prompt": "你是一个高精度的文档图表识别与解析引擎。",
+      "user_prompt": "请解析下表并计算：\n+------------+----------+------------+----------+\n| Server_ID  | QPS_Base | Error_Rate | Latency  |\n+------------+----------+------------+----------+\n| srv-us-01  | 14500    | 0.02%      | 12.4ms   |\n| srv-eu-02  | 9800     | 0.05%      | 24.8ms   |\n| srv-ap-03  | 23100    | 0.01%      | 8.1ms    |\n+------------+----------+------------+----------+\n\n计算公式：Total_Errors = Sum(QPS_Base * Error_Rate)\n请列出各服务器计算的单秒错误数，并给出 Total_Errors 的总和。",
+      "expected_keyword_groups": [
+        [
+          "srv-us-01"
+        ],
+        [
+          "srv-eu-02"
+        ],
+        [
+          "srv-ap-03"
+        ],
+        [
+          "2.9"
+        ],
+        [
+          "4.9"
+        ],
+        [
+          "2.31"
+        ],
+        [
+          "10.11"
+        ]
+      ]
+    },
+    "standard": {
+      "request_bytes": 917,
+      "latency_sec": 5.817044734954834,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 7,
+        "total_groups": 7,
+        "tokens": {
+          "completion_tokens": 287,
+          "completion_tokens_details": {
+            "reasoning_tokens": 316
+          },
+          "prompt_tokens": 359,
+          "total_tokens": 962
+        },
+        "content_preview": "根据提供的数据和计算公式：`Total_Errors = Sum(QPS_Base * Error_Rate)`，计算如下：\n\n### 1. 各服务器单秒错误数计算\n* **srv-us-01**：$14500 \\times 0.02\\% = 14500 \\times 0.0002 = \\mathbf{2.9}$ 次/秒\n* **srv-eu-02**：$9800 \\times 0.05\\% = ..."
+      }
+    },
+    "experimental": {
+      "request_bytes": 917,
+      "latency_sec": 3.7228193283081055,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 7,
+        "total_groups": 7,
+        "tokens": {
+          "completion_tokens": 306,
+          "completion_tokens_details": {
+            "reasoning_tokens": 469
+          },
+          "prompt_tokens": 1156,
+          "total_tokens": 1931
+        },
+        "content_preview": "根据表格数据与给定的计算公式：`Errors = QPS_Base × Error_Rate`，计算各服务器的单秒错误数及总和如下：\n\n### 1. 各服务器单秒错误数计算：\n\n* **srv-us-01**：\n  $$14500 \\times 0.02\\% = 14500 \\times 0.0002 = 2.9\\text{ 个/秒}$$\n\n* **srv-eu-02**：\n  $$9800 \\t..."
+      }
+    },
+    "hybrid": {
+      "request_bytes": 929,
+      "latency_sec": 4.8905603885650635,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 7,
+        "total_groups": 7,
+        "tokens": {
+          "completion_tokens": 286,
+          "completion_tokens_details": {
+            "reasoning_tokens": 418
+          },
+          "prompt_tokens": 1222,
+          "total_tokens": 1926
+        },
+        "content_preview": "根据表格中的数据，按照公式 **Errors = QPS_Base × Error_Rate** 计算各服务器每秒的错误数如下：\n\n1. **srv-us-01**：\n   $$14500 \\times 0.02\\% = 14500 \\times 0.0002 = 2.9 \\text{ 个/秒}$$\n\n2. **srv-eu-02**：\n   $$9800 \\times 0.05\\% = 9800..."
+      }
+    }
+  },
+  {
+    "question": {
+      "id": "native_image_interleaved_07",
+      "category": "native_image_fidelity",
+      "title": "原生图片与上下文文本交错理解",
+      "system_prompt": "你是一个能够理解文本和图像的多模态AI助手。",
+      "user_prompt": "这是一个包含原生单像素红色PNG图像的多模态会话测试。\n问题：在计算机图像学中，一个 1x1 像素的标准 PNG 图像，其 RGBA 值为 (255, 0, 0, 255) 代表什么颜色？请简要解释 PNG 文件头的前 8 个 Magic Bytes 是什么。",
+      "has_native_image": true,
+      "native_image_data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+      "expected_keyword_groups": [
+        [
+          "红",
+          "red"
+        ],
+        [
+          "png",
+          "image"
+        ],
+        [
+          "89",
+          "50",
+          "4e",
+          "47",
+          "magic",
+          "header",
+          "137"
+        ]
+      ]
+    },
+    "standard": {
+      "request_bytes": 960,
+      "latency_sec": 4.637120008468628,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 532,
+          "completion_tokens_details": {
+            "reasoning_tokens": 272
+          },
+          "prompt_tokens": 1324,
+          "total_tokens": 2128
+        },
+        "content_preview": "### 1. RGBA 值为 `(255, 0, 0, 255)` 代表的颜色\n- **颜色**：**纯红色（完全不透明）**。\n- **解析**：\n  - **R (Red)**: `255`（红色分量达到最大饱和度）\n  - **G (Green)**: `0`（无绿色）\n  - **B (Blue)**: `0`（无蓝色）\n  - **A (Alpha)**: `255`（完全不透明，Alp..."
+      }
+    },
+    "experimental": {
+      "request_bytes": 960,
+      "latency_sec": 4.484252452850342,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 542,
+          "completion_tokens_details": {
+            "reasoning_tokens": 449
+          },
+          "prompt_tokens": 2248,
+          "total_tokens": 3239
+        },
+        "content_preview": "在计算机图像学中，针对您的两个问题解答如下：\n\n---\n\n### 1. RGBA 值为 `(255, 0, 0, 255)` 代表什么颜色？\n该值代表 **完全不透明的纯红色（Pure Red / #FF0000）**。\n- **R (Red, 红色)** = 255（通道最大值，完全饱和）\n- **G (Green, 绿色)** = 0（无绿光）\n- **B (Blue, 蓝色)** = 0（无..."
+      }
+    },
+    "hybrid": {
+      "request_bytes": 972,
+      "latency_sec": 7.608478546142578,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 609,
+          "completion_tokens_details": {
+            "reasoning_tokens": 524
+          },
+          "prompt_tokens": 2315,
+          "total_tokens": 3448
+        },
+        "content_preview": "针对您提出的问题，解答如下：\n\n### 1. RGBA 值为 `(255, 0, 0, 255)` 代表的颜色\n- **代表颜色**：**纯红色（Pure Red，完全不透明）**。\n- **解析**：\n  - **R (Red) = 255**：红色通道达到最大亮度；\n  - **G (Green) = 0**、**B (Blue) = 0**：无绿色和蓝色成分；\n  - **A (Alpha)..."
+      }
+    }
+  },
+  {
+    "question": {
+      "id": "complex_tools_history_image_08",
+      "category": "tool_calling_with_history_image",
+      "title": "工具调用与历史原生图片混合多轮复杂场景",
+      "system_prompt": "你是一个高可靠工业物联网控制与安全审计 AI 助手。必须严格根据用户提供的信息、历史查询结果及图片，调用相应的函数工具完成任务。",
+      "has_tools": true,
+      "has_history": true,
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "lookup_device_inventory",
+            "description": "查询设备库存与状态数据库",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "device_id": {
+                  "type": "string",
+                  "description": "设备ID代码"
+                }
+              },
+              "required": [
+                "device_id"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "record_security_audit",
+            "description": "记录安全审计事件并提交审计报告",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "device_id": {
+                  "type": "string",
+                  "description": "设备ID"
+                },
+                "led_color": {
+                  "type": "string",
+                  "description": "照片中检测到的指示灯颜色 (例如 Red, Green, Blue)"
+                },
+                "stock_count": {
+                  "type": "integer",
+                  "description": "数据库查询到的剩余库存数量"
+                },
+                "action_required": {
+                  "type": "string",
+                  "description": "建议采取的紧急处置操作"
+                }
+              },
+              "required": [
+                "device_id",
+                "led_color",
+                "stock_count",
+                "action_required"
+              ]
+            }
+          }
+        }
+      ],
+      "history_messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "我们正在现场巡检设备 DEV-9002。请首先帮我查询它的库存和基本状态。附上该设备当前的现场指示灯照片："
+            },
+            {
+              "type": "image_url",
+              "image_url": {
+                "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+                "detail": "high"
+              }
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": "我先为您查询设备 DEV-9002 的库存与状态信息。",
+          "tool_calls": [
+            {
+              "id": "call_inv_001",
+              "type": "function",
+              "function": {
+                "name": "lookup_device_inventory",
+                "arguments": "{\"device_id\": \"DEV-9002\"}"
+              }
+            }
+          ]
+        },
+        {
+          "role": "tool",
+          "tool_call_id": "call_inv_001",
+          "content": "{\"status\": \"success\", \"device_id\": \"DEV-9002\", \"stock_count\": 42, \"location\": \"上海张江仓库 A3-09\", \"last_inspected\": \"2026-03-01\"}"
+        }
+      ],
+      "user_prompt": "已收到数据库返回的库存信息。现在请你结合刚才照片中设备指示灯的颜色（注意分析第一条消息中图片的颜色）以及库存数量，调用 `record_security_audit` 工具提交最终的安全审计记录！",
+      "expected_keyword_groups": [
+        [
+          "record_security_audit"
+        ],
+        [
+          "dev-9002"
+        ],
+        [
+          "red",
+          "红"
+        ],
+        [
+          "42"
+        ]
+      ]
+    },
+    "standard": {
+      "request_bytes": 3178,
+      "latency_sec": 5.3955748081207275,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 4,
+        "total_groups": 4,
+        "tokens": {
+          "completion_tokens": 58,
+          "completion_tokens_details": {
+            "reasoning_tokens": 184
+          },
+          "prompt_tokens": 1664,
+          "total_tokens": 1906
+        },
+        "content_preview": "[Tool Calls: 1] "
+      }
+    },
+    "experimental": {
+      "request_bytes": 3178,
+      "latency_sec": 5.268454551696777,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 4,
+        "total_groups": 4,
+        "tokens": {
+          "completion_tokens": 69,
+          "completion_tokens_details": {
+            "reasoning_tokens": 180
+          },
+          "prompt_tokens": 4655,
+          "total_tokens": 4904
+        },
+        "content_preview": "[Tool Calls: 1] "
+      }
+    },
+    "hybrid": {
+      "request_bytes": 3190,
+      "latency_sec": 4.265452146530151,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 4,
+        "total_groups": 4,
+        "tokens": {
+          "completion_tokens": 65,
+          "completion_tokens_details": {
+            "reasoning_tokens": 180
+          },
+          "prompt_tokens": 2683,
+          "total_tokens": 2928
+        },
+        "content_preview": "[Tool Calls: 1] "
+      }
+    }
+  }
+]

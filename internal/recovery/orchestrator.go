@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"antigravity-gateway/internal/config"
+	"antigravity-gateway/internal/imagectx"
 	"antigravity-gateway/internal/keymgmt"
 	"antigravity-gateway/internal/limiter"
 	"antigravity-gateway/internal/metrics"
@@ -86,10 +87,62 @@ func (o *Orchestrator) HandleChatCompletions(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	// Check model permission
-	if !o.keyMgr.IsModelAllowed(keyInfo, partialReq.Model) {
-		server.WriteError(w, http.StatusForbidden, fmt.Sprintf("Model %q is not permitted for this API key", partialReq.Model), "permission_denied", "model_forbidden")
+	rawModel := partialReq.Model
+	targetModel := rawModel
+	targetMode := imagectx.ModeStandard
+
+	stdPfx := o.cfg.StandardAliasPrefix
+	if stdPfx == "" {
+		stdPfx = "[抗截断] "
+	}
+	expPfx := o.cfg.ExperimentalAliasPrefix
+	if expPfx == "" {
+		expPfx = "[实验性] "
+	}
+	hybPfx := o.cfg.HybridAliasPrefix
+	if hybPfx == "" {
+		hybPfx = "[混合实验性] "
+	}
+
+	trimmedStd := strings.TrimSpace(stdPfx)
+	trimmedExp := strings.TrimSpace(expPfx)
+	trimmedHyb := strings.TrimSpace(hybPfx)
+
+	if strings.HasPrefix(rawModel, expPfx) {
+		targetMode = imagectx.ModeAllImage
+		targetModel = strings.TrimPrefix(rawModel, expPfx)
+	} else if trimmedExp != "" && strings.HasPrefix(rawModel, trimmedExp) {
+		targetMode = imagectx.ModeAllImage
+		targetModel = strings.TrimSpace(strings.TrimPrefix(rawModel, trimmedExp))
+	} else if strings.HasPrefix(rawModel, hybPfx) {
+		targetMode = imagectx.ModeCurrentTurnOnly
+		targetModel = strings.TrimPrefix(rawModel, hybPfx)
+	} else if trimmedHyb != "" && strings.HasPrefix(rawModel, trimmedHyb) {
+		targetMode = imagectx.ModeCurrentTurnOnly
+		targetModel = strings.TrimSpace(strings.TrimPrefix(rawModel, trimmedHyb))
+	} else if strings.HasPrefix(rawModel, stdPfx) {
+		targetMode = imagectx.ModeStandard
+		targetModel = strings.TrimPrefix(rawModel, stdPfx)
+	} else if trimmedStd != "" && strings.HasPrefix(rawModel, trimmedStd) {
+		targetMode = imagectx.ModeStandard
+		targetModel = strings.TrimSpace(strings.TrimPrefix(rawModel, trimmedStd))
+	}
+
+	// Check model permission (allow either raw model with prefix or stripped target model)
+	if !o.keyMgr.IsModelAllowed(keyInfo, rawModel) && !o.keyMgr.IsModelAllowed(keyInfo, targetModel) {
+		server.WriteError(w, http.StatusForbidden, fmt.Sprintf("Model %q is not permitted for this API key", rawModel), "permission_denied", "model_forbidden")
 		return
+	}
+
+	// If model prefix was used, rewrite model in request payload to targetModel
+	if targetModel != rawModel {
+		var bMap map[string]any
+		if err := json.Unmarshal(bodyBytes, &bMap); err == nil {
+			bMap["model"] = targetModel
+			if nb, err := json.Marshal(bMap); err == nil {
+				bodyBytes = nb
+			}
+		}
 	}
 
 	// Inject synthetic transport tool
@@ -97,6 +150,30 @@ func (o *Orchestrator) HandleChatCompletions(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		server.WriteError(w, http.StatusInternalServerError, "Failed to prepare request: "+err.Error(), "api_error", "internal_error")
 		return
+	}
+
+	// Apply Image Context Transformation if required
+	if targetMode != imagectx.ModeStandard {
+		imgCfg := &imagectx.PipelineConfig{
+			Mode:                 targetMode,
+			MaxRunesPerPage:      o.cfg.ImageMaxRunesPerPage,
+			MaxLinesPerPage:      o.cfg.ImageMaxLinesPerPage,
+			MaxPages:             o.cfg.ImageMaxPages,
+			MaxTotalBytes:        o.cfg.ImageMaxTotalBytes,
+			MaxSingleBytes:       o.cfg.ImageMaxSingleBytes,
+			FallbackOnError:      o.cfg.ImageFallbackOnError,
+		}
+
+		transformedBody, fallbackTriggered, tErr := imagectx.TransformRequest(injected.TransformedBody, imgCfg, targetMode)
+		if tErr != nil {
+			server.WriteError(w, http.StatusBadRequest, "Image context transformation failed: "+tErr.Error(), "invalid_request_error", "image_context_error")
+			return
+		}
+		if fallbackTriggered {
+			w.Header().Set("X-Image-Context-Fallback", "true")
+		} else {
+			injected.TransformedBody = transformedBody
+		}
 	}
 
 	if injected.IsStreaming {

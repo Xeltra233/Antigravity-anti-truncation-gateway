@@ -1,0 +1,178 @@
+[
+  {
+    "id": "fact_retrieval_01",
+    "category": "long_context_retrieval",
+    "title": "跨多段落事实定位与长文本精准提取",
+    "system_prompt": "你是一个严谨的研发助理，必须准确基于所给上下文回答问题。",
+    "user_prompt": "项目代号：Project Chimera-X。\n第一阶段在 2024-03-15 启动，负责人为 Dr. Alice Vance，分配预算为 450 万元。\n第二阶段在 2024-09-20 启动，负责人为 Bob Chen，分配预算为 820 万元。\n第三阶段在 2025-02-10 启动，负责人为 Carol Danvers，分配预算为 1200 万元。\n\n请直接回答：第二阶段的启动日期是什么？负责人是谁？分配预算是多少万元？",
+    "expected_keyword_groups": [
+      ["2024-09-20", "2024年9月20日"],
+      ["Bob Chen", "bob chen", "Bob"],
+      ["820", "820万"]
+    ]
+  },
+  {
+    "id": "reasoning_logic_02",
+    "category": "multi_step_reasoning",
+    "title": "多约束条件逻辑推理与算术推导",
+    "system_prompt": "你是一个擅长逻辑推理与数学计算的专家。请一步一步思考并给出最终确切数字。",
+    "user_prompt": "甲、乙、丙三人分配 180 颗糖果。\n1. 甲分到的数量是乙的 2 倍；\n2. 丙分到的数量比乙少 20 颗；\n3. 三人刚好分完 180 颗糖果。\n\n请问：甲、乙、丙各自得到多少颗糖果？请在最后以形如【甲: X, 乙: Y, 丙: Z】的格式总结。",
+    "expected_keyword_groups": [
+      ["甲: 100", "甲：100", "甲分到100", "甲 100", "甲=100"],
+      ["乙: 50", "乙：50", "乙分到50", "乙 50", "乙=50"],
+      ["丙: 30", "丙：30", "丙分到30", "丙 30", "丙=30"]
+    ]
+  },
+  {
+    "id": "code_analysis_03",
+    "category": "code_analysis_and_repair",
+    "title": "Python 算法边界条件分析与代码修复",
+    "system_prompt": "你是一个资深 Python 算法工程师。",
+    "user_prompt": "请审查以下二分查找函数并指出它的死循环 bug，然后给出修复后的正确 Python 代码：\n```python\ndef binary_search(arr, target):\n    left, right = 0, len(arr) - 1\n    while left < right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid\n        else:\n            right = mid - 1\n    return -1\n```",
+    "expected_keyword_groups": [
+      ["left = mid + 1", "mid + 1"],
+      ["while left <= right", "left <= right", "left < right"],
+      ["死循环", "infinite loop", "边界"]
+    ]
+  },
+  {
+    "id": "json_schema_04",
+    "category": "strict_json_schema",
+    "title": "严格 JSON Schema 实体提取",
+    "system_prompt": "你是一个严格的数据提取引擎。你的回复必须且仅能是一个合法的 JSON 对象，不包含任何 Markdown 代码块标记（如 ```json）或前后解释说明。",
+    "user_prompt": "请从下述文本中提取服务器配置信息：\n'主机 web-prod-01 (IP: 192.168.1.108) 运行于 us-west-2 机房，配备 32 核 CPU 和 64GB 内存，状态为 healthy。'\n\n输出 JSON 字段要求：hostname (string), ip (string), region (string), cpu_cores (number), memory_gb (number), status (string)。",
+    "expected_keyword_groups": [
+      ["\"hostname\": \"web-prod-01\"", "\"hostname\":\"web-prod-01\""],
+      ["\"ip\": \"192.168.1.108\"", "\"ip\":\"192.168.1.108\""],
+      ["\"cpu_cores\": 32", "\"cpu_cores\":32"],
+      ["\"memory_gb\": 64", "\"memory_gb\":64"],
+      ["\"status\": \"healthy\"", "\"status\":\"healthy\""]
+    ]
+  },
+  {
+    "id": "chinese_nuance_05",
+    "category": "chinese_semantic_nuance",
+    "title": "中文成语语义辨析与高级英文对照",
+    "system_prompt": "你是一个精通中国古代文学与跨语言翻译的语言学专家。",
+    "user_prompt": "请辨析成语'不以为然'与'不以为意'的核心语义差异，并分别给出一个最贴切的高级英文翻译表达（如 take sth amiss, brush aside, disapprove 等）。",
+    "expected_keyword_groups": [
+      ["不以为然", "不同意", "不认为是对的", "disagree", "disapprove"],
+      ["不以为意", "不在乎", "不放在心上", "unconcerned", "careless", "brush aside", "ignore"]
+    ]
+  },
+  {
+    "id": "ocr_ascii_table_06",
+    "category": "ocr_and_symbols",
+    "title": "复杂 ASCII 表格与数学公式符号解析",
+    "system_prompt": "你是一个高精度的文档图表识别与解析引擎。",
+    "user_prompt": "请解析下表并计算：\n+------------+----------+------------+----------+\n| Server_ID  | QPS_Base | Error_Rate | Latency  |\n+------------+----------+------------+----------+\n| srv-us-01  | 14500    | 0.02%      | 12.4ms   |\n| srv-eu-02  | 9800     | 0.05%      | 24.8ms   |\n| srv-ap-03  | 23100    | 0.01%      | 8.1ms    |\n+------------+----------+------------+----------+\n\n计算公式：Total_Errors = Sum(QPS_Base * Error_Rate)\n请列出各服务器计算的单秒错误数，并给出 Total_Errors 的总和。",
+    "expected_keyword_groups": [
+      ["srv-us-01"],
+      ["srv-eu-02"],
+      ["srv-ap-03"],
+      ["2.9"],
+      ["4.9"],
+      ["2.31"],
+      ["10.11"]
+    ]
+  },
+  {
+    "id": "native_image_interleaved_07",
+    "category": "native_image_fidelity",
+    "title": "原生图片与上下文文本交错理解",
+    "system_prompt": "你是一个能够理解文本和图像的多模态AI助手。",
+    "user_prompt": "这是一个包含原生单像素红色PNG图像的多模态会话测试。\n问题：在计算机图像学中，一个 1x1 像素的标准 PNG 图像，其 RGBA 值为 (255, 0, 0, 255) 代表什么颜色？请简要解释 PNG 文件头的前 8 个 Magic Bytes 是什么。",
+    "has_native_image": true,
+    "native_image_data": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+    "expected_keyword_groups": [
+      ["红", "red"],
+      ["png", "image"],
+      ["89", "50", "4e", "47", "magic", "header", "137"]
+    ]
+  },
+  {
+    "id": "complex_tools_history_image_08",
+    "category": "tool_calling_with_history_image",
+    "title": "工具调用与历史原生图片混合多轮复杂场景",
+    "system_prompt": "你是一个高可靠工业物联网控制与安全审计 AI 助手。必须严格根据用户提供的信息、历史查询结果及图片，调用相应的函数工具完成任务。",
+    "has_tools": true,
+    "has_history": true,
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "lookup_device_inventory",
+          "description": "查询设备库存与状态数据库",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "device_id": {"type": "string", "description": "设备ID代码"}
+            },
+            "required": ["device_id"]
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "record_security_audit",
+          "description": "记录安全审计事件并提交审计报告",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "device_id": {"type": "string", "description": "设备ID"},
+              "led_color": {"type": "string", "description": "照片中检测到的指示灯颜色 (例如 Red, Green, Blue)"},
+              "stock_count": {"type": "integer", "description": "数据库查询到的剩余库存数量"},
+              "action_required": {"type": "string", "description": "建议采取的紧急处置操作"}
+            },
+            "required": ["device_id", "led_color", "stock_count", "action_required"]
+          }
+        }
+      }
+    ],
+    "history_messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "我们正在现场巡检设备 DEV-9002。请首先帮我查询它的库存和基本状态。附上该设备当前的现场指示灯照片："
+          },
+          {
+            "type": "image_url",
+            "image_url": {
+              "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+              "detail": "high"
+            }
+          }
+        ]
+      },
+      {
+        "role": "assistant",
+        "content": "我先为您查询设备 DEV-9002 的库存与状态信息。",
+        "tool_calls": [
+          {
+            "id": "call_inv_001",
+            "type": "function",
+            "function": {
+              "name": "lookup_device_inventory",
+              "arguments": "{\"device_id\": \"DEV-9002\"}"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "call_inv_001",
+        "content": "{\"status\": \"success\", \"device_id\": \"DEV-9002\", \"stock_count\": 42, \"location\": \"上海张江仓库 A3-09\", \"last_inspected\": \"2026-03-01\"}"
+      }
+    ],
+    "user_prompt": "已收到数据库返回的库存信息。现在请你结合刚才照片中设备指示灯的颜色（注意分析第一条消息中图片的颜色）以及库存数量，调用 `record_security_audit` 工具提交最终的安全审计记录！",
+    "expected_keyword_groups": [
+      ["record_security_audit"],
+      ["dev-9002"],
+      ["red", "红"],
+      ["42"]
+    ]
+  }
+]

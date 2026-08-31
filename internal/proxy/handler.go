@@ -110,9 +110,14 @@ func (h *ProxyHandler) HandleModels(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	formattedBytes, err := FormatTriModelList(modelsBytes, h.cfg, nil)
+	if err != nil {
+		formattedBytes = modelsBytes
+	}
+
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write(modelsBytes)
+	_, _ = w.Write(formattedBytes)
 }
 
 func (h *ProxyHandler) HandleChat(w http.ResponseWriter, r *http.Request) {
