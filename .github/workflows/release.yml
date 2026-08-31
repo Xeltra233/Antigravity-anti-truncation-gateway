@@ -2,9 +2,6 @@ name: Build & Release
 
 on:
   push:
-    branches:
-      - main
-      - android
     tags:
       - 'v*'
   workflow_dispatch:
@@ -161,26 +158,18 @@ jobs:
         run: |
           if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
             TAG_NAME="${GITHUB_REF#refs/tags/}"
-            echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
-            echo "title=Release ${TAG_NAME}" >> $GITHUB_OUTPUT
-            echo "prerelease=false" >> $GITHUB_OUTPUT
-          elif [[ "${{ github.ref }}" == refs/heads/android ]]; then
-            TAG_NAME="latest-android"
-            echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
-            echo "title=Continuous Android Build (${TAG_NAME})" >> $GITHUB_OUTPUT
-            echo "prerelease=false" >> $GITHUB_OUTPUT
           else
-            echo "tag=latest" >> $GITHUB_OUTPUT
-            echo "title=Continuous Build (latest)" >> $GITHUB_OUTPUT
-            echo "prerelease=false" >> $GITHUB_OUTPUT
+            TAG_NAME="${{ github.ref_name }}"
           fi
+          echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
+          echo "title=Release ${TAG_NAME}" >> $GITHUB_OUTPUT
 
       - name: Create or Update GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.release_meta.outputs.tag }}
           name: ${{ steps.release_meta.outputs.title }}
-          prerelease: ${{ steps.release_meta.outputs.prerelease == 'true' }}
+          prerelease: false
           draft: false
           generate_release_notes: true
           files: |
