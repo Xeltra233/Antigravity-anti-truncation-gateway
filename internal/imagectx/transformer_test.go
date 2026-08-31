@@ -217,3 +217,79 @@ func TestTransformer_LimitsFallback(t *testing.T) {
 		t.Errorf("expected fallback output to equal original input JSON")
 	}
 }
+
+func TestTransformer_SillyTavernDatabasePluginCompatibility(t *testing.T) {
+	cfg := DefaultPipelineConfig()
+	// Simulates SillyTavern RAG / Vector DB plugin injecting system memory context into current turn + a message with missing role
+	inputJSON := `{
+		"model":"gemini-3.7-flash-high",
+		"messages":[
+			{"role":"system","content":"Global World Info"},
+			{"role":"user","content":"turn 1 user"},
+			{"role":"assistant","content":"turn 1 assistant reply"},
+			{"role":"system","content":"[Vector DB Memory Injection for Turn 2] User prefers tea over coffee."},
+			{"content":"turn 2 user query"}
+		]
+	}`
+
+	out, fb, err := TransformRequest([]byte(inputJSON), cfg, ModeCurrentTurnOnly)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if fb {
+		t.Errorf("unexpected fallback")
+	}
+
+	var root map[string]any
+	if err := json.Unmarshal(out, &root); err != nil {
+		t.Fatalf("failed to unmarshal output: %v", err)
+	}
+
+	msgs := root["messages"].([]any)
+	if len(msgs) != 5 {
+		t.Fatalf("expected 5 messages, got %d", len(msgs))
+	}
+
+	// 0: Global World Info (History turn <= lastAssistantIdx) -> text
+	m0 := msgs[0].(map[string]any)
+	if m0["content"] != "Global World Info" {
+		t.Errorf("expected history system to remain string, got %v", m0["content"])
+	}
+
+	// 1: Turn 1 User (History) -> text
+	m1 := msgs[1].(map[string]any)
+	if m1["content"] != "turn 1 user" {
+		t.Errorf("expected history user to remain string, got %v", m1["content"])
+	}
+
+	// 2: Turn 1 Assistant (History lastAssistantIdx) -> text
+	m2 := msgs[2].(map[string]any)
+	if m2["content"] != "turn 1 assistant reply" {
+		t.Errorf("expected history assistant to remain string, got %v", m2["content"])
+	}
+
+	// 3: Injected System Memory in Current Turn (Turn 2 > lastAssistantIdx) -> image_url with role SYSTEM
+	m3 := msgs[3].(map[string]any)
+	parts3, ok := m3["content"].([]any)
+	if !ok || len(parts3) == 0 {
+		t.Fatalf("expected injected system to be converted to parts, got %v", m3["content"])
+	}
+	p3 := parts3[0].(map[string]any)
+	if p3["type"] != "image_url" {
+		t.Errorf("expected injected system in current turn to be image_url, got %v", p3["type"])
+	}
+
+	// 4: Missing role in Current Turn -> auto-filled to 'user' and converted to image_url
+	m4 := msgs[4].(map[string]any)
+	if m4["role"] != "user" {
+		t.Errorf("expected missing role to be auto-filled to 'user', got %v", m4["role"])
+	}
+	parts4, ok := m4["content"].([]any)
+	if !ok || len(parts4) == 0 {
+		t.Fatalf("expected missing role message to be converted to parts, got %v", m4["content"])
+	}
+	p4 := parts4[0].(map[string]any)
+	if p4["type"] != "image_url" {
+		t.Errorf("expected current turn user message to be image_url, got %v", p4["type"])
+	}
+}

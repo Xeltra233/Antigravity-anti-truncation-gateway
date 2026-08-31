@@ -87,6 +87,11 @@ func TransformRequest(bodyBytes []byte, cfg *PipelineConfig, targetMode Mode) ([
 
 		role, _ := msgMap["role"].(string)
 		roleLower := strings.ToLower(strings.TrimSpace(role))
+		if roleLower == "" {
+			// Auto-fill missing role with default "user" (SillyTavern/RAG plugin compatibility fallback)
+			roleLower = "user"
+			msgMap["role"] = "user"
+		}
 
 		// 1. Tool / Function responses MUST remain native JSON/text to preserve function calling protocol
 		if roleLower == "tool" || roleLower == "function" {
@@ -94,9 +99,9 @@ func TransformRequest(bodyBytes []byte, cfg *PipelineConfig, targetMode Mode) ([
 			continue
 		}
 
-		// 2. If ModeCurrentTurnOnly, any message at or before the last assistant message (or non-user message) remains text
+		// 2. If ModeCurrentTurnOnly, messages in prior turns (at or before last assistant) remain native text
 		if targetMode == ModeCurrentTurnOnly {
-			if msgIdx <= lastAssistantIdx || roleLower != "user" {
+			if lastAssistantIdx >= 0 && msgIdx <= lastAssistantIdx {
 				newMessages = append(newMessages, msgMap)
 				continue
 			}
