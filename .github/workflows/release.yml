@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - android
     tags:
       - 'v*'
   workflow_dispatch:
@@ -97,9 +98,47 @@ jobs:
           name: ${{ env.ASSET }}
           path: ${{ env.ASSET }}
 
+  build-android:
+    name: Build & Package Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          check-latest: true
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Assemble Android Release APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew :app:assembleRelease
+
+      - name: Upload Android APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: antigravity-gateway-apk
+          path: android/app/build/outputs/apk/release/antigravity-gateway-*.apk
+          if-no-files-found: error
+
   publish:
     name: Publish Release
-    needs: build
+    needs: [build, build-android]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -124,6 +163,11 @@ jobs:
             TAG_NAME="${GITHUB_REF#refs/tags/}"
             echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
             echo "title=Release ${TAG_NAME}" >> $GITHUB_OUTPUT
+            echo "prerelease=false" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.ref }}" == refs/heads/android ]]; then
+            TAG_NAME="latest-android"
+            echo "tag=${TAG_NAME}" >> $GITHUB_OUTPUT
+            echo "title=Continuous Android Build (${TAG_NAME})" >> $GITHUB_OUTPUT
             echo "prerelease=false" >> $GITHUB_OUTPUT
           else
             echo "tag=latest" >> $GITHUB_OUTPUT
