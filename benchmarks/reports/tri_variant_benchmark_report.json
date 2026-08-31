@@ -27,59 +27,59 @@
     },
     "standard": {
       "request_bytes": 1061,
-      "latency_sec": 4.303256273269653,
+      "latency_sec": 5.700089931488037,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 410,
+          "completion_tokens": 397,
           "completion_tokens_details": {
-            "reasoning_tokens": 401
+            "reasoning_tokens": 678
           },
           "prompt_tokens": 415,
-          "total_tokens": 1226
+          "total_tokens": 1490
         },
-        "content_preview": "### One-Line Bash Command Pipeline\n\n```bash\nawk '$9 == 504 {print $7}' /var/log/nginx/access.log | sort | uniq -c | sort -rn | head -n 3\n```\n\n---\n\n### Step-by-Step Breakdown\n\n1. **`awk '$9 == 504 {pri..."
+        "content_preview": "### Exact One-Line Bash Command\n\n```bash\nawk '$9 == 504 { print $7 }' /var/log/nginx/access.log | sort | uniq -c | sort -rn | head -n 3\n```\n\n---\n\n### Step-by-Step Pipeline Explanation\n\n1. **`awk '$9 =..."
       }
     },
     "experimental": {
       "request_bytes": 1061,
-      "latency_sec": 3.939026117324829,
+      "latency_sec": 5.179395437240601,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 356,
+          "completion_tokens": 339,
           "completion_tokens_details": {
-            "reasoning_tokens": 454
+            "reasoning_tokens": 595
           },
-          "prompt_tokens": 1147,
-          "total_tokens": 1957
+          "prompt_tokens": 1148,
+          "total_tokens": 2082
         },
-        "content_preview": "Here is the one-line Bash command pipeline to accomplish the task:\n\n```bash\nawk '$9 == 504 {print $7}' /var/log/nginx/access.log | sort | uniq -c | sort -nr | head -n 3\n```\n\n---\n\n### **Explanation of ..."
+        "content_preview": "### Exact Command Line\n\n```bash\nawk '$9 == 504 {print $7}' /var/log/nginx/access.log | sort | uniq -c | sort -nr | head -n 3\n```\n\n---\n\n### Component Breakdown & Explanation\n\n1. **`awk '$9 == 504 {prin..."
       }
     },
     "hybrid": {
       "request_bytes": 1073,
-      "latency_sec": 3.540776014328003,
+      "latency_sec": 4.643722772598267,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 398,
+          "completion_tokens": 313,
           "completion_tokens_details": {
-            "reasoning_tokens": 427
+            "reasoning_tokens": 552
           },
-          "prompt_tokens": 1231,
-          "total_tokens": 2056
+          "prompt_tokens": 1149,
+          "total_tokens": 2014
         },
-        "content_preview": "### One-Line Bash Command Pipeline\n\n```bash\nawk '$9 == 504 {print $7}' /var/log/nginx/access.log | sort | uniq -c | sort -rn | head -n 3\n```\n\n---\n\n### Step-by-Step Breakdown & Explanation\n\n1. **`awk '..."
+        "content_preview": "### Exact Command Line\n\n```bash\nawk '$9 == 504 {print $7}' /var/log/nginx/access.log | sort | uniq -c | sort -nr | head -n 3\n```\n\n---\n\n### Pipeline Component Breakdown\n\n1. **`awk '$9 == 504 {print $7}..."
       }
     }
   },
@@ -112,45 +112,7 @@
     },
     "standard": {
       "request_bytes": 1032,
-      "latency_sec": 4.559561491012573,
-      "status_code": 200,
-      "eval": {
-        "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
-        "tokens": {
-          "completion_tokens": 173,
-          "completion_tokens_details": {
-            "reasoning_tokens": 341
-          },
-          "prompt_tokens": 388,
-          "total_tokens": 902
-        },
-        "content_preview": "Based on the provided raw ANSI terminal stream:\n\n1. **Underlined Text (`\\x1b[4;31m`):**\n   * **Exact Text:** `/etc/ssl/certs/prod_api.crt`\n   * **Text Color:** Red (code `31`)\n\n2. **Inverse/Reverse Vi..."
-      }
-    },
-    "experimental": {
-      "request_bytes": 1032,
-      "latency_sec": 3.4880611896514893,
-      "status_code": 200,
-      "eval": {
-        "score": 1.0,
-        "matched_groups": 3,
-        "total_groups": 3,
-        "tokens": {
-          "completion_tokens": 182,
-          "completion_tokens_details": {
-            "reasoning_tokens": 356
-          },
-          "prompt_tokens": 1194,
-          "total_tokens": 1732
-        },
-        "content_preview": "Based on the provided raw terminal output stream, here are the answers:\n\n1. **Underlined text and color:**\n   - **Exact text:** `/etc/ssl/certs/prod_api.crt`\n   - **Text color:** **Red** (indicated by..."
-      }
-    },
-    "hybrid": {
-      "request_bytes": 1044,
-      "latency_sec": 3.1611833572387695,
+      "latency_sec": 2.4578635692596436,
       "status_code": 200,
       "eval": {
         "score": 1.0,
@@ -159,12 +121,50 @@
         "tokens": {
           "completion_tokens": 220,
           "completion_tokens_details": {
-            "reasoning_tokens": 396
+            "reasoning_tokens": 372
           },
-          "prompt_tokens": 1263,
-          "total_tokens": 1879
+          "prompt_tokens": 382,
+          "total_tokens": 974
         },
-        "content_preview": "Based on the provided raw ANSI terminal stream, here are the answers to the questions:\n\n1. **Underlined Text and Color:**\n   - **Exact text:** `/etc/ssl/certs/prod_api.crt`\n   - **Text color:** **Red*..."
+        "content_preview": "Based on the provided ANSI escape sequence stream, here are the answers to the questions:\n\n1. **Text with Underline (` [4;31m`) & Color:**\n   - **Exact text:** `/etc/ssl/certs/prod_api.crt`\n   - **Tex..."
+      }
+    },
+    "experimental": {
+      "request_bytes": 1032,
+      "latency_sec": 3.1050972938537598,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 208,
+          "completion_tokens_details": {
+            "reasoning_tokens": 490
+          },
+          "prompt_tokens": 1191,
+          "total_tokens": 1889
+        },
+        "content_preview": "Based on the provided terminal stream, here are the answers:\n\n1. **Text & Color for `[4;31m`:**\n   - **Text:** `/etc/ssl/certs/prod_api.crt`\n   - **Color:** Red (indicated by the `31` SGR parameter)\n\n..."
+      }
+    },
+    "hybrid": {
+      "request_bytes": 1044,
+      "latency_sec": 2.8843564987182617,
+      "status_code": 200,
+      "eval": {
+        "score": 1.0,
+        "matched_groups": 3,
+        "total_groups": 3,
+        "tokens": {
+          "completion_tokens": 227,
+          "completion_tokens_details": {
+            "reasoning_tokens": 414
+          },
+          "prompt_tokens": 1193,
+          "total_tokens": 1834
+        },
+        "content_preview": "Based on the provided terminal stream, here are the answers:\n\n1. **Text highlighted with Underline (`\\x1b[4;31m`) and color:**\n   * **Exact text:** `/etc/ssl/certs/prod_api.crt`\n   * **Color:** Red (A..."
       }
     }
   },
@@ -194,59 +194,59 @@
     },
     "standard": {
       "request_bytes": 985,
-      "latency_sec": 2.079106330871582,
+      "latency_sec": 3.521890640258789,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 169,
+          "completion_tokens": 164,
           "completion_tokens_details": {
-            "reasoning_tokens": 265
+            "reasoning_tokens": 308
           },
-          "prompt_tokens": 382,
-          "total_tokens": 816
+          "prompt_tokens": 388,
+          "total_tokens": 860
         },
-        "content_preview": "Based on the provided Git unified diff, here are the answers to your questions:\n\n1. **Original rejection condition:**\n   The exact condition was `rl.tokens <= 0` (i.e., checking if the token count was..."
+        "content_preview": "Based on the provided Git unified diff:\n\n1. **Exact condition before the patch:**\n   `rl.tokens <= 0` (in the statement `if rl.tokens <= 0 { return false }`)\n\n2. **New function call introduced:**\n   `..."
       }
     },
     "experimental": {
       "request_bytes": 985,
-      "latency_sec": 3.447402238845825,
+      "latency_sec": 2.5649573802948,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 163,
+          "completion_tokens": 165,
           "completion_tokens_details": {
-            "reasoning_tokens": 229
+            "reasoning_tokens": 426
           },
-          "prompt_tokens": 1171,
-          "total_tokens": 1563
+          "prompt_tokens": 1172,
+          "total_tokens": 1763
         },
-        "content_preview": "Based on the provided Git diff patch, here are the answers to your questions:\n\n1. **Exact condition for rejecting a request in the original version:**\n   `rl.tokens <= 0`\n\n2. **New function call intro..."
+        "content_preview": "Based on the provided Git Unified Diff patch, here are the answers to your questions:\n\n1. **Exact condition for rejecting a request in the original version:**\n   `rl.tokens <= 0`\n\n2. **New function ca..."
       }
     },
     "hybrid": {
       "request_bytes": 997,
-      "latency_sec": 3.1781764030456543,
+      "latency_sec": 2.885904312133789,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 178,
+          "completion_tokens": 177,
           "completion_tokens_details": {
-            "reasoning_tokens": 346
+            "reasoning_tokens": 321
           },
-          "prompt_tokens": 1243,
-          "total_tokens": 1767
+          "prompt_tokens": 1172,
+          "total_tokens": 1670
         },
-        "content_preview": "Based on the provided Git diff patch, here are the answers to your questions:\n\n1. **Exact condition for rejecting a request in the original version:**\n   - The condition was `rl.tokens <= 0` (which tr..."
+        "content_preview": "Based on the provided Git Unified Diff patch, here are the answers to your questions:\n\n1. **Original rejection condition:**\n   The exact condition for rejecting a request was `rl.tokens <= 0` (i.e., `..."
       }
     }
   },
@@ -279,59 +279,59 @@
     },
     "standard": {
       "request_bytes": 1325,
-      "latency_sec": 4.357543706893921,
+      "latency_sec": 3.4025585651397705,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 200,
+          "completion_tokens": 231,
           "completion_tokens_details": {
-            "reasoning_tokens": 721
+            "reasoning_tokens": 665
           },
-          "prompt_tokens": 727,
-          "total_tokens": 1648
+          "prompt_tokens": 731,
+          "total_tokens": 1627
         },
-        "content_preview": "Based on the provided `strace` log:\n\n1. **System call causing the stall:**  \n   `futex` (specifically with `FUTEX_WAIT_PRIVATE`, indicating synchronization lock contention such as a mutex/semaphore wa..."
+        "content_preview": "Here is the analysis of the provided `strace` log:\n\n1. **System call causing the stall:**\n   * **`futex`** (specifically invoked with the `FUTEX_WAIT_PRIVATE` operation). The thread blocked while wait..."
       }
     },
     "experimental": {
       "request_bytes": 1325,
-      "latency_sec": 7.5873637199401855,
+      "latency_sec": 4.169903993606567,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 180,
+          "completion_tokens": 213,
           "completion_tokens_details": {
-            "reasoning_tokens": 645
+            "reasoning_tokens": 649
           },
           "prompt_tokens": 1184,
-          "total_tokens": 2009
+          "total_tokens": 2046
         },
-        "content_preview": "Based on the provided `strace` log:\n\n1. **System call causing the stall:**  \n   **`futex`** (specifically with the `FUTEX_WAIT_PRIVATE` operation, waiting on a synchronization primitive/lock).\n\n2. **F..."
+        "content_preview": "Based on the provided `strace` snippet, here are the answers to your questions:\n\n1. **System call causing the stall:**  \n   **`futex`** (specifically called with the `FUTEX_WAIT_PRIVATE` operation: `f..."
       }
     },
     "hybrid": {
       "request_bytes": 1337,
-      "latency_sec": 2.565523147583008,
+      "latency_sec": 3.4314279556274414,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 190,
+          "completion_tokens": 201,
           "completion_tokens_details": {
-            "reasoning_tokens": 172
+            "reasoning_tokens": 668
           },
-          "prompt_tokens": 1245,
-          "total_tokens": 1607
+          "prompt_tokens": 1185,
+          "total_tokens": 2054
         },
-        "content_preview": "Based on the provided `strace` output:\n\n1. **System call causing the stall:**\n   * **`futex`** (specifically with the `FUTEX_WAIT_PRIVATE` operation, typically indicating the thread was blocked waitin..."
+        "content_preview": "Based on the provided `strace` snippet:\n\n1. **System call causing the 5-second stall:**\n   * **`futex`** (specifically called with the `FUTEX_WAIT_PRIVATE` operation waiting on a mutex/synchronization..."
       }
     }
   },
@@ -361,59 +361,59 @@
     },
     "standard": {
       "request_bytes": 782,
-      "latency_sec": 3.0986874103546143,
+      "latency_sec": 2.810129404067993,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 359,
+          "completion_tokens": 524,
           "completion_tokens_details": {
-            "reasoning_tokens": 436
+            "reasoning_tokens": 450
           },
-          "prompt_tokens": 312,
-          "total_tokens": 1107
+          "prompt_tokens": 306,
+          "total_tokens": 1280
         },
-        "content_preview": "To determine the contents of Cell (3,3), we apply the Boolean Symmetric Difference (XOR) operation across the elements of Row 3:\n\n### Analysis:\n- **Operation Definition (XOR):** An element is included..."
+        "content_preview": "To determine the missing pattern in Cell (3,3), we apply the specified rule: **Boolean Symmetric Difference ($\\text{XOR}$)** across the rows. Under this operation, a segment appears in the third cell ..."
       }
     },
     "experimental": {
       "request_bytes": 782,
-      "latency_sec": 3.766714096069336,
+      "latency_sec": 3.1893527507781982,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 278,
+          "completion_tokens": 225,
           "completion_tokens_details": {
-            "reasoning_tokens": 402
+            "reasoning_tokens": 482
           },
-          "prompt_tokens": 1153,
-          "total_tokens": 1833
+          "prompt_tokens": 1154,
+          "total_tokens": 1861
         },
-        "content_preview": "To find the segments in Cell (3,3), we apply the Boolean Symmetric Difference (XOR) rule to the first two cells in Row 3:\n\n* **Cell (3,1):** `[ — | \\ ]` (contains segments: `—`, `|`, `\\`)\n* **Cell (3,..."
+        "content_preview": "To find the pattern in Cell (3,3), we apply the Boolean Symmetric Difference (XOR) rule across Row 3:\n\n* **Cell (3,1):** contains segments `[ — | \\ ]`\n* **Cell (3,2):** contains segments `[ | / \\ ]`\n\n..."
       }
     },
     "hybrid": {
       "request_bytes": 794,
-      "latency_sec": 3.1484732627868652,
+      "latency_sec": 3.0103189945220947,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 3,
         "total_groups": 3,
         "tokens": {
-          "completion_tokens": 380,
+          "completion_tokens": 188,
           "completion_tokens_details": {
-            "reasoning_tokens": 407
+            "reasoning_tokens": 390
           },
-          "prompt_tokens": 1231,
-          "total_tokens": 2018
+          "prompt_tokens": 1157,
+          "total_tokens": 1735
         },
-        "content_preview": "Based on the cognitive matrix analysis using the Boolean Symmetric Difference (XOR) rule across each row:\n\n### **Matrix Analysis:**\n\n* **Row 1:**\n  * **Cell (1,1):** `[ — | ]`\n  * **Cell (1,2):** `[ |..."
+        "content_preview": "To determine the segments in Cell (3,3), we apply the Boolean Symmetric Difference (XOR) rule between the first two cells of Row 3:\n\n- **Cell (3,1):** contains $\\{—, |, \\backslash\\}$\n- **Cell (3,2):**..."
       }
     }
   },
@@ -436,59 +436,59 @@
     },
     "standard": {
       "request_bytes": 578,
-      "latency_sec": 1.6987419128417969,
+      "latency_sec": 2.266849994659424,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 1,
         "total_groups": 1,
         "tokens": {
-          "completion_tokens": 144,
+          "completion_tokens": 162,
           "completion_tokens_details": {
-            "reasoning_tokens": 249
+            "reasoning_tokens": 387
           },
-          "prompt_tokens": 294,
-          "total_tokens": 687
+          "prompt_tokens": 290,
+          "total_tokens": 839
         },
-        "content_preview": "To find the next number $a(7)$ in the sequence:\n\n1. Calculate $65^2$:\n   $$65^2 = 4225$$\n\n2. Add this value to $a(6) = 321$:\n   $$a(7) = 321 + 4225 = 4546$$\n\n**Final Answer:**\nThe exact integer value ..."
+        "content_preview": "To find the next number in the sequence, we apply the established recurrence relation:\n\n$$a(n) = a(n-1) + a(n-2)^2$$\n\nFor $n = 7$:\n$$a(7) = a(6) + a(5)^2$$\n$$a(7) = 321 + 65^2$$\n$$a(7) = 321 + 4225 = ..."
       }
     },
     "experimental": {
       "request_bytes": 578,
-      "latency_sec": 2.98508882522583,
+      "latency_sec": 3.3520734310150146,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 1,
         "total_groups": 1,
         "tokens": {
-          "completion_tokens": 133,
+          "completion_tokens": 156,
           "completion_tokens_details": {
-            "reasoning_tokens": 473
+            "reasoning_tokens": 347
           },
-          "prompt_tokens": 1146,
-          "total_tokens": 1752
+          "prompt_tokens": 1143,
+          "total_tokens": 1646
         },
-        "content_preview": "To find the exact integer value of $a(7)$:\n\n1. Calculate $65^2$:\n   $$65^2 = 4225$$\n\n2. Add this difference to the previous term $a(6) = 321$:\n   $$a(7) = 321 + 4225 = 4546$$\n\n**Exact integer value:**..."
+        "content_preview": "To find the exact integer value of $a(7)$:\n\n1. Calculate the square of the term two steps prior ($a(5) = 65$):\n   $$65^2 = 4225$$\n\n2. Add this difference to the previous term ($a(6) = 321$):\n   $$a(7)..."
       }
     },
     "hybrid": {
       "request_bytes": 590,
-      "latency_sec": 2.5085837841033936,
+      "latency_sec": 7.3811492919921875,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 1,
         "total_groups": 1,
         "tokens": {
-          "completion_tokens": 151,
+          "completion_tokens": 137,
           "completion_tokens_details": {
-            "reasoning_tokens": 456
+            "reasoning_tokens": 232
           },
-          "prompt_tokens": 1217,
-          "total_tokens": 1824
+          "prompt_tokens": 1147,
+          "total_tokens": 1516
         },
-        "content_preview": "To find the next number $a(7)$ in the sequence:\n\n1. Calculate the square of the term two steps prior:\n   $$65^2 = 4225$$\n\n2. Add this difference to the preceding term ($a(6) = 321$):\n   $$a(7) = 321 +..."
+        "content_preview": "To find the next term $a(7)$ in the sequence:\n\n1. Calculate $65^2$:\n   $$65^2 = 4225$$\n\n2. Add this difference to the previous term ($321$):\n   $$a(7) = 321 + 4225 = 4546$$\n\nThe exact integer value of..."
       }
     }
   },
@@ -518,59 +518,59 @@
     },
     "standard": {
       "request_bytes": 731,
-      "latency_sec": 3.546165704727173,
+      "latency_sec": 3.266693115234375,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 2,
         "total_groups": 2,
         "tokens": {
-          "completion_tokens": 174,
+          "completion_tokens": 227,
           "completion_tokens_details": {
-            "reasoning_tokens": 421
+            "reasoning_tokens": 540
           },
-          "prompt_tokens": 1331,
-          "total_tokens": 1926
+          "prompt_tokens": 1337,
+          "total_tokens": 2104
         },
-        "content_preview": "Based on the digital imaging standards and image inspection:\n\n1. **Primary RGB Color:** \n   The image represents a shade of **Red** (specifically a light coral / salmon pink hue, where the red channel..."
+        "content_preview": "Based on the provided image and digital imaging standards:\n\n1. **Primary RGB Color Representation:**\n   - **Dominant Primary Channel:** **Red**\n   - **Color Tone / Hex Representation:** Coral / Salmon..."
       }
     },
     "experimental": {
       "request_bytes": 731,
-      "latency_sec": 5.077694892883301,
+      "latency_sec": 3.26932954788208,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 2,
         "total_groups": 2,
         "tokens": {
-          "completion_tokens": 188,
+          "completion_tokens": 227,
           "completion_tokens_details": {
-            "reasoning_tokens": 604
+            "reasoning_tokens": 430
           },
-          "prompt_tokens": 2246,
-          "total_tokens": 3038
+          "prompt_tokens": 2240,
+          "total_tokens": 2897
         },
-        "content_preview": "Based on the provided image and standard colorimetric definitions:\n\n1. **Dominant / Primary RGB Color:**\n   * **Red** (specifically a warm coral / salmon shade, where the red channel dominates the RGB..."
+        "content_preview": "Based on the image and standard colorimetry specifications:\n\n1. **Primary RGB Color:** \n   - **Dominant Primary Channel:** **Red** (the image is a shade of light red/coral/salmon, where the red channe..."
       }
     },
     "hybrid": {
       "request_bytes": 743,
-      "latency_sec": 5.489843368530273,
+      "latency_sec": 3.45637845993042,
       "status_code": 200,
       "eval": {
         "score": 1.0,
         "matched_groups": 2,
         "total_groups": 2,
         "tokens": {
-          "completion_tokens": 194,
+          "completion_tokens": 226,
           "completion_tokens_details": {
-            "reasoning_tokens": 720
+            "reasoning_tokens": 518
           },
-          "prompt_tokens": 2308,
-          "total_tokens": 3222
+          "prompt_tokens": 2246,
+          "total_tokens": 2990
         },
-        "content_preview": "Based on the provided image and digital colorimetry standards:\n\n1. **Primary RGB Color & Description:**\n   - **Dominant Primary Channel:** **Red** (the image is dominated by the red spectral component..."
+        "content_preview": "Based on the provided image asset:\n\n1. **Primary RGB Color:**\n   * **Dominant Primary Channel:** **Red** (the color is a shade of coral/salmon-red, where the Red channel is dominant, approximately `RG..."
       }
     }
   },
@@ -708,7 +708,7 @@
     },
     "standard": {
       "request_bytes": 2388,
-      "latency_sec": 1.6230759620666504,
+      "latency_sec": 1.3615787029266357,
       "status_code": 200,
       "eval": {
         "score": 1.0,
@@ -717,17 +717,17 @@
         "tokens": {
           "completion_tokens": 55,
           "completion_tokens_details": {
-            "reasoning_tokens": 141
+            "reasoning_tokens": 140
           },
-          "prompt_tokens": 1683,
-          "total_tokens": 1879
+          "prompt_tokens": 1687,
+          "total_tokens": 1882
         },
         "content_preview": "[Tool Calls: 1] "
       }
     },
     "experimental": {
       "request_bytes": 2388,
-      "latency_sec": 3.661058187484741,
+      "latency_sec": 3.8650991916656494,
       "status_code": 200,
       "eval": {
         "score": 1.0,
@@ -736,17 +736,17 @@
         "tokens": {
           "completion_tokens": 55,
           "completion_tokens_details": {
-            "reasoning_tokens": 71
+            "reasoning_tokens": 121
           },
           "prompt_tokens": 4691,
-          "total_tokens": 4817
+          "total_tokens": 4867
         },
         "content_preview": "[Tool Calls: 1] "
       }
     },
     "hybrid": {
       "request_bytes": 2400,
-      "latency_sec": 2.1068899631500244,
+      "latency_sec": 9.050979137420654,
       "status_code": 200,
       "eval": {
         "score": 1.0,
@@ -755,10 +755,10 @@
         "tokens": {
           "completion_tokens": 55,
           "completion_tokens_details": {
-            "reasoning_tokens": 250
+            "reasoning_tokens": 218
           },
-          "prompt_tokens": 2688,
-          "total_tokens": 2993
+          "prompt_tokens": 2639,
+          "total_tokens": 2912
         },
         "content_preview": "[Tool Calls: 1] "
       }
