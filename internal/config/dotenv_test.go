@@ -141,3 +141,41 @@ TEST_DOTENV_KEY2=from_file_2
 		t.Errorf("expected from_file_2, got %s", val)
 	}
 }
+
+func TestLoadDotEnvBootstrapExample(t *testing.T) {
+	tmpDir := t.TempDir()
+	examplePath := filepath.Join(tmpDir, ".env.example")
+	err := os.WriteFile(examplePath, []byte("BOOTSTRAP_KEY=bootstrap_value\n"), 0644)
+	if err != nil {
+		t.Fatalf("failed to write .env.example: %v", err)
+	}
+
+	origDir, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("failed to getwd: %v", err)
+	}
+	defer os.Chdir(origDir)
+	if err := os.Chdir(tmpDir); err != nil {
+		t.Fatalf("failed to chdir: %v", err)
+	}
+
+	os.Unsetenv("BOOTSTRAP_KEY")
+	os.Unsetenv("UPSTREAM_BASE_URL")
+	defer func() {
+		os.Unsetenv("BOOTSTRAP_KEY")
+	}()
+
+	loadedPath, count, err := LoadDotEnv()
+	if err != nil {
+		t.Fatalf("LoadDotEnv failed: %v", err)
+	}
+	if loadedPath == "" || count == 0 {
+		t.Fatalf("expected bootstrapped .env, got path=%q count=%d", loadedPath, count)
+	}
+	if os.Getenv("BOOTSTRAP_KEY") != "bootstrap_value" {
+		t.Errorf("expected bootstrap_value, got %s", os.Getenv("BOOTSTRAP_KEY"))
+	}
+	if _, err := os.Stat(filepath.Join(tmpDir, ".env")); err != nil {
+		t.Errorf("expected .env file to be created: %v", err)
+	}
+}

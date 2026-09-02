@@ -66,6 +66,27 @@ func LoadDotEnv(customPaths ...string) (string, int, error) {
 	}
 
 	if targetFile == "" {
+		// If UPSTREAM_BASE_URL is not set in environment, attempt to bootstrap .env from .env.example
+		if strings.TrimSpace(os.Getenv("UPSTREAM_BASE_URL")) == "" {
+			exampleCandidates := []string{".env.example"}
+			if exe, err := os.Executable(); err == nil && exe != "" {
+				exampleCandidates = append(exampleCandidates, filepath.Join(filepath.Dir(exe), ".env.example"))
+			}
+			for _, ex := range exampleCandidates {
+				if fi, err := os.Stat(ex); err == nil && !fi.IsDir() {
+					dest := filepath.Join(filepath.Dir(ex), ".env")
+					if content, err := os.ReadFile(ex); err == nil {
+						if err := os.WriteFile(dest, content, 0644); err == nil {
+							targetFile = dest
+							break
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if targetFile == "" {
 		return "", 0, nil // No .env file found; valid when running with pure system env vars
 	}
 
