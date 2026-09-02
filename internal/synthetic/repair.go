@@ -184,86 +184,89 @@ func attemptStructuralRepair(s string) string {
 	return res
 }
 
-// scanAndExtractContent scans for `"content"\s*:\s*"` and unescapes the value.
+// scanAndExtractContent scans for `"content"\s*:\s*"` (or other common keys) and unescapes the value.
 func scanAndExtractContent(s string) (string, bool) {
-	keyIdx := strings.Index(s, `"content"`)
-	if keyIdx == -1 {
-		return "", false
-	}
-	sub := s[keyIdx+len(`"content"`):]
-	colonIdx := strings.IndexByte(sub, ':')
-	if colonIdx == -1 {
-		return "", false
-	}
-	sub = strings.TrimSpace(sub[colonIdx+1:])
-	if !strings.HasPrefix(sub, `"`) {
-		return "", false
-	}
-
-	// Scan string literal
-	var valBuf bytes.Buffer
-	escaped := false
-	started := false
-
-	for i := 0; i < len(sub); i++ {
-		b := sub[i]
-		if !started {
-			if b == '"' {
-				started = true
-			}
+	keys := []string{`"content"`, `"text"`, `"answer"`, `"response"`, `"result"`, `"output"`, `"message"`}
+	for _, key := range keys {
+		keyIdx := strings.Index(s, key)
+		if keyIdx == -1 {
+			continue
+		}
+		sub := s[keyIdx+len(key):]
+		colonIdx := strings.IndexByte(sub, ':')
+		if colonIdx == -1 {
+			continue
+		}
+		sub = strings.TrimSpace(sub[colonIdx+1:])
+		if !strings.HasPrefix(sub, `"`) {
 			continue
 		}
 
-		if escaped {
-			escaped = false
-			switch b {
-			case '"', '\\', '/':
-				valBuf.WriteByte(b)
-			case 'b':
-				valBuf.WriteByte('\b')
-			case 'f':
-				valBuf.WriteByte('\f')
-			case 'n':
-				valBuf.WriteByte('\n')
-			case 'r':
-				valBuf.WriteByte('\r')
-			case 't':
-				valBuf.WriteByte('\t')
-			case 'u':
-				if i+4 < len(sub) {
-					hexStr := sub[i+1 : i+5]
-					if u, err := strconv.ParseUint(hexStr, 16, 16); err == nil {
-						var rBuf [4]byte
-						n := utf8.EncodeRune(rBuf[:], rune(u))
-						valBuf.Write(rBuf[:n])
-						i += 4
-						continue
-					}
-				}
-				valBuf.WriteString(`\u`)
-			default:
-				valBuf.WriteByte(b)
-			}
-		} else if b == '\\' {
-			escaped = true
-		} else if b == '"' {
-			// Check if this quote is the true closing quote (followed only by whitespace and '}' or ',')
-			rest := strings.TrimLeft(sub[i+1:], " \t\r\n")
-			if rest == "" || strings.HasPrefix(rest, "}") || strings.HasPrefix(rest, ",") {
-				// Found true closing quote
-				return valBuf.String(), true
-			} else {
-				// Internal literal quote
-				valBuf.WriteByte('"')
-			}
-		} else {
-			valBuf.WriteByte(b)
-		}
-	}
+		// Scan string literal
+		var valBuf bytes.Buffer
+		escaped := false
+		started := false
 
-	// Even if unclosed at the very end, if we collected content, return it
-	if valBuf.Len() > 0 {
-		return valBuf.String(), true
+		for i := 0; i < len(sub); i++ {
+			b := sub[i]
+			if !started {
+				if b == '"' {
+					started = true
+				}
+				continue
+			}
+
+			if escaped {
+				escaped = false
+				switch b {
+				case '"', '\\', '/':
+					valBuf.WriteByte(b)
+				case 'b':
+					valBuf.WriteByte('\b')
+				case 'f':
+					valBuf.WriteByte('\f')
+				case 'n':
+					valBuf.WriteByte('\n')
+				case 'r':
+					valBuf.WriteByte('\r')
+				case 't':
+					valBuf.WriteByte('\t')
+				case 'u':
+					if i+4 < len(sub) {
+						hexStr := sub[i+1 : i+5]
+						if u, err := strconv.ParseUint(hexStr, 16, 16); err == nil {
+							var rBuf [4]byte
+							n := utf8.EncodeRune(rBuf[:], rune(u))
+							valBuf.Write(rBuf[:n])
+							i += 4
+							continue
+						}
+					}
+					valBuf.WriteString(`\u`)
+				default:
+					valBuf.WriteByte(b)
+				}
+			} else if b == '\\' {
+				escaped = true
+			} else if b == '"' {
+				// Check if this quote is the true closing quote (followed only by whitespace and '}' or ',')
+				rest := strings.TrimLeft(sub[i+1:], " \t\r\n")
+				if rest == "" || strings.HasPrefix(rest, "}") || strings.HasPrefix(rest, ",") {
+					// Found true closing quote
+					return valBuf.String(), true
+				} else {
+					// Internal literal quote
+					valBuf.WriteByte('"')
+				}
+			} else {
+				valBuf.WriteByte(b)
+			}
+		}
+
+		// Even if unclosed at the very end, if we collected content, return it
+		if valBuf.Len() > 0 {
+			return valBuf.String(), true
+		}
 	}
 
 	return "", false
