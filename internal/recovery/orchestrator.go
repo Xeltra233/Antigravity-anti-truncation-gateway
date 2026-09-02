@@ -385,8 +385,20 @@ func (o *Orchestrator) handleStreaming(w http.ResponseWriter, ctx context.Contex
 	}
 
 	if injected.SyntheticToolName == "" {
-		// Passthrough mode
-		_, _ = io.Copy(w, resp.Body)
+		// Passthrough mode with immediate chunk-by-chunk flushing
+		buf := make([]byte, 4096)
+		for {
+			n, err := resp.Body.Read(buf)
+			if n > 0 {
+				_, _ = w.Write(buf[:n])
+				if flusher != nil {
+					flusher.Flush()
+				}
+			}
+			if err != nil {
+				break
+			}
+		}
 		return
 	}
 
