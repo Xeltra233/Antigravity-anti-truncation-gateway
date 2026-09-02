@@ -50,40 +50,64 @@ func (d *IncrementalJSONStringDecoder) Feed(chunk string) (string, bool, error) 
 	for i < len(src) {
 		switch d.state {
 		case StateInit:
-			// Look for { or "content"
+			// Look for { or " or raw text start
 			if src[i] == '{' {
 				d.state = StateLookingForKey
+				i++
 			} else if src[i] == '"' {
 				d.state = StateLookingForKey
 				d.pendingKey.WriteByte('"')
+				i++
+			} else if src[i] == ' ' || src[i] == '\t' || src[i] == '\r' || src[i] == '\n' || src[i] == '`' {
+				i++
+			} else {
+				// Raw plain text start (fallback)
+				d.state = StateInString
 			}
-			i++
 
 		case StateLookingForKey:
 			d.pendingKey.WriteByte(src[i])
 			i++
 			keyStr := d.pendingKey.String()
-			if strings.Contains(keyStr, `"content"`) {
+			if strings.Contains(keyStr, `"content"`) ||
+				strings.Contains(keyStr, `"text"`) ||
+				strings.Contains(keyStr, `"answer"`) ||
+				strings.Contains(keyStr, `"response"`) ||
+				strings.Contains(keyStr, `"result"`) ||
+				strings.Contains(keyStr, `"output"`) ||
+				strings.Contains(keyStr, `"message"`) {
 				d.state = StateLookingForColon
 				d.pendingKey.Reset()
+			} else if strings.Contains(keyStr, `":`) || strings.Contains(keyStr, `": `) {
+				d.state = StateLookingForQuote
+				d.pendingKey.Reset()
 			} else if len(keyStr) > 500 {
-				d.state = StateError
+				// Fallback: treat as in-string
+				d.state = StateInString
 			}
 
 		case StateLookingForColon:
 			if src[i] == ':' {
 				d.state = StateLookingForQuote
+				i++
+			} else if src[i] == ' ' || src[i] == '\t' || src[i] == '\r' || src[i] == '\n' {
+				i++
+			} else if src[i] == '"' {
+				d.state = StateInString
+				i++
+			} else {
+				d.state = StateInString
 			}
-			i++
 
 		case StateLookingForQuote:
 			if src[i] == '"' {
 				d.state = StateInString
-			} else if src[i] != ' ' && src[i] != '\t' && src[i] != '\r' && src[i] != '\n' {
-				d.state = StateError
+				i++
+			} else if src[i] == ' ' || src[i] == '\t' || src[i] == '\r' || src[i] == '\n' {
+				i++
+			} else {
+				d.state = StateInString
 			}
-			i++
-
 		case StateInString:
 			// If we held a pending quote from the previous chunk, determine if it was closing or literal
 			if d.pendingQuote {
