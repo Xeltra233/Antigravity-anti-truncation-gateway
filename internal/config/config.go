@@ -228,7 +228,7 @@ func Load(getenv func(string) string) (*Config, error) {
 	cfg.MaxConcurrentRequestsPerKey = getInt(getenv("MAX_CONCURRENT_REQUESTS_PER_KEY"), 64, 1, 100000)
 	cfg.RequestQueueTimeout = getDurationMS(getenv("REQUEST_QUEUE_TIMEOUT_MS"), 50, 0, 10000)
 
-	cfg.StreamSideBufferBytes = getInt(getenv("STREAM_SIDE_BUFFER_BYTES"), 512, 0, 10485760)
+	cfg.StreamSideBufferBytes = getInt(getenv("STREAM_SIDE_BUFFER_BYTES"), 0, 0, 10485760)
 	cfg.StreamRepairBufferBytes = getInt(getenv("STREAM_REPAIR_BUFFER_BYTES"), 1048576, 1024, 10485760)
 	cfg.StreamFlushInterval = getDurationMS(getenv("STREAM_FLUSH_INTERVAL_MS"), 0, 0, 10)
 
