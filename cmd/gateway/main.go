@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	Version   = "1.0.1"
+	Version   = "1.0.5"
 	GitCommit = "none"
 	BuildTime = "unknown"
 )
@@ -141,12 +141,16 @@ func main() {
 	}
 
 	logger.Init(cfg.LogLevel, os.Stdout)
+	if cfg.EnvFileLoaded != "" {
+		slog.Info("loaded configuration from .env file", "path", cfg.EnvFileLoaded)
+	}
 	slog.Info("starting antigravity-gateway",
 		"version", Version,
 		"git_commit", GitCommit,
 		"build_time", BuildTime,
 		"port", cfg.Port,
 		"upstream", cfg.UpstreamBaseURL,
+		"env_file", cfg.EnvFileLoaded,
 		"wrapper_mode", cfg.WrapperMode,
 		"recovery_policy", cfg.RecoveryPolicy,
 		"empty_retries", cfg.UpstreamEmptyRetries,
