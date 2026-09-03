@@ -1,4 +1,4 @@
-# Antigravity Anti-Truncation Gateway (OpenAI Chat 防截断兼容网关)
+# Antigravity Gateway (OpenAI Chat 防截断兼容网关)
 
 <p align="center">
   <img src="https://img.shields.io/badge/Go-1.25+-00ADD8?style=flat-square&logo=go" alt="Go Version">
@@ -40,7 +40,7 @@
 
 ### 📖 项目简介与解决痛点
 
-**Antigravity Anti-Truncation Gateway** 是一款专为 **OpenAI Chat Completions 协议** 设计的高性能、无 UI（Headless）、环境变量与 `.env` 配置文件优先的防截断与格式修复中间件网关。
+**Antigravity Gateway** 是一款专为 **OpenAI Chat Completions 协议** 设计的高性能、无 UI（Headless）、环境变量与 `.env` 配置文件优先的防截断与格式修复中间件网关。
 
 在重度提示词环境（例如 **SillyTavern 酒馆复杂预设、超长角色卡、Prompt Pre-fill 续写、工具调用协同**）下，主流大模型（Claude、Gemini、GPT 等）经常出现以下问题：
 1. **输出意外截断**：长文本生成时受限于普通补全通道的输出长度限制或安全过滤器，导致生成中途断崖式截断；
@@ -278,7 +278,7 @@ export PORT="8080"
 创建 systemd 服务文件 `/etc/systemd/system/antigravity-gateway.service`：
 ```ini
 [Unit]
-Description=Antigravity Anti-Truncation Gateway Service
+Description=Antigravity Gateway Service
 After=network.target
 
 [Service]
@@ -453,7 +453,7 @@ curl -X POST http://127.0.0.1:8080/admin/keys/key_7f8a91b2c3d4/revoke \
 
 ### Overview & Problems Solved
 
-**Antigravity Anti-Truncation Gateway** is a high-performance, headless, environment-variable & `.env`-configured OpenAI Chat Completions compatibility middleware.
+**Antigravity Gateway** is a high-performance, headless, environment-variable & `.env`-configured OpenAI Chat Completions compatibility middleware.
 
 In complex, heavy-prompt environments (such as **SillyTavern complex presets, massive character cards, prompt pre-fills, and multi-turn workflows**), mainstream LLMs (Claude, Gemini, GPT) frequently encounter:
 1. **Premature Output Truncation**: Standard chat completion channels truncate unexpectedly due to token limits or output length restrictions;
@@ -666,7 +666,7 @@ export PORT=8080
 Create `/etc/systemd/system/antigravity-gateway.service`:
 ```ini
 [Unit]
-Description=Antigravity Anti-Truncation Gateway Service
+Description=Antigravity Gateway Service
 After=network.target
 
 [Service]
