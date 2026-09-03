@@ -27,8 +27,8 @@ func TestEmptyResponseRetrySuccess(t *testing.T) {
 		// Extract synthetic tool name
 		tools, _ := req["tools"].([]any)
 		var synthToolName string
-		for _, t := range tools {
-			tMap := t.(map[string]any)
+		for _, tool := range tools {
+			tMap := tool.(map[string]any)
 			fn := tMap["function"].(map[string]any)
 			name := fn["name"].(string)
 			if strings.HasPrefix(name, "agw_emit_") {
@@ -158,6 +158,7 @@ func TestConcurrencyLimiterRejections(t *testing.T) {
 	}
 
 	keyMgr, _ := keymgmt.NewManager(":memory:", "hmac-secret-at-least-16-bytes", nil)
+	defer keyMgr.Close()
 	client := proxy.NewUpstreamClient(cfg)
 	orch := NewOrchestrator(cfg, client, keyMgr)
 
@@ -198,5 +199,57 @@ func TestConcurrencyLimiterRejections(t *testing.T) {
 	}
 	if !has200 {
 		t.Errorf("expected at least one 200 response, got codes: %v", statusCodes)
+	}
+}
+
+func TestChatSizeLimits(t *testing.T) {
+	var upstreamCalls atomic.Int32
+	mockUpstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		upstreamCalls.Add(1)
+		_, _ = w.Write([]byte(strings.Repeat("z", 65)))
+	}))
+	defer mockUpstream.Close()
+
+	baseConfig := func() *config.Config {
+		return &config.Config{
+			UpstreamBaseURL:             mockUpstream.URL,
+			UpstreamAuthMode:            "none",
+			UpstreamTimeout:             time.Second,
+			WrapperMode:                 "off",
+			MaxRequestBytes:             64,
+			MaxResponseBytes:            64,
+			MaxConcurrentRequests:       10,
+			MaxConcurrentRequestsPerKey: 10,
+		}
+	}
+
+	keyMgr, err := keymgmt.NewManager(":memory:", "hmac-secret-at-least-16-bytes", nil)
+	if err != nil {
+		t.Fatalf("failed to create key manager: %v", err)
+	}
+	defer keyMgr.Close()
+
+	cfg := baseConfig()
+	orch := NewOrchestrator(cfg, proxy.NewUpstreamClient(cfg), keyMgr)
+	request := httptest.NewRequest(http.MethodPost, "/v1/chat/completions", bytes.NewReader([]byte(strings.Repeat("x", 65))))
+	request = request.WithContext(context.WithValue(request.Context(), proxy.KeyInfoContextKey, &keymgmt.KeyInfo{ID: "size-key", Status: "active"}))
+	recorder := httptest.NewRecorder()
+	orch.HandleChatCompletions(recorder, request)
+	if recorder.Code != http.StatusRequestEntityTooLarge {
+		t.Fatalf("oversized chat request status = %d, want %d", recorder.Code, http.StatusRequestEntityTooLarge)
+	}
+	if upstreamCalls.Load() != 0 {
+		t.Fatalf("oversized chat request reached upstream")
+	}
+
+	request = httptest.NewRequest(http.MethodPost, "/v1/chat/completions", bytes.NewReader([]byte(`{"model":"gpt-4o","messages":[]}`)))
+	request = request.WithContext(context.WithValue(request.Context(), proxy.KeyInfoContextKey, &keymgmt.KeyInfo{ID: "size-key", Status: "active"}))
+	recorder = httptest.NewRecorder()
+	orch.HandleChatCompletions(recorder, request)
+	if recorder.Code != http.StatusBadGateway {
+		t.Fatalf("oversized chat response status = %d, want %d", recorder.Code, http.StatusBadGateway)
+	}
+	if !strings.Contains(recorder.Body.String(), "upstream_response_too_large") {
+		t.Fatalf("oversized chat response body = %s", recorder.Body.String())
 	}
 }

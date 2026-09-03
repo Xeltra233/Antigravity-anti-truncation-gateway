@@ -1,7 +1,7 @@
 # Antigravity Anti-Truncation Gateway (OpenAI Chat 防截断兼容网关)
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Go-1.24+-00ADD8?style=flat-square&logo=go" alt="Go Version">
+  <img src="https://img.shields.io/badge/Go-1.25+-00ADD8?style=flat-square&logo=go" alt="Go Version">
   <img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="License">
   <img src="https://img.shields.io/badge/Architecture-Headless%20%7C%20High--Concurrency-blue.svg?style=flat-square" alt="Architecture">
   <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20Android%20%7C%20Docker-orange.svg?style=flat-square" alt="Platform">
@@ -123,7 +123,7 @@ docker run -d \
 
 ---
 
-#### 方案 C：从源码自行编译（需安装 Go 1.24+）
+#### 方案 C：从源码自行编译（需安装 Go 1.25+）
 如果你希望自己修改代码并编译：
 
 ##### 1. 安装 Go 语言环境（如尚未安装）
@@ -158,7 +158,7 @@ cd Antigravity-gateway
 - **查看版本信息**:
   ```bash
   ./gateway -v
-  # 输出: Antigravity Gateway version 1.0.5 (commit: ..., built: ...)
+  # 输出: Antigravity Gateway version 1.0.7 (commit: ..., built: ...)
   ```
 
 - **跨平台交叉编译 (在一台机器上为其他系统编译)**:
@@ -193,7 +193,7 @@ cd Antigravity-gateway
 | `UPSTREAM_TIMEOUT_MS` | 否 | `120000` | 上游请求单次超时时间（毫秒，默认 2 分钟） |
 | `PORT` | 否 | `8080` | 网关本地监听端口 |
 | `HOST` | 否 | `0.0.0.0` | 网关监听网络地址 |
-| `API_KEY` | 否 | - | 下游客户端访问网关时使用的简易 API Key（留空则无需认证，适合本地单人直接裸连） |
+| `API_KEY` | 否 | - | 下游客户端简易访问 Key；也可通过 `DOWNSTREAM_KEYS_JSON` 配置多个 Key。`/v1/*` 始终要求有效 Bearer Key，未配置任何下游 Key 时不会自动变为免认证模式。 |
 | `ENV_FILE` | 否 | - | 自定义指定加载的 `.env` 配置文件路径 |
 | `WRAPPER_MODE` | 否 | `prefer` | 包装模式：`prefer`（推荐，自适应注入合成协议）、`required`（强制要求）、`off`（紧急透明透传回滚） |
 | `RECOVERY_POLICY` | 否 | `repair` | 格式恢复策略：`repair`（本地确定性修复）、`repair_then_retry`（单次安全重试）、`fail`（直接报错） |
@@ -230,7 +230,7 @@ cd Antigravity-gateway
 UPSTREAM_BASE_URL=https://api.openai.com
 UPSTREAM_API_KEY=sk-your-upstream-key-here
 
-# 可选：给下游客户端配置的简易访问 Key 与端口（留空则无需密码）
+# 可选：给下游客户端配置的简易访问 Key 与端口
 API_KEY=sk-antigravity-123456
 PORT=8080
 HOST=0.0.0.0
@@ -384,7 +384,7 @@ curl -X POST http://127.0.0.1:8080/admin/keys/key_7f8a91b2c3d4/revoke \
 
 #### 1. 通用连接参数
 - **API 接口地址 (Base URL)**: `http://127.0.0.1:8080/v1`（局域网/公网部署请替换为对应 IP 或域名）
-- **API 密钥 (API Key)**: 填入网关中配置的 `API_KEY`（如 `sk-antigravity-123456`，若未配置则可留空或填任意字符）
+- **API 密钥 (API Key)**: 填入网关中配置的 `API_KEY` 或 `DOWNSTREAM_KEYS_JSON` 中的有效 Key；网关的 `/v1/*` 接口始终要求 Bearer Key，未配置任何下游 Key 时不会变成免认证模式。
 - **模型名称**: 填入上游支持的原生模型（如 `gemini-3.5-flash-low`, `gemini-3.7-flash-high`, `claude-sonnet-4-6` 等）
 
 #### 2. SillyTavern (酒馆) 设置
@@ -419,10 +419,10 @@ curl -X POST http://127.0.0.1:8080/admin/keys/key_7f8a91b2c3d4/revoke \
 
 ### 🛡️ 运维监控与健康检查
 
-- **存活探针 (Liveness)**: `GET /healthz` → 返回 `{"status":"ok","version":"1.0.5"}` (200 OK)
-- **就绪探针 (Readiness)**: `GET /readyz` → 返回 `{"status":"ready","version":"1.0.5"}` (200 OK)
-- **Prometheus 监控指标**: `GET /metrics` → 输出标准 Prometheus Metrics，包含请求总量、活跃连接数、响应延迟统计等。
-- **紧急回滚**: 若遇到突发未知上游格式异常，可将环境变量设置为 `WRAPPER_MODE=off` 无缝切换为原生纯透传模式。
+- **存活探针 (Liveness)**: `GET /healthz` → 返回 `{"status":"ok","version":"1.0.7"}` (200 OK)
+- **就绪探针 (Readiness)**: `GET /readyz` → 返回 `{"status":"ready","version":"1.0.7"}` (200 OK)
+- **Prometheus 监控指标**: `GET /metrics` → 输出请求总量、活跃请求数、过载拒绝、合成包装命中/修复/重试/冲突等指标。
+- **紧急回滚**: 若遇到突发未知上游格式异常，修改 `.env` 中的 `WRAPPER_MODE=off` 并重启网关，即可切换为原生纯透传模式。
 
 ---
 
@@ -441,7 +441,7 @@ curl -X POST http://127.0.0.1:8080/admin/keys/key_7f8a91b2c3d4/revoke \
 **A**: 完全支持。网关内置了智能正则过滤器，检测到生图、图像分析、音频等模型时会自动跳过合成包装，执行 100% 原生透传。
 
 #### Q4: 为什么我在 `.env` 文件里修改了配置却不生效？
-**A**: 网关自 `v1.0.5` 起已原生支持 `.env` 文件解析。请确认：
+**A**: 网关自 `v1.0.7` 起已原生支持 `.env` 文件解析。请确认：
 1. 操作系统环境变量中是否已设置了同名变量（系统环境变量优先级高于 `.env` 文件）；
 2. 启动时注意观察首行日志 `loaded configuration from .env file (path: ...)`，查看网关实际加载的 `.env` 文件绝对路径；
 3. 如果使用 Windows，推荐直接使用包内自带的 `run.bat`，它会自动保障读取脚本同级目录下的 `.env`。
@@ -535,7 +535,7 @@ docker run -d \
 
 ---
 
-#### Option C: Build from Source (Requires Go 1.24+)
+#### Option C: Build from Source (Requires Go 1.25+)
 
 ##### 1. Install Go (if not installed)
 - **Windows**: In PowerShell run `winget install GoLang.Go` or download from [Go Downloads](https://go.dev/dl/).
@@ -584,7 +584,7 @@ The gateway follows 12-Factor App design principles and reads configuration foll
 | `UPSTREAM_TIMEOUT_MS` | No | `120000` | Upstream request timeout in milliseconds (default: 2 minutes) |
 | `PORT` | No | `8080` | Gateway listening port |
 | `HOST` | No | `0.0.0.0` | Gateway listening host interface |
-| `API_KEY` | No | - | Downstream client authentication key (optional single-key mode; leave empty for open local access) |
+| `API_KEY` | No | - | Downstream client authentication key; configure this or at least one valid key in `DOWNSTREAM_KEYS_JSON` |
 | `ENV_FILE` | No | - | Custom path to load `.env` configuration file from |
 | `WRAPPER_MODE` | No | `prefer` | Wrapper mode: `prefer` (recommended, injects synthetic protocol), `required` (strict), `off` (emergency passthrough) |
 | `RECOVERY_POLICY` | No | `repair` | Recovery policy: `repair` (local deterministic fix), `repair_then_retry` (retry on failure), `fail` (error out) |
@@ -621,7 +621,7 @@ The gateway follows 12-Factor App design principles and reads configuration foll
 UPSTREAM_BASE_URL=https://api.openai.com
 UPSTREAM_API_KEY=sk-your-upstream-key-here
 
-# Optional: Downstream client authentication key and port (leave empty for open access)
+# Optional: Downstream client authentication key and port
 API_KEY=sk-antigravity-123456
 PORT=8080
 HOST=0.0.0.0
@@ -760,7 +760,7 @@ The gateway is 100% compliant with standard OpenAI `/v1` endpoints.
 
 #### 1. General Settings
 - **Base URL**: `http://127.0.0.1:8080/v1`
-- **API Key**: Configured `API_KEY` (or leave empty if unauthenticated)
+- **API Key**: Configured `API_KEY` or a key from `DOWNSTREAM_KEYS_JSON`; `/v1/*` always requires a valid Bearer key
 - **Model**: Original upstream model name (e.g. `gemini-3.5-flash-low`, `claude-sonnet-4-6`)
 
 #### 2. SillyTavern Setup
@@ -795,10 +795,10 @@ The gateway is 100% compliant with standard OpenAI `/v1` endpoints.
 
 ### 🛡️ Health Checks & Observability
 
-- **Liveness Probe**: `GET /healthz` → returns `{"status":"ok","version":"1.0.5"}` (200 OK)
-- **Readiness Probe**: `GET /readyz` → returns `{"status":"ready","version":"1.0.5"}` (200 OK)
+- **Liveness Probe**: `GET /healthz` → returns `{"status":"ok","version":"1.0.7"}` (200 OK)
+- **Readiness Probe**: `GET /readyz` → returns `{"status":"ready","version":"1.0.7"}` (200 OK)
 - **Prometheus Metrics**: `GET /metrics` → exports standard metrics including request totals, latencies, active connections, and synthetic wrapper counts.
-- **Emergency Fallback**: Set `WRAPPER_MODE=off` to revert instantly to transparent raw passthrough without restarting.
+- **Emergency Fallback**: Set `WRAPPER_MODE=off` in `.env` and restart the gateway to revert to transparent raw passthrough.
 
 ---
 
@@ -817,7 +817,7 @@ Internal refusal indicates sensitive keywords in the prompt card. Adjust your ch
 **A**: Yes. The gateway includes an automatic classifier that skips synthetic wrapping for non-text models (DALL-E, Flux, Whisper, Embeddings) and performs 100% raw passthrough.
 
 #### Q4: Why are my changes in `.env` not taking effect?
-**A**: Starting from `v1.0.5`, native `.env` loading is fully supported. Check:
+**A**: Starting from `v1.0.7`, native `.env` loading is fully supported. Check:
 1. Whether an environment variable with the same name exists in your system (system environment variables take precedence over `.env`);
 2. Check the first log output on startup `loaded configuration from .env file (path: ...)`;
 3. On Windows, use `run.bat` which guarantees loading `.env` from the script directory.

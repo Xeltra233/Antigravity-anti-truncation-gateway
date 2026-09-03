@@ -120,7 +120,16 @@ func TestAdminAPI(t *testing.T) {
 		t.Errorf("expected 401, got %d", w.Code)
 	}
 
-	// 2. Create Key via Admin API
+	// 2. Invalid admin token is also rejected
+	req = httptest.NewRequest("GET", "/admin/keys", nil)
+	req.Header.Set("Authorization", "Bearer invalid-admin-token")
+	w = httptest.NewRecorder()
+	mux.ServeHTTP(w, req)
+	if w.Code != http.StatusUnauthorized {
+		t.Errorf("expected 401 for invalid admin token, got %d", w.Code)
+	}
+
+	// 3. Create Key via Admin API
 	createBody, _ := json.Marshal(CreateKeyRequest{
 		Name:          "API Key 1",
 		AllowedModels: []string{"gemini-3.5-flash-low"},

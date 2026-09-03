@@ -1,19 +1,17 @@
 # Build stage
-FROM golang:alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
-# Enable automatic Go toolchain upgrade if sub-dependencies require it
-ENV GOTOOLCHAIN=auto
+RUN apk add --no-cache ca-certificates
 
-# Install git and ca-certificates
-RUN apk add --no-cache git ca-certificates
+COPY go.mod go.sum ./
+RUN go mod download
 
-# Copy source code and modules
-COPY . .
+COPY cmd ./cmd
+COPY internal ./internal
 
-# Build the binary targeting cmd/gateway
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /app/bin/server ./cmd/gateway
+RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags="-w -s" -o /app/bin/server ./cmd/gateway
 
 # Final stage
 FROM alpine:3.21

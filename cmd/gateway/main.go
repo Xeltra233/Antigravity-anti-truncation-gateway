@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"io"
 	"log/slog"
 	"net/http"
 	"os"
@@ -20,7 +18,7 @@ import (
 )
 
 var (
-	Version   = "1.0.6"
+	Version   = "1.0.7"
 	GitCommit = "none"
 	BuildTime = "unknown"
 )
@@ -29,10 +27,12 @@ type responseLogger struct {
 	http.ResponseWriter
 	statusCode   int
 	bytesWritten int64
-	bodyBuf      bytes.Buffer
 }
 
 func (rl *responseLogger) WriteHeader(code int) {
+	if rl.statusCode != 0 {
+		return
+	}
 	rl.statusCode = code
 	rl.ResponseWriter.WriteHeader(code)
 }
@@ -42,14 +42,6 @@ func (rl *responseLogger) Write(b []byte) (int, error) {
 		rl.statusCode = http.StatusOK
 	}
 	rl.bytesWritten += int64(len(b))
-	if rl.bodyBuf.Len() < 2048 {
-		remaining := 2048 - rl.bodyBuf.Len()
-		if len(b) > remaining {
-			rl.bodyBuf.Write(b[:remaining])
-		} else {
-			rl.bodyBuf.Write(b)
-		}
-	}
 	return rl.ResponseWriter.Write(b)
 }
 
@@ -63,24 +55,15 @@ func detailedLoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
-		w.Header().Set("Access-Control-Allow-Headers", "*")
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		// Authorization must be named explicitly: the CORS wildcard does not cover it.
+		w.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type, X-Request-ID, Accept, Origin, Cache-Control")
+		w.Header().Set("Access-Control-Expose-Headers", "X-Request-ID")
 		w.Header().Set("Access-Control-Max-Age", "86400")
 
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusNoContent)
 			slog.Info("HTTP OPTIONS preflight handled", "path", r.URL.Path, "remote", r.RemoteAddr)
 			return
-		}
-
-		// Read & preview request body (up to 4KB)
-		var reqBodyPreview string
-		if r.Body != nil && r.ContentLength != 0 {
-			buf, err := io.ReadAll(io.LimitReader(r.Body, 4096))
-			if err == nil && len(buf) > 0 {
-				reqBodyPreview = string(buf)
-				r.Body = io.NopCloser(io.MultiReader(bytes.NewReader(buf), r.Body))
-			}
 		}
 
 		authHeader := r.Header.Get("Authorization")
@@ -98,7 +81,6 @@ func detailedLoggingMiddleware(next http.Handler) http.Handler {
 			"remote", r.RemoteAddr,
 			"content_type", r.Header.Get("Content-Type"),
 			"auth", maskedAuth,
-			"body_preview", strings.ReplaceAll(strings.ReplaceAll(reqBodyPreview, "\n", " "), "\r", " "),
 		)
 
 		start := time.Now()
@@ -108,19 +90,15 @@ func detailedLoggingMiddleware(next http.Handler) http.Handler {
 		}
 
 		next.ServeHTTP(rl, r)
-
-		respPreview := strings.TrimSpace(rl.bodyBuf.String())
-		if len(respPreview) > 500 {
-			respPreview = respPreview[:500] + "...(truncated)"
+		if rl.statusCode == 0 {
+			rl.statusCode = http.StatusOK
 		}
-
 		slog.Info("<<< OUTGOING HTTP RESPONSE",
 			"method", r.Method,
 			"path", r.URL.Path,
 			"status", rl.statusCode,
 			"bytes", rl.bytesWritten,
 			"duration_ms", time.Since(start).Milliseconds(),
-			"resp_preview", strings.ReplaceAll(strings.ReplaceAll(respPreview, "\n", " "), "\r", " "),
 		)
 	})
 }
