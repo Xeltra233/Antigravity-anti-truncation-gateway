@@ -47,9 +47,8 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version-file: go.mod
           check-latest: true
-
       - name: Build Binary
         env:
           GOOS: ${{ matrix.os }}
@@ -106,7 +105,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version-file: go.mod
           check-latest: true
 
       - name: Set up Java 17

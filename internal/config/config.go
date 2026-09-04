@@ -75,12 +75,21 @@ type Config struct {
 	ModelsCacheTTL  time.Duration
 	LogLevel        string
 	TrustProxy      bool
+	EnvFileLoaded   string
 }
 
 func LoadFromEnv() (*Config, error) {
-	return Load(os.Getenv)
+	loadedFile, _, err := LoadDotEnv()
+	if err != nil {
+		return nil, fmt.Errorf("error loading .env: %w", err)
+	}
+	cfg, err := Load(os.Getenv)
+	if err != nil {
+		return nil, err
+	}
+	cfg.EnvFileLoaded = loadedFile
+	return cfg, nil
 }
-
 func Load(getenv func(string) string) (*Config, error) {
 	cfg := &Config{}
 

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -15,6 +16,7 @@ import (
 	"antigravity-gateway/internal/imagectx"
 	"antigravity-gateway/internal/keymgmt"
 	"antigravity-gateway/internal/limiter"
+	"antigravity-gateway/internal/limits"
 	"antigravity-gateway/internal/metrics"
 	"antigravity-gateway/internal/proxy"
 	"antigravity-gateway/internal/server"
@@ -71,7 +73,11 @@ func (o *Orchestrator) HandleChatCompletions(w http.ResponseWriter, r *http.Requ
 	defer release()
 
 	// Read downstream request body
-	bodyBytes, err := io.ReadAll(io.LimitReader(r.Body, o.cfg.MaxRequestBytes))
+	bodyBytes, err := limits.ReadAll(r.Body, o.cfg.MaxRequestBytes)
+	if errors.Is(err, limits.ErrExceeded) {
+		server.WriteError(w, http.StatusRequestEntityTooLarge, "Request body exceeded configured size limit", "invalid_request_error", "request_too_large")
+		return
+	}
 	if err != nil {
 		server.WriteError(w, http.StatusBadRequest, "Failed to read request body", "invalid_request_error", "bad_request")
 		return
@@ -215,8 +221,12 @@ func (o *Orchestrator) handleNonStreaming(w http.ResponseWriter, ctx context.Con
 			return
 		}
 
-		respBody, err := io.ReadAll(io.LimitReader(resp.Body, o.cfg.MaxResponseBytes))
+		respBody, err := limits.ReadAll(resp.Body, o.cfg.MaxResponseBytes)
 		resp.Body.Close()
+		if errors.Is(err, limits.ErrExceeded) {
+			server.WriteError(w, http.StatusBadGateway, "Upstream response exceeded configured size limit", "api_error", "upstream_response_too_large")
+			return
+		}
 		if err != nil {
 			server.WriteError(w, http.StatusBadGateway, "Failed to read upstream response", "api_error", "upstream_error")
 			return
@@ -257,6 +267,10 @@ func (o *Orchestrator) handleNonStreaming(w http.ResponseWriter, ctx context.Con
 				w.Header().Set("Content-Type", "application/json; charset=utf-8")
 				w.WriteHeader(http.StatusOK)
 				_, _ = w.Write(retryNormalized)
+				return
+			}
+			if errors.Is(retryErr, limits.ErrExceeded) {
+				server.WriteError(w, http.StatusBadGateway, "Upstream retry response exceeded configured size limit", "api_error", "upstream_response_too_large")
 				return
 			}
 		}
@@ -336,7 +350,7 @@ func (o *Orchestrator) attemptSingleFormatRetry(ctx context.Context, originalBod
 		return nil, fmt.Errorf("retry returned upstream status %d", resp.StatusCode)
 	}
 
-	respBytes, err := io.ReadAll(io.LimitReader(resp.Body, o.cfg.MaxResponseBytes))
+	respBytes, err := limits.ReadAll(resp.Body, o.cfg.MaxResponseBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -367,9 +381,18 @@ func (o *Orchestrator) handleStreaming(w http.ResponseWriter, ctx context.Contex
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		respBody, readErr := limits.ReadAll(resp.Body, o.cfg.MaxResponseBytes)
+		if errors.Is(readErr, limits.ErrExceeded) {
+			server.WriteError(w, http.StatusBadGateway, "Upstream response exceeded configured size limit", "api_error", "upstream_response_too_large")
+			return
+		}
+		if readErr != nil {
+			server.WriteError(w, http.StatusBadGateway, "Failed to read upstream response", "api_error", "upstream_error")
+			return
+		}
 		w.Header().Set("Content-Type", resp.Header.Get("Content-Type"))
 		w.WriteHeader(resp.StatusCode)
-		_, _ = io.Copy(w, resp.Body)
+		_, _ = w.Write(respBody)
 		return
 	}
 
@@ -384,18 +407,35 @@ func (o *Orchestrator) handleStreaming(w http.ResponseWriter, ctx context.Contex
 		flusher.Flush()
 	}
 
+	limitedBody := limits.NewReader(resp.Body, o.cfg.MaxResponseBytes)
 	if injected.SyntheticToolName == "" {
-		// Passthrough mode with immediate chunk-by-chunk flushing
+		// Passthrough mode with immediate chunk-by-chunk flushing. The [DONE]
+		// event is the SSE application-level terminator; do not wait for an HTTP
+		// connection close because upstreams commonly keep connections alive.
 		buf := make([]byte, 4096)
+		doneMarker := []byte("data: [DONE]")
+		var tail []byte
 		for {
-			n, err := resp.Body.Read(buf)
+			n, err := limitedBody.Read(buf)
 			if n > 0 {
 				_, _ = w.Write(buf[:n])
 				if flusher != nil {
 					flusher.Flush()
 				}
+				tail = append(tail, buf[:n]...)
+				if bytes.Contains(tail, doneMarker) {
+					return
+				}
+				if len(tail) > len(doneMarker) {
+					tail = tail[len(tail)-len(doneMarker)+1:]
+				}
 			}
 			if err != nil {
+				if errors.Is(err, limits.ErrExceeded) {
+					slog.Warn("streaming upstream response exceeded configured size limit", "request_id", reqID)
+				} else if !errors.Is(err, io.EOF) {
+					slog.Warn("failed while reading streaming upstream response", "request_id", reqID, "err", err)
+				}
 				break
 			}
 		}
@@ -403,7 +443,14 @@ func (o *Orchestrator) handleStreaming(w http.ResponseWriter, ctx context.Contex
 	}
 
 	transformer := synthetic.NewStreamTransformer(o.cfg, injected.SyntheticToolName)
-	stats, _ := transformer.Transform(resp.Body, w, flusher)
+	stats, transformErr := transformer.Transform(limitedBody, w, flusher)
+	if transformErr != nil {
+		if errors.Is(transformErr, limits.ErrExceeded) {
+			slog.Warn("streaming upstream response exceeded configured size limit", "request_id", reqID)
+		} else {
+			slog.Warn("failed to transform streaming upstream response", "request_id", reqID, "err", transformErr)
+		}
+	}
 	if stats != nil {
 		if stats.SyntheticHit {
 			metrics.Default.SyntheticHits.Add(1)

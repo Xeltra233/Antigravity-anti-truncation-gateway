@@ -3,6 +3,7 @@ package proxy
 import (
 	"context"
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -11,6 +12,7 @@ import (
 	"time"
 
 	"antigravity-gateway/internal/config"
+	"antigravity-gateway/internal/limits"
 )
 
 type UpstreamClient struct {
@@ -109,7 +111,10 @@ func (c *UpstreamClient) GetModels(ctx context.Context, reqID string) ([]byte, e
 		return nil, fmt.Errorf("upstream returned status %d: %s", resp.StatusCode, string(bodyBytes))
 	}
 
-	bodyBytes, err := io.ReadAll(io.LimitReader(resp.Body, c.cfg.MaxResponseBytes))
+	bodyBytes, err := limits.ReadAll(resp.Body, c.cfg.MaxResponseBytes)
+	if errors.Is(err, limits.ErrExceeded) {
+		return nil, fmt.Errorf("upstream models response exceeded configured size limit")
+	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to read models response body: %w", err)
 	}

@@ -1,10 +1,12 @@
 package proxy
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -42,7 +44,7 @@ func TestProxyModelsVerbatimAndCache(t *testing.T) {
 		UpstreamMaxIdleConns:        100,
 		UpstreamMaxIdleConnsPerHost: 10,
 		UpstreamMaxConnsPerHost:     10,
-		ModelsCacheTTL:              500 * time.Millisecond,
+		ModelsCacheTTL:              20 * time.Millisecond,
 		MaxResponseBytes:            1024 * 1024,
 	}
 
@@ -80,6 +82,76 @@ func TestProxyModelsVerbatimAndCache(t *testing.T) {
 	}
 	if string(bytes1) != string(bytes2) {
 		t.Errorf("cached bytes mismatch")
+	}
+
+	time.Sleep(50 * time.Millisecond)
+	bytes3, err := client.GetModels(ctx, "req3")
+	if err != nil {
+		t.Fatalf("failed to refresh models after cache expiry: %v", err)
+	}
+	if upstreamCalled != 2 {
+		t.Errorf("expected cache refresh to make 2 upstream calls, got %d", upstreamCalled)
+	}
+	if string(bytes1) != string(bytes3) {
+		t.Errorf("refreshed bytes mismatch")
+	}
+}
+
+func TestModelsResponseSizeLimit(t *testing.T) {
+	mockUpstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(strings.Repeat("x", 65)))
+	}))
+	defer mockUpstream.Close()
+
+	cfg := &config.Config{
+		UpstreamBaseURL:  mockUpstream.URL,
+		UpstreamAuthMode: "none",
+		UpstreamTimeout:  time.Second,
+		MaxResponseBytes: 64,
+	}
+	client := NewUpstreamClient(cfg)
+
+	if _, err := client.GetModels(context.Background(), "req-large-models"); err == nil || !strings.Contains(err.Error(), "exceeded configured size limit") {
+		t.Fatalf("GetModels error = %v, want configured size limit error", err)
+	}
+}
+
+func TestGenericPassthroughSizeLimits(t *testing.T) {
+	upstreamCalls := 0
+	mockUpstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		upstreamCalls++
+		_, _ = w.Write([]byte(strings.Repeat("y", 65)))
+	}))
+	defer mockUpstream.Close()
+
+	cfg := &config.Config{
+		UpstreamBaseURL:  mockUpstream.URL,
+		UpstreamAuthMode: "none",
+		UpstreamTimeout:  time.Second,
+		MaxRequestBytes:  64,
+		MaxResponseBytes: 64,
+	}
+	client := NewUpstreamClient(cfg)
+	handler := NewProxyHandler(cfg, nil, client)
+
+	request := httptest.NewRequest(http.MethodPost, "/v1/embeddings", bytes.NewReader([]byte(strings.Repeat("x", 65))))
+	recorder := httptest.NewRecorder()
+	handler.HandleGenericPassthrough(recorder, request)
+	if recorder.Code != http.StatusRequestEntityTooLarge {
+		t.Fatalf("oversized request status = %d, want %d", recorder.Code, http.StatusRequestEntityTooLarge)
+	}
+	if upstreamCalls != 0 {
+		t.Fatalf("oversized request reached upstream %d times", upstreamCalls)
+	}
+
+	request = httptest.NewRequest(http.MethodPost, "/v1/embeddings", bytes.NewReader([]byte(`{}`)))
+	recorder = httptest.NewRecorder()
+	handler.HandleGenericPassthrough(recorder, request)
+	if recorder.Code != http.StatusBadGateway {
+		t.Fatalf("oversized response status = %d, want %d", recorder.Code, http.StatusBadGateway)
+	}
+	if !strings.Contains(recorder.Body.String(), "upstream_response_too_large") {
+		t.Fatalf("oversized response body = %s", recorder.Body.String())
 	}
 }
 

@@ -1,0 +1,9 @@
+# Use an allow-list so local credentials, databases, build outputs, Android
+# caches, goal notes, and Git history never enter the Docker build context.
+*
+!go.mod
+!go.sum
+!cmd/
+!cmd/**
+!internal/
+!internal/**

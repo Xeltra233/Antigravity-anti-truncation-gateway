@@ -1,35 +1,23 @@
 @echo off
-chcp 65001 >nul
+chcp 65001 >nul 2>&1
 title Antigravity Gateway
 
-:: ===================================================
-:: Antigravity Gateway 启动脚本
-:: 请修改下方的环境变量，或保持默认配置
-:: ===================================================
-
-:: 上游 API 地址 (必填)
-if "%UPSTREAM_BASE_URL%"=="" set UPSTREAM_BASE_URL=https://your-upstream-domain.com
-
-:: 上游 API 密钥 (若上游不需要认证可留空并设置 UPSTREAM_AUTH_MODE=none)
-if "%UPSTREAM_API_KEY%"=="" set UPSTREAM_API_KEY=sk-your-upstream-key
-
-:: 本地网关监听端口 (默认 8080)
-if "%PORT%"=="" set PORT=8080
-
-:: 本地网关访问密钥 (下游客户端调用网关时使用的 API Key，留空则无需认证)
-if "%API_KEY%"=="" set API_KEY=sk-antigravity-123456
+cd /d "%~dp0"
 
 echo ===================================================
-echo   Antigravity Gateway 启动中...
-echo   监听端口: %PORT%
-echo   上游地址: %UPSTREAM_BASE_URL%
+echo   Antigravity Gateway
 echo ===================================================
+echo.
 
 "%~dp0gateway.exe"
 
-if %errorlevel% neq 0 (
+if errorlevel 1 (
     echo.
-    echo [错误] 网关退出，错误码: %errorlevel%
-    echo 请检查配置或端口占用情况。
+    echo ===================================================
+    echo [提示] 网关已退出。
+    echo 故障排查：
+    echo 1. 请检查同级目录下的 .env 文件，确认 UPSTREAM_BASE_URL 与 UPSTREAM_API_KEY 配置正确。
+    echo 2. 检查端口（默认 8080）是否被其他程序占用。
+    echo ===================================================
     pause
 )
