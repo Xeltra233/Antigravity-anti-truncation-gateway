@@ -18,6 +18,7 @@ import (
 	"antigravity-gateway/internal/proxy"
 	"antigravity-gateway/internal/recovery"
 	"antigravity-gateway/internal/server"
+	"antigravity-gateway/internal/synthetic"
 )
 
 func main() {
@@ -35,7 +36,7 @@ func main() {
 	upstreamURL := strings.TrimSpace(lines[0])
 	upstreamKey := strings.TrimSpace(lines[1])
 
-	fmt.Printf("[1/7] Read api.txt: Upstream URL = %s (Key masked: %s...)\n", upstreamURL, upstreamKey[:min(len(upstreamKey), 8)])
+	fmt.Printf("[1/7] Read api.txt: Upstream URL = %s (API key loaded)\n", upstreamURL)
 
 	// Setup In-Process Gateway
 	staticKey := "sk-downstream-live-test"
@@ -121,7 +122,32 @@ func main() {
 		log.Fatalf("No models returned from upstream")
 	}
 
-	selectedModel := "gemini-3.5-flash-low"
+	modelFilter := synthetic.NewModelFilter("", "")
+	selectedModel := ""
+	preferredModels := []string{"gemini-3.7-flash-high", "gemini-3.7-flash", "gemini-3-flash"}
+	for _, preferred := range preferredModels {
+		for _, model := range modelsData.Data {
+			if model.ID == preferred && modelFilter.IsTextModel(model.ID) {
+				selectedModel = model.ID
+				break
+			}
+		}
+		if selectedModel != "" {
+			break
+		}
+	}
+	if selectedModel == "" {
+		for _, model := range modelsData.Data {
+			if modelFilter.IsTextModel(model.ID) {
+				selectedModel = model.ID
+				break
+			}
+		}
+	}
+	if selectedModel == "" {
+		log.Fatalf("No text-capable model returned from upstream")
+	}
+
 	fmt.Printf("✓ Models fetched successfully (%d models). Selected model: %s\n", len(modelsData.Data), selectedModel)
 
 	// 2. Test Non-Streaming with Heavy Prompt (SillyTavern style)

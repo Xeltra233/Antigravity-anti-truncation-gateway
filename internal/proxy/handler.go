@@ -1,16 +1,17 @@
 package proxy
 
 import (
+	"bytes"
 	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
-	"io"
 	"net/http"
 	"strings"
 
 	"antigravity-gateway/internal/config"
 	"antigravity-gateway/internal/keymgmt"
+	"antigravity-gateway/internal/limits"
 	"antigravity-gateway/internal/server"
 )
 
@@ -132,12 +133,22 @@ func (h *ProxyHandler) HandleChat(w http.ResponseWriter, r *http.Request) {
 // HandleGenericPassthrough proxies any other /v1/... endpoint (e.g. /v1/embeddings, /v1/completions) to upstream.
 func (h *ProxyHandler) HandleGenericPassthrough(w http.ResponseWriter, r *http.Request) {
 	reqID := GetRequestID(r.Context())
+	bodyBytes, err := limits.ReadAll(r.Body, h.cfg.MaxRequestBytes)
+	if errors.Is(err, limits.ErrExceeded) {
+		server.WriteError(w, http.StatusRequestEntityTooLarge, "Request body exceeded configured size limit", "invalid_request_error", "request_too_large")
+		return
+	}
+	if err != nil {
+		server.WriteError(w, http.StatusBadRequest, "Failed to read request body", "invalid_request_error", "bad_request")
+		return
+	}
+
 	targetURL := h.cfg.UpstreamBaseURL + r.URL.Path
 	if r.URL.RawQuery != "" {
 		targetURL += "?" + r.URL.RawQuery
 	}
 
-	upstreamReq, err := h.client.NewUpstreamRequest(r.Context(), r.Method, targetURL, r.Body, reqID)
+	upstreamReq, err := h.client.NewUpstreamRequest(r.Context(), r.Method, targetURL, bytes.NewReader(bodyBytes), reqID)
 	if err != nil {
 		server.WriteError(w, http.StatusInternalServerError, "Failed to create upstream request: "+err.Error(), "api_error", "internal_error")
 		return
@@ -154,13 +165,23 @@ func (h *ProxyHandler) HandleGenericPassthrough(w http.ResponseWriter, r *http.R
 	}
 	defer resp.Body.Close()
 
+	responseBody, err := limits.ReadAll(resp.Body, h.cfg.MaxResponseBytes)
+	if errors.Is(err, limits.ErrExceeded) {
+		server.WriteError(w, http.StatusBadGateway, "Upstream response exceeded configured size limit", "api_error", "upstream_response_too_large")
+		return
+	}
+	if err != nil {
+		server.WriteError(w, http.StatusBadGateway, "Failed to read upstream response", "api_error", "upstream_error")
+		return
+	}
+
 	for k, vv := range resp.Header {
 		for _, v := range vv {
 			w.Header().Add(k, v)
 		}
 	}
 	w.WriteHeader(resp.StatusCode)
-	_, _ = io.Copy(w, resp.Body)
+	_, _ = w.Write(responseBody)
 }
 
 func (h *ProxyHandler) RegisterRoutes(mux *http.ServeMux) {
